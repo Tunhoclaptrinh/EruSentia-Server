@@ -18,7 +18,7 @@ async function runBenchmark() {
       LIMIT 10;
     `;
     const res1 = await client.query(q1);
-    res1.rows.forEach(r => console.log('  ', r['QUERY PLAN']));
+    res1.rows.forEach((r: Record<string, any>) => console.log('  ', r['QUERY PLAN']));
     console.log('\n----------------------------------------------------------------\n');
 
     // 2. Benchmark: Full-text Search on GIN Index
@@ -32,7 +32,7 @@ async function runBenchmark() {
       LIMIT 10;
     `;
     const res2 = await client.query(q2);
-    res2.rows.forEach(r => console.log('  ', r['QUERY PLAN']));
+    res2.rows.forEach((r: Record<string, any>) => console.log('  ', r['QUERY PLAN']));
     console.log('\n================================================================');
     console.log('Benchmark completed successfully!');
     console.log('================================================================');

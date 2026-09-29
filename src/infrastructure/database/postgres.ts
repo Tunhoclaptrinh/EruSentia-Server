@@ -17,7 +17,7 @@ const poolConfig: PoolConfig = {
 
 export const dbPool = new Pool(poolConfig);
 
-dbPool.on('error', (err) => {
+dbPool.on('error', (err: Error) => {
   console.error('[PostgreSQL Pool Error]: Unexpected client error', err);
 });
 
