@@ -13,6 +13,8 @@
     "db:schema": "tsx scripts/run-sql.ts sql/01_schema.sql",
     "db:indexes": "tsx scripts/run-sql.ts sql/02_indexes.sql",
     "db:seed": "tsx scripts/seed.ts",
+    "db:reset": "tsx scripts/run-sql.ts sql/00_reset.sql",
+    "db:fresh": "npm run db:reset && npm run db:schema && npm run db:indexes && npm run db:seed",
     "db:benchmark": "tsx scripts/benchmark.ts",
     "test": "jest",
     "test:watch": "jest --watch"
