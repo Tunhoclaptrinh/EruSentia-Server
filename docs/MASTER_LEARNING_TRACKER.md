@@ -28,6 +28,9 @@ erusentia-server/docs/
 ├── 🗺️ DATABASE_DESIGN.md                 ← Sơ đồ ERD, thiết kế 8 bảng quan hệ 3NF & chiến lược Indexing
 ├── 📜 TEMPLATE_CONTRACT.md               ← Đặc tả JSON Schema chuẩn giao tiếp giữa Server và App
 │
+├── 📂 week-01/                           ← Ghi chép & sổ tay kỹ thuật thực chiến Tuần 1
+│   └── 01_docker_and_environment_handbook.md # Bí mật Docker network, Virtualization & WSL 2
+│
 ├── 📂 reports/                           ← Thư mục lưu trữ báo cáo tiến độ nộp Mentor hàng tuần
 │   ├── WEEKLY_REPORT_TEMPLATE.md         ← Mẫu báo cáo chuẩn chung
 │   └── week_01_report.md                 ← Báo cáo chi tiết Tuần 1: Database & OOP
