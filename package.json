@@ -1,0 +1,31 @@
+{
+  "name": "sentia-hub-service",
+  "version": "1.0.0",
+  "description": "Sentia Hub - High-performance Cloud Community & Template Sharing Backend Service",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "db:schema": "tsx scripts/run-sql.ts sql/01_schema.sql",
+    "db:indexes": "tsx scripts/run-sql.ts sql/02_indexes.sql",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:benchmark": "tsx scripts/benchmark.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "@types/pg": "^8.11.11",
+    "prettier": "^3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}
