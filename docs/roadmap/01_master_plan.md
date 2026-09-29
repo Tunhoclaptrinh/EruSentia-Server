@@ -81,8 +81,8 @@ EruSentia/                   ← Repo frontend (đã có - không phá vỡ)
 
 | File | Nội dung | Tham chiếu TYP |
 |---|---|---|
-| [00_training_schedule.md](./00_training_schedule.md) | Lộ trình gốc từ Excel | Toàn bộ |
-| [00_ip_protection_strategy.md](./00_ip_protection_strategy.md) | 🛡️ Chiến lược bảo vệ IP, phạm vi nộp bài & kịch bản demo | Nguyên tắc an toàn |
+| [LEARNING_ROADMAP_AND_RESOURCES.md](./LEARNING_ROADMAP_AND_RESOURCES.md) | 📚 Lộ trình 6 tuần & Kho tài liệu tham khảo chính thức | Toàn bộ lộ trình |
+| [00_training_schedule.md](./00_training_schedule.md) | Lộ trình gốc chuyển đổi từ Excel | TYP 2026 |
 | [00_production_engineering_blueprint.md](./00_production_engineering_blueprint.md) | ⚡ Chuẩn Go-To-Market & Kỹ thuật tối ưu hóa đến cùng cực | Chuẩn sản xuất |
 | **[01_master_plan.md](./01_master_plan.md)** | ← File này | Tổng quan |
 | [02_week1_database.md](./02_week1_database.md) | Kế hoạch chi tiết Tuần 1 | W1: DB & OOP |

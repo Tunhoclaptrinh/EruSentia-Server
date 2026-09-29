@@ -33,6 +33,7 @@ erusentia-server/docs/
 │   └── week_01_report.md                 ← Báo cáo chi tiết Tuần 1: Database & OOP
 │
 └── 📂 roadmap/                           ← Các tài liệu kiến trúc & kế hoạch gốc
+    ├── 📚 LEARNING_ROADMAP_AND_RESOURCES.md # Lộ trình 6 tuần & Kho tài liệu đọc chính thức
     ├── 00_training_schedule.md           # Lộ trình từ file Excel gốc
     ├── 00_production_engineering_...     # Bản thiết kế kỹ thuật tối ưu cùng cực (GTM)
     ├── 01_master_plan.md                 # Kế hoạch tổng thể 6 tuần
