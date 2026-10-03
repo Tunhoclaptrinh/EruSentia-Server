@@ -4,27 +4,6 @@
 
 ---
 
-## 👥 THÔNG TIN MENTOR
-
-| STT | Học viên | Mentor | Liên hệ |
-|-----|----------|--------|---------|
-| 1 | Nguyễn Tiến Tuấn | Từ Trường Vũ | [Facebook](https://www.facebook.com/truong.vu.470825) |
-| 2 | Nguyễn Xuân Đạt | Trịnh Quang Lâm | [Facebook](https://www.facebook.com/trinh.lam.522016/) |
-| 3 | Nguyễn Đức Hiếu | Phạm Xuân Hoàng Long | [Facebook](https://www.facebook.com/gnolggnaoh) |
-| 4 | Dương Văn Chiến | Phạm Xuân Hoàng Long | [Facebook](https://www.facebook.com/gnolggnaoh) |
-| 5 | Trần Duy Mạnh | Bùi Anh Đức | [Facebook](https://www.facebook.com/anhducwszxje) |
-| 6 | Trần Anh Tuấn | Trần Quang Lâm | [Facebook](https://www.facebook.com/tran.quang.lam.673543) |
-| 7 | Đỗ Thanh Phong | Nguyễn Trường Giang | [Facebook](https://www.facebook.com/truong.giang.592204) |
-| 8 | Nguyễn Khắc Thành | Từ Trường Vũ | [Facebook](https://www.facebook.com/truong.vu.470825) |
-| 9 | Đỗ Bảo Ngọc | Nguyễn Vinh Tùng | [Facebook](https://www.facebook.com/nguyen.vinhtung.0707) |
-| 10 | Đào Anh Ly | Lê Đức Huy | [Facebook](https://www.facebook.com/lee.huy.507464) |
-| 11 | Bạch Trường Hải | Lê Đức Huy | [Facebook](https://www.facebook.com/lee.huy.507464) |
-| 12 | Nguyễn Thanh Phong | Lê Đức Huy | [Facebook](https://www.facebook.com/lee.huy.507464) |
-
-**Link nộp bài tập:** https://github.com/quanglam04/trainning-typ-2026
-
----
-
 ## 📅 NỘI DUNG TRAINING (6 TUẦN + PHỎNG VẤN)
 
 ---

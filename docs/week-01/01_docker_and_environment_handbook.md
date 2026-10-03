@@ -69,7 +69,7 @@ Khi đăng nhập trên Adminer (`http://localhost:8080`), nhiều bạn hay gõ
 
 ## ✨ 4. "PHÉP MÀU" TỰ ĐỘNG CHẠY SQL (`/docker-entrypoint-initdb.d/`)
 
-Hãy nhìn lại 2 dòng này trong file [docker-compose.dev.yml](../../docker/docker-compose.dev.yml):
+Hãy nhìn lại 2 dòng này trong file cấu hình `docker-compose.dev.yml`:
 
 ```yaml
 volumes:
