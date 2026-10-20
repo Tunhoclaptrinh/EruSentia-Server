@@ -119,8 +119,8 @@ erDiagram
 | 5 | `documents` | Tài liệu, ghi chú chia sẻ dạng Markdown | `visibility IN ('public', 'unlisted', 'private')` |
 | 6 | `forks` | Ghi nhận lượt sao chép template về dùng | `UNIQUE(original_template_id, forked_by_user_id)` chống clone spam |
 | 7 | `ratings` | Đánh giá 1-5 sao | `UNIQUE(template_id, user_id)` (1 user chỉ rate 1 lần), `score 1..5` |
-| 8 | `notifications` | Thông báo sự kiện (Producer-Consumer) | Hỗ trợ RabbitMQ pub/sub, cờ `is_read` |
-| 9 | `audit_logs` | Nhật ký bảo mật & truy vết hệ thống | Chuẩn bị sẵn partition theo tháng |
+| 8 | `notifications` | Thông báo sự kiện (Producer-Consumer) | Lưu dữ liệu thông báo và cờ `is_read`; chưa tích hợp RabbitMQ |
+| 9 | `audit_logs` | Nhật ký bảo mật & truy vết hệ thống | Lưu dữ liệu truy vết; schema hiện chưa tạo partition |
 
 ---
 
@@ -132,7 +132,7 @@ erDiagram
    ON templates (category_id, rating_avg DESC, forks_count DESC)
    WHERE deleted_at IS NULL AND is_public = TRUE;
    ```
-   *Mục đích:* Phục vụ trang chủ Marketplace lấy top templates nhanh nhất. Loại bỏ 100% bản ghi đã xóa hoặc private ra khỏi index tree, tiết kiệm 60% RAM.
+   *Mục đích:* Phục vụ trang chủ Marketplace lấy top templates nhanh nhất. Index chỉ chứa các bản ghi chưa xóa và đang công khai; dung lượng và hiệu quả cần đo trên dữ liệu thực tế.
 
 2. **GIN Full-Text Search Index:**
    ```sql
@@ -140,4 +140,9 @@ erDiagram
    ON templates USING GIN (to_tsvector('english', title || ' ' || coalesce(description, '')))
    WHERE deleted_at IS NULL AND is_public = TRUE;
    ```
-   *Mục đích:* Tìm kiếm từ khóa tức thì trong < 3ms không cần Elasticsearch.
+   *Mục đích:* Hỗ trợ truy vấn full-text search trên PostgreSQL; dùng EXPLAIN ANALYZE để kiểm tra execution plan và thời gian thực thi.
+
+
+Schema hiện có 9 bảng nghiệp vụ. Hai bảng `users_no_index` và `template_slots` xuất hiện trong ảnh thực hành là bảng phụ phục vụ bài học. Các chức năng HTTP, ORM, hàng đợi và phân quyền ứng dụng chưa được triển khai.
+
+[Báo cáo thực hành tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/week-1/week-1/WEEK1_REPORT.md) nằm tại repo TYP.

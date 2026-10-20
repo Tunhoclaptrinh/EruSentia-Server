@@ -5,7 +5,7 @@
 
 -- 1. Composite Partial Index cho trang Explore / Marketplace Hot List
 -- Tối ưu: Chỉ đánh index các bản ghi còn hoạt động (soft-deleted = false) và public.
--- Giảm 60% RAM, tốc độ traversal đạt < 2ms.
+-- Dùng EXPLAIN ANALYZE để đo hiệu quả trên tập dữ liệu thực tế.
 CREATE INDEX IF NOT EXISTS idx_templates_explore_hot
 ON templates (category_id, rating_avg DESC, forks_count DESC)
 WHERE deleted_at IS NULL AND is_public = TRUE;

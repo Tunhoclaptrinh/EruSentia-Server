@@ -42,4 +42,5 @@ coverage/
 
 # Local tools & automation
 .tools/
+.private-planning/
 
