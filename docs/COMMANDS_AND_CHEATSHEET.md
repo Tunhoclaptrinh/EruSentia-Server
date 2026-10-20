@@ -51,3 +51,5 @@ Bài này thêm 100.000 user benchmark và tạo `users_no_index`. Dùng databas
 Đọc `EXPLAIN ANALYZE` theo dữ liệu và điều kiện lọc thực tế. Việc có index không đảm bảo PostgreSQL luôn chọn index scan.
 
 [Báo cáo và lý thuyết tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/week-1/week-1) được lưu tại repo TYP.
+
+Xem [bảng tham chiếu TYP](TRAINING_REFERENCES.md) để mở đúng bài Docker, Index, Transaction, OOP hoặc DI tương ứng.
