@@ -1,28 +1,39 @@
-import * as dotenv from 'dotenv';
-import { checkDatabaseHealth } from './infrastructure/database/postgres';
+import * as dotenv from "dotenv";
+import {
+  checkDatabaseHealth,
+  dbPool,
+} from "./infrastructure/database/postgres";
 
 dotenv.config();
 
-const PORT = Number(process.env.PORT) || 3000;
-const APP_NAME = process.env.APP_NAME || 'sentia-hub-service';
+const APP_NAME = process.env.APP_NAME || "sentia-hub-service";
 
 async function bootstrap() {
-  console.log(`================================================================`);
-  console.log(`🚀 Starting ${APP_NAME} in ${process.env.NODE_ENV || 'development'} mode...`);
-  console.log(`================================================================`);
+  console.log(
+    `================================================================`,
+  );
+  console.log(
+    `Checking ${APP_NAME} database in ${process.env.NODE_ENV || "development"} mode...`,
+  );
+  console.log(
+    `================================================================`,
+  );
 
   const isDbHealthy = await checkDatabaseHealth();
   if (isDbHealthy) {
     console.log(`✅ [Database]: Successfully connected to PostgreSQL!`);
   } else {
-    console.warn(`⚠️ [Database]: PostgreSQL is currently offline or unreachable. Please start Docker or verify .env configuration.`);
+    throw new Error(
+      "PostgreSQL is unreachable. Start the database or verify the DB_* environment variables.",
+    );
   }
 
-  console.log(`🌐 Server ready and listening on port ${PORT}`);
-  console.log(`📡 Ready for Week 1 (Database & OOP) and Week 2 (REST API & ORM)!`);
+  console.log("Database check completed. The HTTP API is not implemented yet.");
 }
 
-bootstrap().catch((err) => {
-  console.error('Fatal bootstrap error:', err);
-  process.exit(1);
-});
+bootstrap()
+  .catch((err) => {
+    console.error("Database check failed:", err.message);
+    process.exitCode = 1;
+  })
+  .finally(() => dbPool.end());
