@@ -61,6 +61,6 @@ Demo DI dùng repository Postgres mô phỏng để giải thích cách thay dep
 - [Thiết kế database](docs/DATABASE_DESIGN.md).
 - [Lệnh vận hành và thực hành](docs/COMMANDS_AND_CHEATSHEET.md).
 - [Bảng dẫn từng chủ đề sang tài liệu TYP](docs/TRAINING_REFERENCES.md).
-- [Báo cáo tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/week-1/week-1/WEEK1_REPORT.md), [lý thuyết và hướng dẫn](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/week-1/week-1/docs/00_GUIDE_INDEX.md), [ảnh demo](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/week-1/week-1/screenshots) được quản lý tại repo TYP.
+- [Báo cáo tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/WEEK1_REPORT.md), [lý thuyết và hướng dẫn](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/00_GUIDE_INDEX.md), [ảnh demo](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/typ-2026-week-1/week-1/screenshots) được quản lý tại repo TYP.
 
 Các phép đo hiệu năng cần đi kèm dữ liệu đầu vào và execution plan; repo không cam kết một mức thời gian cố định cho mọi môi trường.
