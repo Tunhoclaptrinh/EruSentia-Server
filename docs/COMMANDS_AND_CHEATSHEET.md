@@ -59,3 +59,19 @@ Bài này thêm 100.000 user benchmark và tạo `users_no_index`. Dùng databas
 [Báo cáo và lý thuyết tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/typ-2026-week-1/week-1) được lưu tại repo TYP.
 
 Xem [bảng tham chiếu TYP](TRAINING_REFERENCES.md) để mở đúng bài Docker, Index, Transaction, OOP hoặc DI tương ứng.
+
+## Tuần 4 — welcome email qua RabbitMQ
+
+```bash
+docker compose -f docker/docker-compose.queue.yml up -d --wait
+pnpm db:queue
+QUEUE_ENABLED=true pnpm dev
+# Terminal khác, cùng DB_* và QUEUE_NAMESPACE:
+QUEUE_ENABLED=true pnpm worker:welcome
+# Chỉ dùng database mới/rỗng week4_test_*:
+RUN_QUEUE_TESTS=1 DB_DATABASE=week4_test_local pnpm test:queue
+```
+
+RabbitMQ UI `127.0.0.1:15672`, Mailpit UI `127.0.0.1:8025`. Đặt DB_* trước lệnh ghi.
+`db:fresh` nay chạy thêm migration queue sau auth và vẫn xóa toàn bộ schema hiện có.
+Không dùng trên dữ liệu cần giữ. [Hướng dẫn MQ](MESSAGE_QUEUE.md).

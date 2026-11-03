@@ -36,6 +36,14 @@ UserDto chỉ có id/email/role/createdAt. TokenPairDto có accessToken, refresh
 tokenType=Bearer, expiresIn=900, refreshExpiresAt và user. Token/response tài khoản
 đặt Cache-Control:no-store. Không gửi token qua query string.
 
+## Welcome email tùy chọn — tuần 4
+
+Khi QUEUE_ENABLED=true, PostgreSQL lưu user và message_outbox trong cùng transaction
+đăng ký. Response 201 không chờ gửi email. Worker riêng chuyển sự kiện qua RabbitMQ
+đến Mailpit local; event không mang password, hash, email hay token. Cấp admin qua
+CLI không phát welcome event. Cơ chế này không phải email verification.
+Xem [Message Queue](MESSAGE_QUEUE.md); queue tắt mặc định, memory không hỗ trợ queue.
+
 ## Access JWT
 
 HS256 với key ngẫu nhiên ít nhất 32 byte, kiểm tra chữ ký, allowlist HS256, issuer

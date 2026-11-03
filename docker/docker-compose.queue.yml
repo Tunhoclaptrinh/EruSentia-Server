@@ -1,0 +1,28 @@
+# Optional week-4 services; independent of the existing PostgreSQL dev stack.
+services:
+  rabbitmq:
+    image: rabbitmq:4.4.0-management
+    container_name: sentia_rabbitmq_dev
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: eru
+      RABBITMQ_DEFAULT_PASS: eru_dev_password
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    container_name: sentia_mailpit_dev
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+volumes:
+  rabbitmq_data:

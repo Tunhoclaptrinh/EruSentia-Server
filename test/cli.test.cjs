@@ -84,3 +84,9 @@ test("admin provisioning propagates DB failure without printing the password", (
   assert.match(output, /Admin creation failed/);
   assert(!output.includes(password));
 });
+
+test("welcome worker rejects disabled queue configuration before connecting", () => {
+  const output = run("src/messaging/worker.ts", [], { QUEUE_ENABLED: "false" });
+  assert.match(output, /Welcome worker startup failed/);
+  assert.doesNotMatch(output, /worker ready|amqp:\/\//);
+});

@@ -153,3 +153,16 @@ CRUD ở [Template API](TEMPLATE_API.md). Hàng đợi chưa triển khai.
 [Báo cáo thực hành tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/WEEK1_REPORT.md) nằm tại repo TYP.
 
 Lý thuyết chi tiết: [SQL cơ bản](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/02_sql_basics.md), [Index](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/03_index.md), [Locking](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/05_locking.md) và [Transaction](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/06_transaction.md).
+
+## Bổ sung tuần 4 — outbox và email ledger
+
+`sql/06_message_queue.sql` thêm 2 bảng, áp dụng thủ công sau migration auth:
+
+- `message_outbox`: id/event_type/payload/created_at/published_at. User và event
+  được commit chung khi đăng ký có bật queue; pending index chỉ lấy row chưa publish.
+- `welcome_email_deliveries`: event_id PK/FK outbox, user_id FK users, status
+  sent/skipped, message_id, processed_at. Ledger ngăn gửi lại các event đã commit.
+
+Đủ migration 05/06 thì có 12 bảng (9 nền + 1 auth + 2 queue). SQL schema/index/seed
+ban đầu giữ nguyên. Không tự migrate khi bootstrap và không dùng synchronize.
+SMTP nằm ngoài transaction DB, xem giới hạn gửi trùng trong [Message Queue](MESSAGE_QUEUE.md).

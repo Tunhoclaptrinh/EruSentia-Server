@@ -46,3 +46,14 @@ dùng tag lưu trữ `typ-2026-week-3`. Giữ nguyên tag này khi có cập nh�
 
 Hợp đồng hiện tại: [Authentication](AUTHENTICATION.md), [Template](TEMPLATE_API.md),
 [cách chạy/Swagger](../README.md).
+
+## Tuần 4 — Message Queue
+
+Server nhánh `feat/week-4-message-queue`; tài liệu TYP ở nhánh `week-4`.
+[Báo cáo tuần 4](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-4/week-4/WEEK4_REPORT.md),
+[mục lục](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-4/week-4/docs/00_GUIDE_INDEX.md)
+và [snapshot nguồn](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-4/week-4/SOURCE_SNAPSHOT.md)
+dùng tag lưu trữ `typ-2026-week-4`. Giữ nguyên tag này khi cập nhật về sau.
+
+[Message Queue](MESSAGE_QUEUE.md) mô tả triển khai hiện tại; nguồn/báo cáo tuần 3
+vẫn được giữ tại tag TYP `typ-2026-week-3`.

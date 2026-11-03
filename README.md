@@ -2,6 +2,7 @@
 
 Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 phát triển
 API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
+Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
 Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. App chưa tích hợp API.
 
 ## Cài đặt và database
@@ -110,11 +111,56 @@ có override. Bộ ảnh Postman/collection v2.1 trong `tools/postman` thuộc t
 chúng được tái hiện bằng [snapshot tuần 2](https://github.com/Tunhoclaptrinh/EruSentia-Server/tree/b9017f77f6b97a4935fd72d22f2e149f32c4b649),
 không chạy nguyên collection cũ trên hợp đồng auth tuần 3.
 
+## Message Queue — tuần 4
+
+Welcome email dùng RabbitMQ **4.4.0**, Mailpit **1.32.0**, amqplib **2.2.1** và
+Nodemailer **10.3.1**. Mailpit là hộp thư nhận local, không gửi email ra Internet.
+App chưa gọi API; email này không xác minh địa chỉ hoặc kích hoạt tài khoản App.
+
+```bash
+docker compose -f docker/docker-compose.queue.yml up -d --wait
+pnpm db:queue
+# Terminal API: sau khi chuẩn bị schema/index/seed/auth/queue trên DB đã chọn
+QUEUE_ENABLED=true pnpm dev
+# Terminal worker: cùng DB_* và QUEUE_NAMESPACE với API
+QUEUE_ENABLED=true pnpm worker:welcome
+```
+
+`QUEUE_ENABLED=false` mặc định giữ flow tuần 3. Bật queue yêu cầu PostgreSQL và
+migration `sql/06_message_queue.sql`; không có queue giả trong memory mode.
+Worker gửi qua SMTP localhost:1025; RabbitMQ UI http://127.0.0.1:15672 dùng
+`eru` / `eru_dev_password`, Mailpit UI http://127.0.0.1:8025. Các cổng mới chỉ bind
+loopback; credential trên chỉ dùng cho Docker thực hành local.
+
+POST `/auth/register` vẫn trả **201 UserDto**. Khi bật queue, user và outbox commit
+cùng transaction; API không chờ RabbitMQ/SMTP. Worker poll outbox, publish persistent
+message với confirm/mandatory, consumer xử lý rồi manual ack. Có retry trễ 5 giây,
+tối đa 3 lần xử lý trước DLQ; malformed event vào DLQ ngay. Consumer chết trước ack
+được redeliver, không tự động đi DLQ ngay lần chết đầu tiên.
+
+Email ledger chống gửi lại sự kiện đã ghi `sent` và khóa theo event ID giữa workers.
+SMTP không tham gia transaction PostgreSQL: nếu SMTP đã nhận nhưng DB chưa commit,
+retry vẫn có thể gửi trùng. Không cam kết exactly-once email; Message-ID ổn định
+chỉ giúp đối chiếu, không bảo đảm hộp thư deduplicate.
+
+Kiểm chứng đầy đủ trên database mới/rỗng, giữ RabbitMQ/Mailpit đang chạy:
+
+```bash
+docker exec sentia_postgres_dev createdb -U postgres week4_test_local
+RUN_QUEUE_TESTS=1 DB_HOST=127.0.0.1 DB_PORT=5432 DB_USERNAME=postgres \
+  DB_PASSWORD=postgres_dev_password DB_DATABASE=week4_test_local pnpm test:queue
+docker exec sentia_postgres_dev dropdb -U postgres week4_test_local
+```
+
+Suite tự tạo namespace RabbitMQ riêng, nạp SQL 01/02/03/05/06, thực thi HTTP + SMTP,
+dọn đúng queues/exchanges/email của lượt test; không xóa mailbox hoặc vhost chung.
+Chi tiết kiến trúc, retry/DLQ và thao tác vận hành: [MESSAGE_QUEUE](docs/MESSAGE_QUEUE.md).
+
 ## Kiểm thử
 
 ```bash
 pnpm typecheck
-pnpm test          # build + 32 pass, 1 DB test skip theo mặc định
+pnpm test          # build + 35 pass, 2 integration suites skip theo mặc định
 pnpm test:auth     # auth memory
 pnpm test:api      # CRUD memory có JWT
 ```
@@ -135,6 +181,7 @@ MFA, cookie/CSRF flow, quản lý phiên qua UI hay kiểm thử tải. Chưa t�
 
 ## Cấu trúc và tài liệu
 
+- `src/messaging/`: event contract, RabbitMQ transport, outbox dispatcher, email worker.
 - `src/auth/`: DTO, guard, JWT/password service, memory/PostgreSQL auth store.
 - `src/templates/`: CRUD có quyền sở hữu, validation và persistence adapters.
 - `src/openapi.ts`: Swagger UI/JSON từ metadata DTO/controller.

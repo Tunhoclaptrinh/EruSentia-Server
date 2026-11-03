@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   DataSource,
@@ -16,6 +16,10 @@ import {
   Role,
   userIdentity,
 } from "../auth-store";
+import {
+  registrationEvent,
+  REGISTRATION_EVENTS_ENABLED,
+} from "../../messaging/registration-event";
 import { RefreshSessionEntity } from "./refresh-session.entity";
 
 @Injectable()
@@ -26,10 +30,25 @@ export class PostgresAuthStore implements AuthStore {
     @InjectRepository(RefreshSessionEntity)
     private readonly sessions: Repository<RefreshSessionEntity>,
     private readonly dataSource: DataSource,
+    @Inject(REGISTRATION_EVENTS_ENABLED)
+    private readonly eventsEnabled: boolean,
   ) {}
   async createUser(input: { email: string; passwordHash: string; role: Role }) {
     try {
-      return await this.users.save(this.users.create(input));
+      if (!this.eventsEnabled)
+        return await this.users.save(this.users.create(input));
+      return await this.dataSource.transaction(async (manager) => {
+        const user = await manager.save(
+          AuthorEntity,
+          manager.create(AuthorEntity, input),
+        );
+        const event = registrationEvent(user.id);
+        await manager.query(
+          "INSERT INTO message_outbox (id,event_type,payload) VALUES ($1,$2,$3::jsonb)",
+          [event.id, event.type, JSON.stringify(event)],
+        );
+        return user;
+      });
     } catch (error) {
       if (
         error instanceof QueryFailedError &&

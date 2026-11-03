@@ -8,6 +8,7 @@ import { AUTH_STORE } from "./auth-store";
 import { AdminUsersController, AuthController } from "./auth.controller";
 import { AccessTokenGuard, RolesGuard } from "./auth.guards";
 import { AuthService, AUTH_SETTINGS } from "./auth.service";
+import { REGISTRATION_EVENTS_ENABLED } from "../messaging/registration-event";
 import { Passwords } from "./passwords";
 import { MemoryAuthStore } from "./persistence/memory-auth.store";
 import { PostgresAuthStore } from "./persistence/postgres-auth.store";
@@ -36,6 +37,10 @@ export class AuthModule {
       controllers: [AuthController, AdminUsersController],
       providers: [
         { provide: AUTH_SETTINGS, useValue: settings.auth },
+        {
+          provide: REGISTRATION_EVENTS_ENABLED,
+          useValue: settings.queue.enabled,
+        },
         {
           provide: AUTH_STORE,
           useClass:

@@ -16,7 +16,7 @@
     "db:indexes": "node --import tsx scripts/run-sql.ts sql/02_indexes.sql",
     "db:seed": "node --import tsx scripts/seed.ts",
     "db:reset": "node --import tsx scripts/run-sql.ts sql/00_reset.sql",
-    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth",
+    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue",
     "db:benchmark": "node --import tsx scripts/benchmark.ts",
     "demo:oop": "node --import tsx src/week01-practice/oop/demo.ts",
     "demo:di": "node --import tsx src/week01-practice/di/demo.ts",
@@ -26,7 +26,10 @@
     "test:api:db": "pnpm build && node --test test/templates.postgres.test.cjs",
     "db:auth": "node --import tsx scripts/run-sql.ts sql/05_auth_sessions.sql",
     "auth:admin": "node --require ts-node/register scripts/create-admin.ts",
-    "test:auth": "pnpm build && node --test test/auth.api.test.cjs"
+    "test:auth": "pnpm build && node --test test/auth.api.test.cjs",
+    "db:queue": "node --import tsx scripts/run-sql.ts sql/06_message_queue.sql",
+    "worker:welcome": "node --require ts-node/register src/messaging/worker.ts",
+    "test:queue": "pnpm build && node --test test/messaging.integration.test.cjs"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",
@@ -36,9 +39,11 @@
     "@nestjs/swagger": "12.1.0",
     "@nestjs/typeorm": "12.0.2",
     "@node-rs/argon2": "2.2.2",
+    "amqplib": "2.2.1",
     "class-transformer": "0.5.1",
     "class-validator": "0.15.1",
     "dotenv": "^16.4.7",
+    "nodemailer": "10.3.1",
     "pg": "^8.13.3",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
@@ -46,6 +51,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
+    "@types/nodemailer": "8.0.2",
     "@types/pg": "^8.11.11",
     "playwright": "^1.63.0",
     "prettier": "^3.5.3",
