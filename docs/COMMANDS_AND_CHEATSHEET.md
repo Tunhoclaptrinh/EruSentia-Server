@@ -14,9 +14,11 @@ Chạy các lệnh dưới đây từ thư mục gốc của repo `EruSentia-Ser
 | `pnpm db:schema` | Tạo 9 bảng nghiệp vụ bằng `sql/01_schema.sql` |
 | `pnpm db:indexes` | Tạo các index bằng `sql/02_indexes.sql` |
 | `pnpm db:seed` | Nạp seed và 1.000 template benchmark trong một transaction |
+| `pnpm db:auth` | Áp dụng migration bổ sung refresh sessions và index email cho tuần 3 |
 | `pnpm db:benchmark` | In execution plan cho truy vấn danh sách và full-text search |
 
-`pnpm db:reset` xóa các bảng của dự án. `pnpm db:fresh` chạy reset, schema, indexes và seed. Chỉ dùng các lệnh reset trên database phát triển có thể xóa dữ liệu.
+`pnpm db:reset` xóa schema public và các đối tượng bên trong. `pnpm db:fresh` chạy
+reset, schema, indexes, seed và db:auth. Chỉ dùng trên database có thể xóa dữ liệu.
 
 ## Build và demo
 
@@ -24,13 +26,17 @@ Chạy các lệnh dưới đây từ thư mục gốc của repo `EruSentia-Ser
 |---|---|
 | `pnpm typecheck` | Kiểm tra TypeScript của source và scripts |
 | `pnpm test` | Build, kiểm tra CLI và HTTP contract memory; DB test skip nếu chưa bật |
+| `pnpm test:auth` | Kiểm thử JWT, quyền sở hữu và refresh rotation bằng memory |
+| `pnpm auth:admin` | Tạo admin mới từ ADMIN_EMAIL/ADMIN_PASSWORD; không ghi đè tài khoản |
 | `pnpm build` | Biên dịch source và scripts vào `dist/` |
 | `pnpm start` | Khởi động HTTP API tại localhost:3001, mặc định dùng TypeORM/PostgreSQL |
 | `pnpm dev` | Theo dõi source TypeScript và khởi động lại NestJS HTTP API |
 | `pnpm demo:oop` | Chạy demo đóng gói, kế thừa, đa hình và trừu tượng |
 | `pnpm demo:di` | Chạy demo dependency injection và IoC container |
 
-Tuần 2 đã có NestJS listener và TypeORM adapter. Bộ kiểm thử CLI/HTTP dùng node:test, chưa thêm ESLint hoặc Jest. Xem [API tuần 2](TEMPLATE_API.md) và README để chạy memory mode, DB integration và Postman collection.
+Tuần 3 bổ sung JWT/ownership trên NestJS/TypeORM. Bộ kiểm thử CLI/HTTP dùng node:test.
+Xem [Template API](TEMPLATE_API.md), [Auth API](AUTHENTICATION.md) và README để chạy
+memory, DB integration và Swagger. Collection Postman giữ hợp đồng lịch sử tuần 2.
 
 ## Thực hành PostgreSQL
 

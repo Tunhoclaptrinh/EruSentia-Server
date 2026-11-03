@@ -12,15 +12,17 @@ const env = {
   DB_PASSWORD: "unused",
   DB_DATABASE: "cli_test",
   TEMPLATE_STORE: "postgres",
+  ADMIN_EMAIL: "",
+  ADMIN_PASSWORD: "",
 };
 
-function run(script, args = []) {
+function run(script, args = [], extraEnv = {}) {
   const result = spawnSync(
     process.execPath,
     ["--import", "tsx", script, ...args],
     {
       cwd: root,
-      env,
+      env: { ...env, ...extraEnv },
       encoding: "utf8",
       timeout: 10_000,
     },
@@ -67,4 +69,18 @@ test("benchmark propagates connection failure", () => {
 
 test("seed propagates connection failure", () => {
   assert.match(run("scripts/seed.ts"), /Seeding failed/);
+});
+
+test("admin provisioning rejects missing credentials without opening a database", () => {
+  assert.match(run("dist/scripts/create-admin.js"), /Set ADMIN_EMAIL/);
+});
+
+test("admin provisioning propagates DB failure without printing the password", () => {
+  const password = "LearningPass!2026";
+  const output = run("dist/scripts/create-admin.js", [], {
+    ADMIN_EMAIL: "admin@example.test",
+    ADMIN_PASSWORD: password,
+  });
+  assert.match(output, /Admin creation failed/);
+  assert(!output.includes(password));
 });

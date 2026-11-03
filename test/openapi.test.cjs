@@ -5,10 +5,19 @@ const { createApplication } = require("../dist/src/app");
 
 test("Swagger configuration defaults and explicit overrides", () => {
   assert.equal(readConfig({}).swaggerEnabled, true);
-  assert.equal(readConfig({ NODE_ENV: "production" }).swaggerEnabled, false);
   assert.equal(
-    readConfig({ NODE_ENV: "production", SWAGGER_ENABLED: "true" })
-      .swaggerEnabled,
+    readConfig({
+      NODE_ENV: "production",
+      JWT_SECRET: "test-only-key-with-at-least-32-bytes",
+    }).swaggerEnabled,
+    false,
+  );
+  assert.equal(
+    readConfig({
+      NODE_ENV: "production",
+      SWAGGER_ENABLED: "true",
+      JWT_SECRET: "test-only-key-with-at-least-32-bytes",
+    }).swaggerEnabled,
     true,
   );
   assert.equal(readConfig({ SWAGGER_ENABLED: "false" }).swaggerEnabled, false);
@@ -36,10 +45,10 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
   assert.equal(response.status, 200);
   const spec = await response.json();
   assert.match(spec.openapi, /^3\./);
-  assert.deepEqual(Object.keys(spec.paths).sort(), [
-    "/templates",
-    "/templates/{id}",
-  ]);
+  assert.equal(Object.keys(spec.paths).length, 8);
+  assert.equal(spec.components.securitySchemes.bearer.scheme, "bearer");
+  assert.equal(spec.paths["/auth/login"].post.security, undefined);
+  assert.deepEqual(spec.paths["/templates"].get.security, [{ bearer: [] }]);
   assert.deepEqual(Object.keys(spec.paths["/templates"]).sort(), [
     "get",
     "post",
@@ -53,6 +62,12 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
   assert.equal(queries.find((p) => p.name === "page").schema.default, 1);
   assert.equal(queries.find((p) => p.name === "size").schema.maximum, 100);
   assert(queries.every((p) => p.in === "query" && !p.required));
+  const unauthorized = spec.paths["/auth/me"].get.responses[401].content["application/json"].example;
+  assert.equal(unauthorized.statusCode, 401);
+  assert.equal(unauthorized.code, "UNAUTHORIZED");
+  const forbidden = spec.paths["/admin/users"].get.responses[403].content["application/json"].example;
+  assert.equal(forbidden.statusCode, 403);
+  assert.equal(forbidden.code, "FORBIDDEN");
   const schemas = spec.components.schemas;
   assert.deepEqual(schemas.UpdateTemplateDto.required ?? [], []);
   assert(!("authorId" in schemas.UpdateTemplateDto.properties));
@@ -66,7 +81,7 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
   );
   assert(!JSON.stringify(spec).includes("password_hash"));
   const body = Object.fromEntries(
-    ["authorId", "categoryId", "title", "slug", "description"].map((key) => [
+    ["categoryId", "title", "slug", "description"].map((key) => [
       key,
       schemas.CreateTemplateDto.properties[key].example,
     ]),
@@ -79,9 +94,28 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
     allowHeightResize: content.allowHeightResize.example,
   };
   body.isPublic = schemas.CreateTemplateDto.properties.isPublic.example;
-  const created = await fetch(`${base}/templates`, {
+  assert(!("authorId" in schemas.CreateTemplateDto.properties));
+  const credentials = {
+    email: "swagger@example.test",
+    password: "LearningPass!2026",
+  };
+  await fetch(`${base}/auth/register`, {
     method: "POST",
     headers: { "content-type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  const login = await fetch(`${base}/auth/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  const { accessToken } = await login.json();
+  const created = await fetch(`${base}/templates`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify(body),
   });
   const saved = await created.json();

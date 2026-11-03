@@ -1,8 +1,11 @@
+import { randomBytes } from "node:crypto";
+
 export interface AppConfig {
   host: string;
   port: number;
   store: "memory" | "postgres";
   swaggerEnabled: boolean;
+  auth: { secret: string; accessTtlSeconds: number; refreshTtlSeconds: number };
   database: {
     host: string;
     port: number;
@@ -33,6 +36,11 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     !["true", "false"].includes(env.SWAGGER_ENABLED)
   )
     throw new Error("SWAGGER_ENABLED must be true or false");
+  const secret = env.JWT_SECRET || undefined;
+  if (secret && Buffer.byteLength(secret, "utf8") < 32)
+    throw new Error("JWT_SECRET must contain at least 32 bytes");
+  if (!secret && env.NODE_ENV === "production")
+    throw new Error("JWT_SECRET is required in production");
   return {
     host: env.HOST ?? "127.0.0.1",
     port: integer(env.PORT, 3001, "PORT"),
@@ -41,6 +49,11 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       env.SWAGGER_ENABLED === undefined
         ? env.NODE_ENV !== "production"
         : env.SWAGGER_ENABLED === "true",
+    auth: {
+      secret: secret ?? randomBytes(32).toString("base64url"),
+      accessTtlSeconds: 900,
+      refreshTtlSeconds: 7 * 24 * 60 * 60,
+    },
     database: {
       host: env.DB_HOST ?? "localhost",
       port: integer(env.DB_PORT, 5432, "DB_PORT"),

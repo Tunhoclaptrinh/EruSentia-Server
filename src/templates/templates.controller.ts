@@ -18,9 +18,12 @@ import {
 import { TemplatesService } from "./templates.service";
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -34,8 +37,13 @@ import {
   TemplatePageDto,
   TemplateResponseDto,
 } from "./dto/template-response.dto";
+import { CurrentUser } from "../auth/auth.guards";
+import type { UserIdentity } from "../auth/auth-store";
 
 @ApiTags("Templates")
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ type: ApiErrorDto })
+@ApiForbiddenResponse({ type: ApiErrorDto })
 @ApiBadRequestResponse({ type: ApiErrorDto })
 @ApiInternalServerErrorResponse({ type: ApiErrorDto })
 @Controller("templates")
@@ -44,24 +52,24 @@ export class TemplatesController {
   @Get()
   @ApiOperation({ summary: "List and paginate templates" })
   @ApiOkResponse({ type: TemplatePageDto })
-  list(@Query() query: QueryTemplatesDto) {
-    return this.service.list(query);
+  list(@Query() query: QueryTemplatesDto, @CurrentUser() user: UserIdentity) {
+    return this.service.list(query, user);
   }
   @Get(":id")
   @ApiOperation({ summary: "Read a template" })
   @ApiParam({ name: "id", format: "uuid" })
   @ApiOkResponse({ type: TemplateResponseDto })
   @ApiNotFoundResponse({ type: ApiErrorDto })
-  find(@Param("id", UuidPipe) id: string) {
-    return this.service.find(id);
+  find(@Param("id", UuidPipe) id: string, @CurrentUser() user: UserIdentity) {
+    return this.service.find(id, user);
   }
   @Post()
   @ApiOperation({ summary: "Create a template" })
   @ApiCreatedResponse({ type: TemplateResponseDto })
   @ApiConflictResponse({ type: ApiErrorDto })
   @ApiPayloadTooLargeResponse({ type: ApiErrorDto })
-  create(@Body() body: CreateTemplateDto) {
-    return this.service.create(body);
+  create(@Body() body: CreateTemplateDto, @CurrentUser() user: UserIdentity) {
+    return this.service.create(body, user);
   }
   @Patch(":id")
   @ApiOperation({
@@ -74,8 +82,12 @@ export class TemplatesController {
   @ApiNotFoundResponse({ type: ApiErrorDto })
   @ApiConflictResponse({ type: ApiErrorDto })
   @ApiPayloadTooLargeResponse({ type: ApiErrorDto })
-  update(@Param("id", UuidPipe) id: string, @Body() body: UpdateTemplateDto) {
-    return this.service.update(id, body);
+  update(
+    @Param("id", UuidPipe) id: string,
+    @Body() body: UpdateTemplateDto,
+    @CurrentUser() user: UserIdentity,
+  ) {
+    return this.service.update(id, body, user);
   }
   @Delete(":id")
   @HttpCode(204)
@@ -87,7 +99,7 @@ export class TemplatesController {
   @ApiParam({ name: "id", format: "uuid" })
   @ApiNoContentResponse({ description: "Deleted; empty response body." })
   @ApiNotFoundResponse({ type: ApiErrorDto })
-  remove(@Param("id", UuidPipe) id: string) {
-    return this.service.remove(id);
+  remove(@Param("id", UuidPipe) id: string, @CurrentUser() user: UserIdentity) {
+    return this.service.remove(id, user);
   }
 }

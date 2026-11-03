@@ -4,7 +4,6 @@ const { readConfig } = require("../dist/src/config");
 const { createApplication } = require("../dist/src/app");
 const example = require("../tools/examples/create-template.json");
 
-const authorId = "a0000000-0000-0000-0000-000000000002";
 const categoryId = "c0000000-0000-0000-0000-000000000001";
 const category2 = "c0000000-0000-0000-0000-000000000002";
 
@@ -17,10 +16,32 @@ async function contract(t, store) {
   const suffix = randomUUID();
   const tag = `week2-${suffix}`;
   const ids = [];
+  const credentials = {
+    email: `catalog-${suffix}@example.test`,
+    password: "LearningPass!2026",
+  };
+  const registered = await fetch(base + "/auth/register", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  assert.equal(registered.status, 201);
+  const authorId = (await registered.json()).id;
+  const loggedIn = await fetch(base + "/auth/login", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  assert.equal(loggedIn.status, 200);
+  const accessToken = (await loggedIn.json()).accessToken;
+  const headers = {
+    "content-type": "application/json",
+    authorization: `Bearer ${accessToken}`,
+  };
   async function request(method, route, expected, body) {
     const response = await fetch(base + route, {
       method,
-      headers: { "content-type": "application/json" },
+      headers,
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
     const text = await response.text();
@@ -41,7 +62,6 @@ async function contract(t, store) {
     return json;
   }
   const payload = (n, extra = {}) => ({
-    authorId,
     categoryId,
     title: `Week 2 study planner ${n}`,
     slug: `week2-${suffix}-${n}`,
@@ -57,7 +77,7 @@ async function contract(t, store) {
         await request("GET", "/templates/not-a-uuid", 400);
         const malformed = await fetch(base + "/templates", {
           method: "POST",
-          headers: { "content-type": "application/json" },
+          headers,
           body: "{",
         });
         assert.equal(malformed.status, 400);
@@ -323,7 +343,7 @@ async function contract(t, store) {
           [1, 2].map(() =>
             fetch(base + "/templates", {
               method: "POST",
-              headers: { "content-type": "application/json" },
+              headers,
               body: JSON.stringify(body),
             }),
           ),
@@ -351,7 +371,7 @@ async function contract(t, store) {
     });
   } finally {
     for (const id of ids)
-      await fetch(`${base}/templates/${id}`, { method: "DELETE" });
+      await fetch(`${base}/templates/${id}`, { method: "DELETE", headers });
   }
   return { ids, tag };
 }

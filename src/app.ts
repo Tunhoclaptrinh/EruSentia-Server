@@ -8,6 +8,8 @@ import { ApiExceptionFilter } from "./common/api-exception.filter";
 import { TemplatesModule } from "./templates/templates.module";
 import { entities } from "./templates/persistence/entities";
 import { setupOpenApi } from "./openapi";
+import { AuthModule } from "./auth/auth.module";
+import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
 
 @Module({})
 class AppModule {
@@ -20,7 +22,7 @@ class AppModule {
               TypeOrmModule.forRoot({
                 type: "postgres",
                 ...settings.database,
-                entities,
+                entities: [...entities, RefreshSessionEntity],
                 synchronize: false,
                 migrationsRun: false,
                 installExtensions: false,
@@ -30,6 +32,7 @@ class AppModule {
               }),
             ]
           : []),
+        AuthModule.register(settings),
         TemplatesModule.register(settings.store),
       ],
     };

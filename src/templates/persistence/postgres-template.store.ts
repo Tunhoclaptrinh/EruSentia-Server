@@ -1,12 +1,14 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsNull, Repository } from "typeorm";
+import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
-  CreateTemplateDto,
-  QueryTemplatesDto,
-  UpdateTemplateDto,
-} from "../dto/template.dto";
-import { pageOf, TemplateRecord, TemplateStore } from "../template-store";
+  CreateTemplateInput,
+  pageOf,
+  TemplateRecord,
+  TemplateStore,
+} from "../template-store";
+import type { UserIdentity } from "../../auth/auth-store";
 import { AuthorEntity, CategoryEntity, TemplateEntity } from "./entities";
 
 @Injectable()
@@ -36,8 +38,12 @@ export class PostgresTemplateStore implements TemplateStore {
       .leftJoinAndSelect("t.category", "category");
   }
 
-  async list(input: QueryTemplatesDto) {
+  async list(input: QueryTemplatesDto, viewer: UserIdentity) {
     const query = this.query();
+    if (viewer.role !== "admin")
+      query.andWhere("(t.isPublic = TRUE OR t.authorId = :viewerId)", {
+        viewerId: viewer.id,
+      });
     if (input.authorId)
       query.andWhere("t.authorId = :author", { author: input.authorId });
     if (input.categoryId)
@@ -87,7 +93,7 @@ export class PostgresTemplateStore implements TemplateStore {
     }
   }
 
-  async create(input: CreateTemplateDto) {
+  async create(input: CreateTemplateInput) {
     await this.checkReferences(input.authorId, input.categoryId);
     const row = await this.templates.save(this.templates.create(input));
     return (await this.find(row.id))!;

@@ -142,7 +142,13 @@ erDiagram
    ```
    *Mục đích:* Hỗ trợ truy vấn full-text search trên PostgreSQL; dùng EXPLAIN ANALYZE để kiểm tra execution plan và thời gian thực thi.
 
-Schema hiện có 9 bảng nghiệp vụ. Hai bảng `users_no_index` và `template_slots` xuất hiện trong ảnh thực hành là bảng phụ phục vụ bài học. Tuần 2 có HTTP CRUD Template và TypeORM adapter map schema này với synchronize:false. Hàng đợi và phân quyền ứng dụng chưa triển khai; xem [Template API](TEMPLATE_API.md).
+Schema tuần 1 có 9 bảng nghiệp vụ. Tuần 3 thêm `auth_refresh_sessions` bằng
+`sql/05_auth_sessions.sql`, cùng unique index LOWER(email); tổng 10 bảng sau migration.
+Refresh session tham chiếu users, lưu token_hash, family_id, expires_at, used_at và
+revoked_at để rotation/revoke. Không lưu refresh token nguyên văn. Hai bảng lab
+`users_no_index`/`template_slots` trong ảnh tuần 1 không thuộc schema nghiệp vụ.
+NestJS/TypeORM dùng synchronize:false; JWT/RBAC/ownership ở [Auth API](AUTHENTICATION.md),
+CRUD ở [Template API](TEMPLATE_API.md). Hàng đợi chưa triển khai.
 
 [Báo cáo thực hành tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/WEEK1_REPORT.md) nằm tại repo TYP.
 

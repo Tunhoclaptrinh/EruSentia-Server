@@ -6,7 +6,7 @@ Tài liệu học tập và bằng chứng thực hành được giữ tại rep
 
 - [Báo cáo kỹ thuật](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1-reviewed/week-1/WEEK1_REPORT.md).
 - [Mục lục tài liệu](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1-reviewed/week-1/docs/00_GUIDE_INDEX.md).
-- [Hướng dẫn tái hiện](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1-reviewed/week-1/README.md).
+- [Hướng dẫn tái hiện](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1-reviewed/week-1/docs/00_GUIDE_INDEX.md).
 
 | Chủ đề | Tài liệu TYP | Mã nguồn / bằng chứng đối chiếu |
 |---|---|---|
@@ -32,7 +32,17 @@ Các ví dụ SQL/TypeScript trong bài đọc có thể minh họa mô hình m�
 
 ## Tuần 2
 
-Hướng dẫn chạy API ở [README backend](../README.md) và [hợp đồng Template API](TEMPLATE_API.md).
-Lý thuyết/báo cáo và ảnh minh chứng nằm trong repo TYP, thư mục `week-2/`, nhánh
-`week-2`. `week-2/SOURCE_SNAPSHOT.md` của TYP ghim commit server tương ứng với kết quả
-thực hành. Swagger UI cơ bản được tích hợp tại `/docs`, đặc tả JSON tại `/docs-json`.
+Bản nguồn đã chốt: [server b9017f7](https://github.com/Tunhoclaptrinh/EruSentia-Server/tree/b9017f77f6b97a4935fd72d22f2e149f32c4b649).
+[Báo cáo và nguồn đối chiếu tuần 2](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/bafe279cb9c397210bb965306983a5ff607eff55/week-2)
+giữ hợp đồng CRUD trước khi thêm auth. Swagger UI/JSON cơ bản nằm trong mốc đó.
+
+## Tuần 3 — Authentication và Authorization
+
+Server nhánh `feat/week-3-auth`; báo cáo và lý thuyết ở TYP, nhánh `week-3`.
+[Báo cáo tuần 3](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-3/week-3/WEEK3_REPORT.md),
+[mục lục](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-3/week-3/docs/00_GUIDE_INDEX.md)
+và [snapshot nguồn](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-3/week-3/SOURCE_SNAPSHOT.md)
+dùng tag lưu trữ `typ-2026-week-3`. Giữ nguyên tag này khi có cập nhật về sau.
+
+Hợp đồng hiện tại: [Authentication](AUTHENTICATION.md), [Template](TEMPLATE_API.md),
+[cách chạy/Swagger](../README.md).

@@ -31,6 +31,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
         (
           {
             400: "BAD_REQUEST",
+            401: "UNAUTHORIZED",
+            403: "FORBIDDEN",
             404: "NOT_FOUND",
             409: "CONFLICT",
             413: "PAYLOAD_TOO_LARGE",
@@ -53,6 +55,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
         error instanceof Error ? error.message : "Unknown error",
       );
     const http = host.switchToHttp();
+    if (status === 401)
+      http.getResponse().setHeader("WWW-Authenticate", "Bearer");
     http.getResponse().status(status).json({
       statusCode: status,
       code,

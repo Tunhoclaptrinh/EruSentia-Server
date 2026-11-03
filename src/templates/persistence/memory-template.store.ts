@@ -2,22 +2,27 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Inject,
 } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
+import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
-  CreateTemplateDto,
-  QueryTemplatesDto,
-  UpdateTemplateDto,
-} from "../dto/template.dto";
-import { pageOf, TemplateRecord, TemplateStore } from "../template-store";
+  CreateTemplateInput,
+  pageOf,
+  TemplateRecord,
+  TemplateStore,
+} from "../template-store";
+import {
+  active,
+  AUTH_STORE,
+  AuthStore,
+  UserIdentity,
+} from "../../auth/auth-store";
 
 @Injectable()
 export class MemoryTemplateStore implements TemplateStore {
   private readonly rows = new Map<string, TemplateRecord>();
-  private readonly authors = new Set([
-    "a0000000-0000-0000-0000-000000000002",
-    "a0000000-0000-0000-0000-000000000003",
-  ]);
+  constructor(@Inject(AUTH_STORE) private readonly auth: AuthStore) {}
   private readonly categories = new Map([
     [
       "c0000000-0000-0000-0000-000000000001",
@@ -37,10 +42,11 @@ export class MemoryTemplateStore implements TemplateStore {
     ],
   ]);
 
-  async list(query: QueryTemplatesDto) {
+  async list(query: QueryTemplatesDto, viewer: UserIdentity) {
     const rows = [...this.rows.values()].filter(
       (t) =>
         !t.deletedAt &&
+        (viewer.role === "admin" || t.isPublic || t.authorId === viewer.id) &&
         (!query.authorId || t.authorId === query.authorId) &&
         (!query.categoryId || t.categoryId === query.categoryId) &&
         (query.isPublic === undefined || t.isPublic === query.isPublic) &&
@@ -83,11 +89,8 @@ export class MemoryTemplateStore implements TemplateStore {
     input: { authorId: string; categoryId: string; slug: string },
     current?: string,
   ) {
-    if (
-      !this.authors.has(input.authorId) ||
-      !this.categories.has(input.categoryId)
-    ) {
-      throw new BadRequestException("Author or category does not exist");
+    if (!this.categories.has(input.categoryId)) {
+      throw new BadRequestException("Category does not exist");
     }
     // The real UNIQUE(slug) also reserves slugs of soft-deleted rows.
     if (
@@ -99,7 +102,9 @@ export class MemoryTemplateStore implements TemplateStore {
     }
   }
 
-  async create(input: CreateTemplateDto) {
+  async create(input: CreateTemplateInput) {
+    if (!active(await this.auth.findById(input.authorId)))
+      throw new BadRequestException("Author does not exist or is inactive");
     this.validate(input);
     const now = new Date();
     const row: TemplateRecord = {

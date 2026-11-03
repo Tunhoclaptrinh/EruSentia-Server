@@ -3,8 +3,10 @@ import {
   QueryTemplatesDto,
   UpdateTemplateDto,
 } from "./dto/template.dto";
+import type { UserIdentity } from "../auth/auth-store";
 
 export const TEMPLATE_STORE = Symbol("TEMPLATE_STORE");
+export type CreateTemplateInput = CreateTemplateDto & { authorId: string };
 export interface TemplateRecord {
   id: string;
   authorId: string;
@@ -39,9 +41,9 @@ export interface TemplatePage {
 // Catalog projection for HTTP. The week-1 ITemplateRepository remains an entity-oriented
 // domain port; this port includes pagination and related author/category projections.
 export interface TemplateStore {
-  list(query: QueryTemplatesDto): Promise<TemplatePage>;
+  list(query: QueryTemplatesDto, viewer: UserIdentity): Promise<TemplatePage>;
   find(id: string): Promise<TemplateRecord | null>;
-  create(input: CreateTemplateDto): Promise<TemplateRecord>;
+  create(input: CreateTemplateInput): Promise<TemplateRecord>;
   update(id: string, input: UpdateTemplateDto): Promise<TemplateRecord | null>;
   remove(id: string): Promise<boolean>;
 }

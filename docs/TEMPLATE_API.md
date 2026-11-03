@@ -1,8 +1,12 @@
-# Template API — tuần 2
+# Template API — hợp đồng tuần 3
 
 NestJS + TypeORM trên PostgreSQL tuần 1. Dùng cùng 5 route với `TEMPLATE_STORE=memory`
 và `TEMPLATE_STORE=postgres` trên cùng hợp đồng HTTP.
 Bootstrap/test xem [README](../README.md).
+
+Mọi route dưới cần `Authorization: Bearer <accessToken>`. Register/login tại
+[Auth API](AUTHENTICATION.md). Author lấy từ JWT; private chỉ hiện cho chủ sở hữu
+hoặc admin. Hướng dẫn tuần 2 được giữ theo [commit b9017f7](https://github.com/Tunhoclaptrinh/EruSentia-Server/tree/b9017f77f6b97a4935fd72d22f2e149f32c4b649).
 
 Swagger UI cơ bản tại `/docs`, đặc tả OpenAPI JSON tại `/docs-json`, cùng host/port
 với API. Có thể xem schema và gửi request bằng Try it out; cấu hình bật/tắt nằm trong README.
@@ -32,9 +36,9 @@ Data và count có thể khác snapshot khi có ghi đồng thời; OFFSET khôn
 
 ```bash
 curl -i http://127.0.0.1:3001/templates \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{
-    "authorId":"a0000000-0000-0000-0000-000000000002",
     "categoryId":"c0000000-0000-0000-0000-000000000001",
     "title":"Study planner",
     "slug":"study-planner-demo",
@@ -53,20 +57,22 @@ UUID nhận dạng hex `8-4-4-4-12` có dấu gạch nối, không bắt buộc 
 UUIDv4 để hỗ trợ seed tuần 1 (`a000...`, `c000...`). Những cách viết UUID khác mà
 PostgreSQL chấp nhận, như bỏ dấu gạch nối hoặc thêm ngoặc nhọn, không thuộc input API.
 
-Author/category cần tồn tại; tác giả phải active và chưa soft-delete khi tạo. Memory
-mode có 2 author/category mẫu theo README. Chưa kiểm tra quyền người gọi (tuần 3).
+Category cần tồn tại; tác giả lấy từ tài khoản JWT đang active/chưa soft-delete.
+Memory có hai category mẫu; tài khoản tạo qua register. Gửi authorId trong body trả
+400. User/creator chỉ sửa/xóa của mình; admin được quản lý mọi template.
 
 ### Đọc, sửa, xóa
 
 Lấy ID từ response POST rồi thay vào lệnh:
 
 ```bash
-curl 'http://127.0.0.1:3001/templates?page=1&size=5&isPublic=false'
-curl 'http://127.0.0.1:3001/templates/<id>'
+curl -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates?page=1&size=5&isPublic=false'
+curl -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates/<id>'
 curl -X PATCH 'http://127.0.0.1:3001/templates/<id>' \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"title":"Updated study planner"}'
-curl -i -X DELETE 'http://127.0.0.1:3001/templates/<id>'
+curl -i -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates/<id>'
 ```
 
 PATCH partial; field vắng giữ nguyên. `contentJson` thay **toàn bộ document**, không
@@ -78,6 +84,8 @@ như full replacement.
 Slug trùng trả 409 cả khi row cũ đã soft-delete, theo UNIQUE(slug) schema tuần 1.
 Pre-check không thay unique constraint; test đồng thời xác nhận một POST 201, một 409.
 Xóa/sửa/đọc ID không tồn tại hoặc đã xóa trả 404; DELETE lần hai cũng trả 404.
+Private của người khác trả 404 và không vào data/count; sửa/xóa public của người
+khác trả 403. Thiếu/sai/hết hạn token hoặc phiên bị thu hồi trả 401.
 
 ## Error response
 
@@ -105,8 +113,9 @@ JSON body vượt 2 MiB trả 413. Nội dung HTML không được thực thi b�
 `version` VARCHAR là phiên bản nội dung, không phải optimistic counter.
 ManyToOne tới author/category, OneToMany chiều ngược; `onDelete: RESTRICT` đúng FK.
 API join category để lấy tên trong query trang; author chỉ trả ID, không load credentials.
-`AuthorEntity` chỉ map các cột cần đọc, không phải user CRUD hoặc migration đầy đủ.
+`AuthorEntity` map bảng users cho auth, với password_hash đặt select:false. Adapter
+Template vẫn chỉ trả author ID; dữ liệu tài khoản có projection riêng trong Auth API.
 
 `synchronize:false`, `migrationsRun:false`. Không sinh migration từ mapping user/category
-chưa đầy đủ; bootstrap bằng SQL đã có. Chưa có thay đổi schema tuần 2 nên không thêm
-migration rỗng. Schema change trong tương lai cần migration được review riêng.
+chưa đầy đủ; bootstrap bằng SQL đã có và áp dụng `05_auth_sessions.sql` tường minh.
+Migration auth bổ sung không được tự chạy khi khởi động API.

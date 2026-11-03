@@ -1,7 +1,7 @@
 # Hợp đồng Template với App hiện tại
 
-Đối chiếu ngày 03/11/2026. App hiện dùng template HTML từ cấu hình/localStorage,
-chưa gọi API này. Tuần 2 triển khai server và kiểm chứng HTTP/DB; tích hợp và render
+Đối chiếu model App ngày 03/11/2026; bổ sung auth server ngày 04/11/2026. App hiện dùng
+template HTML từ cấu hình/localStorage, chưa gọi API này. Server kiểm chứng HTTP/DB; tích hợp và render
 template qua API trên App nằm ngoài phạm vi kiểm thử hiện tại.
 
 ## Phân biệt mô hình lưu trữ và mô hình giao diện
@@ -30,12 +30,13 @@ hiện có, với nội dung HTML minh họa mới.
 | `aspectRatio`, `allowHeightResize` | Giữ nguyên trong `contentJson`, kể cả boolean false |
 | `tags` | `tags` trên Template server |
 | `category: official/custom` | Tab/nguồn local của App; không tương đương FK taxonomy hoặc quyền xuất bản |
-| Chưa có trên model UI | `authorId`, `categoryId`, `slug`, `isPublic`, version/metrics server |
+| Chưa có trên model UI | `categoryId`, `slug`, `isPublic`, version/metrics server; authorId do server lấy từ JWT |
 
 `categoryId` hiện tham chiếu taxonomy SQL tuần 1 (Software Engineering, Project
 Management...), **khác** nhóm chủ đề của App. Giữ cả hai, không tự map `study` thành
 một UUID hoặc tự gán template là official. Quy tắc xuất bản/định danh người gọi cần
-được chốt khi có auth và tích hợp App. Không bổ sung field giá/bán template vì App
+được chốt khi tích hợp App. Auth server đã có JWT/ownership ở tuần 3; frontend chưa
+gửi request hoặc quản lý token. Không bổ sung field giá/bán template vì App
 hiện tại không có hợp đồng mua bán đó.
 
 ## Envelope lưu trong JSONB

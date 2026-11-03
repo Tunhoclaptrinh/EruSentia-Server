@@ -6,6 +6,10 @@ import { readConfig } from "./config";
 async function bootstrap() {
   config();
   const settings = readConfig();
+  if (!process.env.JWT_SECRET)
+    console.warn(
+      "JWT_SECRET is unset: using a temporary development signing key. Configure a stable random key for persistent access tokens.",
+    );
   const app = await createApplication(settings);
   app.enableShutdownHooks();
   try {

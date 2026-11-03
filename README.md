@@ -1,10 +1,10 @@
 # Sentia Hub Service
 
-Backend TypeScript của EruSentia: PostgreSQL 16, NestJS và TypeORM. API tuần 2 quản lý
-Template trên schema tuần 1; mã nguồn chạy, SQL và kiểm thử tập trung tại repo này.
-Báo cáo/lý thuyết nằm tại repo TYP.
+Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 phát triển
+API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
+Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. App chưa tích hợp API.
 
-## Cài đặt
+## Cài đặt và database
 
 Đã kiểm tra với Node.js **24.21.0**, pnpm **12.11.2**, PostgreSQL **16.15**.
 
@@ -16,152 +16,134 @@ pnpm db:check
 pnpm db:schema
 pnpm db:indexes
 pnpm db:seed
+pnpm db:auth
 ```
 
-Compose: DB `sentia_hub_db` tại localhost:5432; Adminer ở http://localhost:8080,
-server `postgres`, user `postgres`, password dev `postgres_dev_password`.
-Đặt `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE` trong `.env` nếu
-khác môi trường này. Không ghi đè `.env` đang có.
+Compose dùng `sentia_hub_db` tại localhost:5432; Adminer ở http://localhost:8080,
+server `postgres`, user `postgres`, password dev `postgres_dev_password`. Đối chiếu
+DB_* trong .env trước khi chạy lệnh ghi dữ liệu. Trên Ubuntu, `docker info` cần có
+phần Server; nếu chưa chạy daemon, dùng `sudo systemctl start docker` trong terminal.
 
-Trên Ubuntu, `docker info` cần có phần Server; nếu daemon chưa chạy, mở terminal
-Ubuntu và dùng `sudo systemctl start docker`.
-[Hướng dẫn Ubuntu](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1-reviewed/week-1/docs/01_docker_and_environment_handbook.md#7-chạy-thực-tế-trên-ubuntu-native)
-được quản lý tại TYP.
+Với database tuần 2 đã có schema/seed, chỉ cần áp dụng **`pnpm db:auth`** cho tuần 3.
+Script `sql/05_auth_sessions.sql` thêm bảng refresh sessions và unique index trên
+LOWER(email); không reset bảng cũ. Nếu dữ liệu cũ có email trùng khi bỏ qua hoa thường,
+index sẽ báo lỗi để xử lý dữ liệu trước. Bootstrap ORM vẫn tắt synchronize/migrationsRun.
+Không dùng `db:fresh` trên database cần giữ: lệnh đó xóa schema để tạo lại.
 
-## Chạy API tuần 2
+## Cấu hình JWT và chạy
+
+Tạo khóa ngẫu nhiên rồi đặt `JWT_SECRET` trong .env riêng của máy:
 
 ```bash
-# PostgreSQL/TypeORM — mặc định
+node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+```
+
+Không commit khóa thật. Production bắt buộc khóa ít nhất 32 byte; development không
+đặt khóa sẽ sinh khóa tạm mỗi lần khởi động và ghi cảnh báo. Muốn access token còn
+hợp lệ qua restart, dùng khóa ổn định. Access JWT có hạn 15 phút; refresh family có
+hạn tuyệt đối 7 ngày từ login.
+
+```bash
 pnpm dev
-# Hoặc bản biên dịch
+# Hoặc chạy bản build
 pnpm build
 pnpm start
+# Cùng API với bộ lưu trữ memory, không kết nối DB
+TEMPLATE_STORE=memory HOST=127.0.0.1 PORT=3001 pnpm dev
 ```
 
-API mặc định ở **http://127.0.0.1:3001**; đổi bằng `HOST`, `PORT`.
-`pnpm dev` dùng ts-node để giữ decorator metadata của NestJS; Node watch khởi động
-lại khi file TypeScript được import thay đổi. Không chạy bootstrap NestJS qua tsx
-vì tsx/esbuild không phát đầy đủ `emitDecoratorMetadata`.
+HOST/PORT mặc định `127.0.0.1:3001`, có thể bị thay bởi .env. `pnpm dev` dùng ts-node
+để phát decorator metadata. Memory không có tài khoản/template ban đầu; đăng ký qua
+API trước khi tạo template. Có hai category mẫu `...0001` và `...0002`; tài khoản và
+sessions mất khi restart. PostgreSQL lưu tài khoản, template và sessions bền vững.
 
-Để học bước CRUD chưa có DB, đổi adapter cho **cùng API**:
+## Authentication và quyền truy cập
+
+| Method | Endpoint | Quyền / kết quả |
+|---|---|---|
+| POST | `/auth/register` | Công khai; chỉ tạo role user; 201 |
+| POST | `/auth/login` | Công khai; JWT + refresh token; 200 |
+| POST | `/auth/refresh` | Công khai, cần refresh token mới nhất; 200 |
+| POST | `/auth/logout` | Cần refresh token của phiên; 204 |
+| GET | `/auth/me` | Bearer JWT; tài khoản hiện tại |
+| GET | `/admin/users?page=1&size=10` | Chỉ admin; dữ liệu tài khoản an toàn |
+| GET | `/templates`, `/templates/:id` | JWT; public + private của mình; admin xem tất cả |
+| POST | `/templates` | JWT; authorId lấy từ người đăng nhập |
+| PATCH/DELETE | `/templates/:id` | Tác giả hoặc admin |
+
+Thiếu/sai token trả 401. User/creator gọi API admin trả 403. Template riêng của người
+khác trả 404 và không được tính vào total; tài nguyên công khai được đọc nhưng chỉ
+chủ sở hữu/admin được sửa hoặc xóa. Body POST/PATCH gửi authorId bị từ chối 400.
+Password dùng Argon2id; refresh token ngẫu nhiên chỉ được lưu dưới dạng SHA-256.
+Refresh cũ bị dùng lại sẽ thu hồi cả phiên, gồm các access token của phiên đó.
+Xem [hợp đồng auth](docs/AUTHENTICATION.md) và [Template API](docs/TEMPLATE_API.md).
+
+### Tạo tài khoản admin cho thực hành PostgreSQL
+
+Không có mật khẩu admin mặc định; seed tuần 1 chứa hash placeholder nên không dùng
+để đăng nhập. CLI tạo tài khoản mới, không ghi đè/nâng quyền tài khoản đã tồn tại:
 
 ```bash
-TEMPLATE_STORE=memory pnpm dev
+read -r -s -p 'Admin password (12-128 characters): ' ADMIN_PASSWORD
+export ADMIN_PASSWORD
+ADMIN_EMAIL=admin@example.test pnpm auth:admin
+unset ADMIN_PASSWORD
 ```
 
-Memory mode không mở kết nối DB, khởi đầu không có templates, mất dữ liệu khi restart.
-Có sẵn tham chiếu mẫu cho author seed `...0002`, `...0003` và category `...0001`, `...0002`.
-PostgreSQL mode đọc dữ liệu thực, `synchronize: false`, không tự sửa schema.
-
-| Method | Endpoint | Hành vi |
-|--------|----------|---------|
-| GET | `/templates?page=1&size=10` | Danh sách, lọc và phân trang |
-| GET | `/templates/:id` | Chi tiết + category, không tăng view |
-| POST | `/templates` | Tạo mới; 201 |
-| PATCH | `/templates/:id` | Cập nhật các field được gửi; 200 |
-| DELETE | `/templates/:id` | Soft delete; 204, không body |
-
-Xem [hợp đồng và ví dụ cURL](docs/TEMPLATE_API.md).
-Đã [đối chiếu dữ liệu Template với App hiện tại](docs/APP_TEMPLATE_CONTRACT.md):
-HTML và metadata nằm trong content_json; App vẫn dùng localStorage, chưa tích hợp API.
-API hiện phục vụ thực hành local, chưa có đăng nhập/phân quyền của tuần 3; `authorId`
-ở POST là dữ liệu đầu vào, chưa được xác thực là người gọi. Endpoint quản lý có thể
-đọc template private; không coi đây là public feed đã áp quyền truy cập.
+CLI dùng DB_* của .env; nhập password tại terminal, không đặt password thật trong
+command history hoặc tài liệu. Memory không có admin cài sẵn; dùng PostgreSQL cho
+luồng admin thực hành đầy đủ.
 
 ## Swagger/OpenAPI
 
-Khi API đang chạy, mở **http://127.0.0.1:3001/docs** để xem 5 endpoint, query/body,
-response schema và dùng **Try it out**. Đặc tả JSON ở **/docs-json**, cùng host/port
-với API; dùng được ở cả memory và PostgreSQL. Tạo template trước rồi dùng ID trả về
-cho GET/PATCH/DELETE; mỗi POST cần slug mới vì soft-delete vẫn giữ slug.
+Mở **http://127.0.0.1:3001/docs**, JSON ở **/docs-json**. Thứ tự thực hành:
 
-Swagger bật mặc định ngoài production. Đặt `SWAGGER_ENABLED=false` để tắt cả UI/JSON,
-hoặc `SWAGGER_ENABLED=true` để bật tường minh; `NODE_ENV=production` mặc định tắt nếu
-không có override. Không cần Postman để thao tác API qua Swagger UI.
+1. Register → login bằng Try it out.
+2. Sao chép `accessToken` vào **Authorize**, chỉ dán token, không thêm chữ Bearer.
+3. Gọi `/auth/me`, tạo/đọc/sửa/xóa template; không gửi authorId trong body.
+4. Refresh bằng token mới nhất; cập nhật Authorize bằng access token vừa nhận.
+5. Logout bằng refresh token; request protected tiếp theo trả 401.
+
+Đặc tả có 11 operation và Bearer authentication. Swagger bật mặc định ngoài
+production; `SWAGGER_ENABLED=false` tắt cả UI/JSON. Production mặc định tắt nếu không
+có override. Bộ ảnh Postman/collection v2.1 trong `tools/postman` thuộc tuần 2;
+chúng được tái hiện bằng [snapshot tuần 2](https://github.com/Tunhoclaptrinh/EruSentia-Server/tree/b9017f77f6b97a4935fd72d22f2e149f32c4b649),
+không chạy nguyên collection cũ trên hợp đồng auth tuần 3.
 
 ## Kiểm thử
 
 ```bash
 pnpm typecheck
-pnpm test             # build + CLI/HTTP memory/OpenAPI: 18 pass; DB test mặc định skip
-pnpm test:api         # HTTP contract memory, không cần PostgreSQL
+pnpm test          # build + 32 pass, 1 DB test skip theo mặc định
+pnpm test:auth     # auth memory
+pnpm test:api      # CRUD memory có JWT
 ```
 
-Integration test dùng **database mới, rỗng, riêng biệt** có tên `week2_test_*`:
+Integration dùng database mới/rỗng **`week3_test_*`**, không reset database có sẵn:
 
 ```bash
-docker exec sentia_postgres_dev createdb -U postgres week2_test_local
+docker exec sentia_postgres_dev createdb -U postgres week3_test_local
 RUN_DB_TESTS=1 DB_HOST=127.0.0.1 DB_PORT=5432 DB_USERNAME=postgres \
-  DB_PASSWORD=postgres_dev_password DB_DATABASE=week2_test_local pnpm test:api:db
-# Sau khi test xong; lần test kế tiếp tạo DB mới hoặc drop/create lại đúng DB test này.
-docker exec sentia_postgres_dev dropdb -U postgres week2_test_local
+  DB_PASSWORD=postgres_dev_password DB_DATABASE=week3_test_local pnpm test:api:db
+docker exec sentia_postgres_dev dropdb -U postgres week3_test_local
 ```
 
-Test tự nạp schema/index/seed vào DB test rỗng. Nếu đã có bảng, test từ chối thay vì
-reset. Kiểm tra validation, 5 API, pagination, unique slug cả khi ghi đồng thời,
-soft-delete, không tăng view ngầm, dữ liệu còn sau tạo app mới và schema không đổi.
+DB suite tự nạp schema/index/seed/migration auth, kiểm tra 19 test gồm CRUD, auth,
+rotation/replay đồng thời, admin CLI, hash lưu trữ và persistence qua app mới.
+Giới hạn thực nghiệm: chưa có rate limiting, email verification, reset password,
+MFA, cookie/CSRF flow, quản lý phiên qua UI hay kiểm thử tải. Chưa tích hợp App.
 
-Để tái hiện bộ minh chứng Postman, mở collection bằng **Native Git Local mode**
-theo hướng dẫn bên dưới. Đặt `baseUrl` và chạy collection theo thứ tự. Collection tạo slug riêng rồi soft-delete
-row vừa tạo. Có thể chạy collection v2.1 qua Newman tạm:
+## Cấu trúc và tài liệu
 
-```bash
-pnpm dlx newman@6.2.3 run tools/postman/templates.postman_collection.json --bail
-```
+- `src/auth/`: DTO, guard, JWT/password service, memory/PostgreSQL auth store.
+- `src/templates/`: CRUD có quyền sở hữu, validation và persistence adapters.
+- `src/openapi.ts`: Swagger UI/JSON từ metadata DTO/controller.
+- `sql/05_auth_sessions.sql`: migration auth bổ sung; schema/seed tuần 1 giữ nguyên.
+- `scripts/create-admin.ts`: cấp tài khoản admin qua kênh quản trị local.
+- `test/`: CLI, JWT/config, HTTP contracts memory và PostgreSQL bằng node:test.
+- `src/domain/`, `src/week01-practice/`: domain và demo OOP/DI tuần 1, độc lập ORM.
 
-Newman chỉ dùng để kiểm chứng collection v2.1 này; không cài global hoặc thêm vào
-runtime. HTTP tests Node vẫn là bộ test chính trong repo.
-Collection có 12 request, 30 assertion, kiểm tra HTML/metadata và CRUD trên cùng ID.
-Hướng dẫn thao tác Postman và ảnh thật nằm tại TYP `week-2/docs/09_postman.md`.
-
-Với Postman 12, có thể dùng **Native Git Local mode** để cấu hình Variables,
-Environment và chạy Runner mà không đưa collection lên Cloud:
-
-```bash
-node tools/postman/prepare-local.cjs
-```
-
-Mở đường dẫn lệnh in ra bằng **Open Folder**, sau đó chọn **Local Items**. File
-`tools/postman/erusentia-local.postman_environment.json` chỉ có baseUrl localhost.
-Script tạo bản v3 local từ collection v2.1 chuẩn đang dùng cho Newman, không thêm
-dependency, không tạo Git repo hay liên kết Cloud và không ghi đè folder đã có.
-Giữ bản local khi thực hành; không dùng Push to Cloud. Hướng dẫn TYP minh họa từng
-bước cấu hình và kết quả Runner local 30/30 assertion.
-
-## Database và demo tuần 1
-
-`pnpm db:check` vẫn chỉ kiểm tra DB rồi thoát, đã chuyển sang `scripts/check-db.ts`.
-`pnpm start` từ tuần 2 **khởi động HTTP API**, không còn là lệnh kiểm tra DB.
-
-`db:seed` nạp 12 template mẫu + tối đa 1.000 template benchmark, chạy lại không nhân
-đôi. `db:benchmark`, `demo:oop`, `demo:di` giữ nguyên cách chạy. Demo DI tuần 1 vẫn
-là stub; adapter PostgreSQL thật của API nằm trong `src/templates/persistence/`.
-
-## Cấu trúc
-
-```text
-src/
-  main.ts, app.ts, config.ts  # Bootstrap NestJS, cấu hình, chọn adapter
-  common/                    # Error response và UUID pipe
-  templates/                 # Controller, service, DTO, catalog port
-    persistence/             # Memory store, TypeORM store, entity mapping
-  domain/                    # Domain entities và port tuần 1, không gắn ORM decorators
-  infrastructure/database/   # pg pool dùng cho CLI db:*
-  week01-practice/            # Demo OOP/DI TypeScript
-scripts/                     # db:check, SQL runner, seed, benchmark
-test/                        # CLI và HTTP contract/integration bằng node:test
-tools/postman/               # Collection v2.1 có assertions
-sql/                         # Schema tuần 1 giữ nguyên, nguồn bootstrap DB
-```
-
-`TemplateStore` là port cho projection HTTP (category, pagination); chưa thay thế
-`ITemplateRepository` nhận/trả domain entity tuần 1. Các ORM decorators nằm ở adapter
-lưu trữ; domain model tuần 1 vẫn độc lập với TypeORM.
-
-- [Database design](docs/DATABASE_DESIGN.md).
-- [Lệnh vận hành](docs/COMMANDS_AND_CHEATSHEET.md).
-- [Tham chiếu tài liệu TYP](docs/TRAINING_REFERENCES.md).
-- [Bản lưu tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/typ-2026-week-1-reviewed/week-1).
-
-Swagger/OpenAPI dùng metadata của DTO/controller; bộ kiểm thử xác nhận UI/JSON,
-schema cập nhật và payload mẫu thực thi được. Hướng dẫn và bằng chứng tuần 2 nằm tại TYP.
+`pnpm db:check`, `demo:oop`, `demo:di`, `db:benchmark` giữ chức năng riêng. Domain
+ITemplateRepository tuần 1 tách biệt TemplateStore dùng cho projection HTTP.
+[Thiết kế DB](docs/DATABASE_DESIGN.md) · [Lệnh thực hành](docs/COMMANDS_AND_CHEATSHEET.md) ·
+[Tài liệu TYP](docs/TRAINING_REFERENCES.md).

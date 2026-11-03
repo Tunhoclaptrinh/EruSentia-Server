@@ -1,10 +1,5 @@
 import { Transform, Type } from "class-transformer";
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  OmitType,
-  PartialType,
-} from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 import { UUID_PATTERN } from "../../common/uuid.pipe";
 import { TemplateContentDto } from "./template-content.dto";
 import {
@@ -35,17 +30,6 @@ const trim = ({ value }: { value: unknown }) =>
 const absent = (_: unknown, value: unknown) => value !== undefined;
 
 export class CreateTemplateDto {
-  @ApiProperty({
-    example: "a0000000-0000-0000-0000-000000000002",
-    pattern: uuidPattern,
-    description:
-      "Existing active author. Authentication is not implemented yet.",
-  })
-  @Transform(({ value }) =>
-    typeof value === "string" ? value.toLowerCase() : value,
-  )
-  @Matches(UUID_PATTERN, { message: "authorId must use UUID syntax" })
-  authorId!: string;
   @ApiProperty({
     example: "c0000000-0000-0000-0000-000000000001",
     pattern: uuidPattern,
@@ -126,10 +110,9 @@ export class CreateTemplateDto {
   tags?: string[];
 }
 
-export class UpdateTemplateDto extends PartialType(
-  OmitType(CreateTemplateDto, ["authorId"] as const),
-  { skipNullProperties: false },
-) {}
+export class UpdateTemplateDto extends PartialType(CreateTemplateDto, {
+  skipNullProperties: false,
+}) {}
 
 export class QueryTemplatesDto {
   @ApiPropertyOptional({
