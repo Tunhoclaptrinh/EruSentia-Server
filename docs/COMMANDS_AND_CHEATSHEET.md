@@ -23,14 +23,14 @@ Chạy các lệnh dưới đây từ thư mục gốc của repo `EruSentia-Ser
 | Lệnh | Công dụng |
 |---|---|
 | `pnpm typecheck` | Kiểm tra TypeScript của source và scripts |
-| `pnpm test` | Kiểm tra lỗi đầu vào, lỗi kết nối và exit code của các CLI |
+| `pnpm test` | Build, kiểm tra CLI và HTTP contract memory; DB test skip nếu chưa bật |
 | `pnpm build` | Biên dịch source và scripts vào `dist/` |
-| `pnpm start` | Chạy `dist/src/main.js` để kiểm tra database |
-| `pnpm dev` | Theo dõi thay đổi và chạy lại kiểm tra database |
+| `pnpm start` | Khởi động HTTP API tại localhost:3001, mặc định dùng TypeORM/PostgreSQL |
+| `pnpm dev` | Theo dõi source TypeScript và khởi động lại NestJS HTTP API |
 | `pnpm demo:oop` | Chạy demo đóng gói, kế thừa, đa hình và trừu tượng |
 | `pnpm demo:di` | Chạy demo dependency injection và IoC container |
 
-Hiện chưa có HTTP listener, ORM adapter, ESLint hoặc Jest. Bộ kiểm thử CLI dùng test runner có sẵn của Node.js.
+Tuần 2 đã có NestJS listener và TypeORM adapter. Bộ kiểm thử CLI/HTTP dùng node:test, chưa thêm ESLint hoặc Jest. Xem [API tuần 2](TEMPLATE_API.md) và README để chạy memory mode, DB integration và Postman collection.
 
 ## Thực hành PostgreSQL
 

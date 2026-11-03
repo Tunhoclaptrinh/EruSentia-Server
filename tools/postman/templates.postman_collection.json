@@ -1,0 +1,397 @@
+{
+  "info": {
+    "name": "EruSentia Week 2 — Templates",
+    "description": "Local management CRUD for week 2; App remains local-only. Run all requests in order. New HTML envelope matches current App fields; this collection does not execute HTML. Creates an isolated slug/tag, verifies persistence and errors, then soft-deletes its own row. No auth until week 3.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3001"
+    },
+    {
+      "key": "authorId",
+      "value": "a0000000-0000-0000-0000-000000000002"
+    },
+    {
+      "key": "categoryId",
+      "value": "c0000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "templateId",
+      "value": ""
+    },
+    {
+      "key": "runSlug",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Create private template",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authorId\": \"a0000000-0000-0000-0000-000000000002\",\n  \"categoryId\": \"c0000000-0000-0000-0000-000000000001\",\n  \"title\": \"Weekly learning planner\",\n  \"slug\": \"{{runSlug}}\",\n  \"description\": \"Reusable HTML planner for a learning week\",\n  \"contentJson\": {\n    \"format\": \"erusentia-template-html\",\n    \"schemaVersion\": 1,\n    \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch học tập</h2><p contenteditable=\\\"true\\\">Mục tiêu tuần này</p></section>\",\n    \"originId\": \"local-weekly-planner\",\n    \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\",\n    \"iconName\": \"CalendarOutlined\",\n    \"subjectCategory\": \"study\",\n    \"level\": \"semi\",\n    \"defaultWidth\": \"100%\",\n    \"defaultHeight\": \"auto\",\n    \"fitMode\": \"fit-page\",\n    \"aspectRatio\": \"auto\",\n    \"allowHeightResize\": false\n  },\n  \"tags\": [\n    \"{{runSlug}}\"\n  ],\n  \"isPublic\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set(\"runSlug\", \"week2-\" + pm.variables.replaceIn(\"{{$guid}}\"));",
+              "pm.collectionVariables.set(\"templateId\", \"\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+              "const body = pm.response.json(); pm.collectionVariables.set(\"templateId\", body.id);",
+              "pm.test(\"Private boolean is preserved\", () => pm.expect(body.isPublic).to.eql(false));",
+              "pm.test(\"Category relation is mapped\", () => pm.expect(body.category.id).to.eql(pm.collectionVariables.get(\"categoryId\")));",
+              "pm.test(\"HTML and all App metadata round-trip\", () => pm.expect(body.contentJson).to.deep.eql({\"format\": \"erusentia-template-html\", \"schemaVersion\": 1, \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch học tập</h2><p contenteditable=\\\"true\\\">Mục tiêu tuần này</p></section>\", \"originId\": \"local-weekly-planner\", \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\", \"iconName\": \"CalendarOutlined\", \"subjectCategory\": \"study\", \"level\": \"semi\", \"defaultWidth\": \"100%\", \"defaultHeight\": \"auto\", \"fitMode\": \"fit-page\", \"aspectRatio\": \"auto\", \"allowHeightResize\": false}));",
+              "pm.test(\"Resize false remains boolean false\", () => pm.expect(body.contentJson.allowHeightResize).to.eql(false));",
+              "pm.test(\"New template has zero views\", () => pm.expect(body.viewsCount).to.eql(0));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 List and paginate",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates?page=1&size=5&tag={{runSlug}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test(\"Pagination envelope\", () => pm.expect(body).to.include.all.keys(\"data\",\"page\",\"size\",\"totalPages\",\"totalElements\"));",
+              "pm.test(\"Contains new template\", () => pm.expect(body.data.some(x => x.id === pm.collectionVariables.get(\"templateId\"))).to.eql(true));",
+              "pm.test(\"Isolated run contains exactly one row\", () => pm.expect(body.totalElements).to.eql(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Read template",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"No view increment\", () => pm.expect(pm.response.json().viewsCount).to.eql(0));",
+              "pm.test(\"Author projection contains no credentials\", () => pm.expect(Object.keys(pm.response.json().author)).to.eql([\"id\"]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Update template",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Updated week 2 planner\",\n  \"isPublic\": true,\n  \"contentJson\": {\n    \"format\": \"erusentia-template-html\",\n    \"schemaVersion\": 1,\n    \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch đã cập nhật</h2></section>\",\n    \"originId\": \"local-weekly-planner\",\n    \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\",\n    \"iconName\": \"CalendarOutlined\",\n    \"subjectCategory\": \"study\",\n    \"level\": \"semi\",\n    \"defaultWidth\": \"720px\",\n    \"defaultHeight\": \"auto\",\n    \"fitMode\": \"fixed\",\n    \"aspectRatio\": \"auto\",\n    \"allowHeightResize\": false\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Update applied\", () => pm.expect(pm.response.json().title).to.eql(\"Updated week 2 planner\"));",
+              "pm.test(\"Whole content document updated\", () => pm.expect(pm.response.json().contentJson).to.deep.eql({\"format\": \"erusentia-template-html\", \"schemaVersion\": 1, \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch đã cập nhật</h2></section>\", \"originId\": \"local-weekly-planner\", \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\", \"iconName\": \"CalendarOutlined\", \"subjectCategory\": \"study\", \"level\": \"semi\", \"defaultWidth\": \"720px\", \"defaultHeight\": \"auto\", \"fitMode\": \"fixed\", \"aspectRatio\": \"auto\", \"allowHeightResize\": false}));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Read update back from store",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/templates/{{templateId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Updated HTML persisted\", () => pm.expect(pm.response.json().contentJson).to.deep.eql({\"format\": \"erusentia-template-html\", \"schemaVersion\": 1, \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch đã cập nhật</h2></section>\", \"originId\": \"local-weekly-planner\", \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\", \"iconName\": \"CalendarOutlined\", \"subjectCategory\": \"study\", \"level\": \"semi\", \"defaultWidth\": \"720px\", \"defaultHeight\": \"auto\", \"fitMode\": \"fixed\", \"aspectRatio\": \"auto\", \"allowHeightResize\": false}));",
+              "pm.test(\"Unchanged description preserved\", () => pm.expect(pm.response.json().description).to.eql(\"Reusable HTML planner for a learning week\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Duplicate slug",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authorId\": \"a0000000-0000-0000-0000-000000000002\",\n  \"categoryId\": \"c0000000-0000-0000-0000-000000000001\",\n  \"title\": \"Weekly learning planner\",\n  \"slug\": \"{{runSlug}}\",\n  \"description\": \"Reusable HTML planner for a learning week\",\n  \"contentJson\": {\n    \"format\": \"erusentia-template-html\",\n    \"schemaVersion\": 1,\n    \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch học tập</h2><p contenteditable=\\\"true\\\">Mục tiêu tuần này</p></section>\",\n    \"originId\": \"local-weekly-planner\",\n    \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\",\n    \"iconName\": \"CalendarOutlined\",\n    \"subjectCategory\": \"study\",\n    \"level\": \"semi\",\n    \"defaultWidth\": \"100%\",\n    \"defaultHeight\": \"auto\",\n    \"fitMode\": \"fit-page\",\n    \"aspectRatio\": \"auto\",\n    \"allowHeightResize\": false\n  },\n  \"tags\": [\n    \"{{runSlug}}\"\n  ],\n  \"isPublic\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));",
+              "pm.test(\"Stable conflict code\", () => pm.expect(pm.response.json().code).to.eql(\"CONFLICT\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Reject invalid pagination",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates?page=0&size=999"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Validation details\", () => pm.expect(pm.response.json().details.length).to.be.above(0));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Reject ownership change",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authorId\": \"{{authorId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Reject invalid nested App metadata",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"contentJson\": {\n    \"format\": \"erusentia-template-html\",\n    \"schemaVersion\": 1,\n    \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch học tập</h2><p contenteditable=\\\"true\\\">Mục tiêu tuần này</p></section>\",\n    \"originId\": \"local-weekly-planner\",\n    \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\",\n    \"iconName\": \"CalendarOutlined\",\n    \"subjectCategory\": \"study\",\n    \"level\": \"semi\",\n    \"defaultWidth\": \"100%\",\n    \"defaultHeight\": \"auto\",\n    \"fitMode\": \"fit-page\",\n    \"aspectRatio\": \"auto\",\n    \"allowHeightResize\": \"false\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", () => pm.response.to.have.status(400));",
+              "pm.test(\"Nested validation details\", () => pm.expect(pm.response.json().details.some(x => x.includes(\"allowHeightResize\"))).to.eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Soft delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));",
+              "pm.test(\"No response body\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Deleted template is hidden",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates/{{templateId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Deleted slug remains reserved",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/templates",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authorId\": \"a0000000-0000-0000-0000-000000000002\",\n  \"categoryId\": \"c0000000-0000-0000-0000-000000000001\",\n  \"title\": \"Weekly learning planner\",\n  \"slug\": \"{{runSlug}}\",\n  \"description\": \"Reusable HTML planner for a learning week\",\n  \"contentJson\": {\n    \"format\": \"erusentia-template-html\",\n    \"schemaVersion\": 1,\n    \"html\": \"<section lang=\\\"vi\\\"><h2>Kế hoạch học tập</h2><p contenteditable=\\\"true\\\">Mục tiêu tuần này</p></section>\",\n    \"originId\": \"local-weekly-planner\",\n    \"guide\": \"Điền mục tiêu rồi chia nhỏ công việc theo ngày.\",\n    \"iconName\": \"CalendarOutlined\",\n    \"subjectCategory\": \"study\",\n    \"level\": \"semi\",\n    \"defaultWidth\": \"100%\",\n    \"defaultHeight\": \"auto\",\n    \"fitMode\": \"fit-page\",\n    \"aspectRatio\": \"auto\",\n    \"allowHeightResize\": false\n  },\n  \"tags\": [\n    \"{{runSlug}}\"\n  ],\n  \"isPublic\": false\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

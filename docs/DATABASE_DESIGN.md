@@ -142,7 +142,7 @@ erDiagram
    ```
    *Mục đích:* Hỗ trợ truy vấn full-text search trên PostgreSQL; dùng EXPLAIN ANALYZE để kiểm tra execution plan và thời gian thực thi.
 
-Schema hiện có 9 bảng nghiệp vụ. Hai bảng `users_no_index` và `template_slots` xuất hiện trong ảnh thực hành là bảng phụ phục vụ bài học. Các chức năng HTTP, ORM, hàng đợi và phân quyền ứng dụng chưa được triển khai.
+Schema hiện có 9 bảng nghiệp vụ. Hai bảng `users_no_index` và `template_slots` xuất hiện trong ảnh thực hành là bảng phụ phục vụ bài học. Tuần 2 có HTTP CRUD Template và TypeORM adapter map schema này với synchronize:false. Hàng đợi và phân quyền ứng dụng chưa triển khai; xem [Template API](TEMPLATE_API.md).
 
 [Báo cáo thực hành tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/WEEK1_REPORT.md) nằm tại repo TYP.
 

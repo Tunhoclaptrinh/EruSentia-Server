@@ -11,6 +11,7 @@ const env = {
   DB_USERNAME: "cli_test",
   DB_PASSWORD: "unused",
   DB_DATABASE: "cli_test",
+  TEMPLATE_STORE: "postgres",
 };
 
 function run(script, args = []) {
@@ -31,13 +32,19 @@ function run(script, args = []) {
 }
 
 test("database check fails and exits when PostgreSQL is unavailable", () => {
-  const output = run("src/main.ts");
+  const output = run("scripts/check-db.ts");
   assert.match(output, /Database check failed/);
   assert.doesNotMatch(output, /Server ready|listening on port/);
 });
 
 test("SQL runner rejects a missing argument before connecting", () => {
   assert.match(run("scripts/run-sql.ts"), /Please specify the SQL file path/);
+});
+
+test("HTTP API startup fails and exits when PostgreSQL is unavailable", () => {
+  const output = run("dist/src/main.js");
+  assert.match(output, /API startup failed/);
+  assert.doesNotMatch(output, /Template API .* listening at/);
 });
 
 test("SQL runner rejects a nonexistent file before connecting", () => {

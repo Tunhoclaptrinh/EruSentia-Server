@@ -6,12 +6,12 @@
   "license": "UNLICENSED",
   "packageManager": "pnpm@12.11.2",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
+    "dev": "node --watch --require ts-node/register src/main.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/main.js",
     "typecheck": "tsc --noEmit --incremental false",
     "format": "prettier --write \"src/**/*.ts\"",
-    "db:check": "node --import tsx src/main.ts",
+    "db:check": "node --import tsx scripts/check-db.ts",
     "db:schema": "node --import tsx scripts/run-sql.ts sql/01_schema.sql",
     "db:indexes": "node --import tsx scripts/run-sql.ts sql/02_indexes.sql",
     "db:seed": "node --import tsx scripts/seed.ts",
@@ -20,19 +20,35 @@
     "db:benchmark": "node --import tsx scripts/benchmark.ts",
     "demo:oop": "node --import tsx src/week01-practice/oop/demo.ts",
     "demo:di": "node --import tsx src/week01-practice/di/demo.ts",
-    "test": "node --test test/*.test.cjs",
-    "test:watch": "node --test --watch test/*.test.cjs"
+    "test": "pnpm build && node --test test/*.test.cjs",
+    "test:watch": "pnpm build && node --test --watch test/*.test.cjs",
+    "test:api": "pnpm build && node --test test/templates.api.test.cjs",
+    "test:api:db": "pnpm build && node --test test/templates.postgres.test.cjs"
   },
   "dependencies": {
+    "@nestjs/common": "12.3.2",
+    "@nestjs/core": "12.3.2",
+    "@nestjs/platform-express": "12.3.2",
+    "@nestjs/swagger": "12.1.0",
+    "@nestjs/typeorm": "12.0.2",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.15.1",
     "dotenv": "^16.4.7",
-    "pg": "^8.13.3"
+    "pg": "^8.13.3",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "typeorm": "0.3.31"
   },
   "devDependencies": {
     "@types/node": "^22.13.9",
     "@types/pg": "^8.11.11",
     "playwright": "^1.63.0",
     "prettier": "^3.5.3",
+    "ts-node": "10.9.2",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
