@@ -75,3 +75,18 @@ RUN_QUEUE_TESTS=1 DB_DATABASE=week4_test_local pnpm test:queue
 RabbitMQ UI `127.0.0.1:15672`, Mailpit UI `127.0.0.1:8025`. Đặt DB_* trước lệnh ghi.
 `db:fresh` nay chạy thêm migration queue sau auth và vẫn xóa toàn bộ schema hiện có.
 Không dùng trên dữ liệu cần giữ. [Hướng dẫn MQ](MESSAGE_QUEUE.md).
+
+## Tuần 5 — Redis cache
+
+```bash
+docker compose -f docker/docker-compose.cache.yml up -d --wait
+pnpm db:cache
+CACHE_ENABLED=true pnpm dev
+RUN_CACHE_TESTS=1 DB_DATABASE=week5_test_local pnpm test:cache
+pnpm cache:types
+DB_DATABASE=week5_test_local pnpm cache:benchmark
+```
+
+Đối chiếu DB_* trước lệnh ghi. Cache tests cần DB mới/rỗng, benchmark cần DB test đã
+nạp schema/auth/cache. db:fresh nay chạy thêm migration 07 và vẫn xóa toàn schema.
+[Hướng dẫn cache](CACHE.md). Không dùng db:fresh trên dữ liệu cần giữ.

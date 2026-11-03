@@ -166,3 +166,11 @@ Lý thuyết chi tiết: [SQL cơ bản](https://github.com/Tunhoclaptrinh/train
 Đủ migration 05/06 thì có 12 bảng (9 nền + 1 auth + 2 queue). SQL schema/index/seed
 ban đầu giữ nguyên. Không tự migrate khi bootstrap và không dùng synchronize.
 SMTP nằm ngoài transaction DB, xem giới hạn gửi trùng trong [Message Queue](MESSAGE_QUEUE.md).
+
+## Tuần 5 — revision cho cache Template
+
+Migration 07 thêm cache_revision UUID vào templates và trigger BEFORE UPDATE sinh
+UUID mới, kể cả SQL update trực tiếp. Cột không được map/serialize vào HTTP DTO.
+Không thêm bảng; đủ migrations 05/06/07 vẫn có 12 bảng. Cache tests chỉ cần 05/07
+và queue tắt nên có 10 bảng. Visibility/revision được đọc từ DB trước cache lookup.
+Schema/index/seed và các migration tuần trước giữ nguyên. [Chi tiết cache](CACHE.md).

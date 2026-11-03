@@ -58,6 +58,7 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
     "get",
     "patch",
   ]);
+  assert(spec.paths["/templates/{id}"].get.responses[200].headers["X-Cache"].schema.enum.includes("HIT"));
   const queries = spec.paths["/templates"].get.parameters;
   assert.equal(queries.find((p) => p.name === "page").schema.default, 1);
   assert.equal(queries.find((p) => p.name === "size").schema.maximum, 100);

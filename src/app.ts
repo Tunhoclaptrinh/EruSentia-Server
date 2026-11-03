@@ -33,7 +33,7 @@ class AppModule {
             ]
           : []),
         AuthModule.register(settings),
-        TemplatesModule.register(settings.store),
+        TemplatesModule.register(settings),
       ],
     };
   }

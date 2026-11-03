@@ -156,11 +156,53 @@ Suite tự tạo namespace RabbitMQ riêng, nạp SQL 01/02/03/05/06, thực thi
 dọn đúng queues/exchanges/email của lượt test; không xóa mailbox hoặc vhost chung.
 Chi tiết kiến trúc, retry/DLQ và thao tác vận hành: [MESSAGE_QUEUE](docs/MESSAGE_QUEUE.md).
 
+## Redis cache — tuần 5
+
+Cache-aside cho **GET /templates/:id** của Template public; private, list và dữ liệu
+đăng nhập không được cache. App chưa tích hợp API. Redis **8.10.3**, node-redis
+**5.12.1** (phù hợp peer TypeORM). CACHE_ENABLED=false mặc định giữ flow trước.
+
+```bash
+docker compose -f docker/docker-compose.cache.yml up -d --wait
+# Database đã có schema/auth; đối chiếu DB_* trước khi ghi migration.
+pnpm db:cache
+CACHE_ENABLED=true pnpm dev
+```
+
+Redis chỉ bind localhost:6379, giới hạn 128 MB, allkeys-lru, tắt persistence vì cache
+có thể dựng lại. Không dùng --remove-orphans với các Compose riêng. Bật cache yêu
+cầu PostgreSQL và migration `sql/07_template_cache_revision.sql`.
+
+Mỗi GET vẫn kiểm tra user/session và đọc metadata visibility/revision từ PostgreSQL.
+HIT bỏ full query lấy HTML/JSON/catalog projection; không có nghĩa không query DB.
+Key namespace:template:v1:id:revision, TTL 60–71 giây (jitter). PATCH/DELETE đổi
+revision bằng DB trigger và DEL key cũ; SQL update trực tiếp cũng đổi revision.
+Cache cũ không cấp quyền đọc khi Template đã private/deleted. GET đang chạy trước
+mutation có thể hoàn tất với snapshot trước đó.
+
+Swagger response header **X-Cache**: HIT, MISS, COALESCED, BYPASS_DISABLED,
+BYPASS_PRIVATE, BYPASS_REDIS. Cache-Control:no-store vẫn áp cho HTTP; Redis là cache
+nội bộ. Redis lỗi/timeout thì fallback DB; DB lỗi không được che bằng cached permissions.
+Miss được gộp trong một process, chưa có distributed lock hoặc negative cache.
+
+```bash
+# DB rỗng/mới do người chạy tạo, không reset database có sẵn:
+RUN_CACHE_TESTS=1 DB_DATABASE=week5_test_local pnpm test:cache
+# Demo 5 data types, đọc Template public từ DB đã chọn, tự xóa scratch keys:
+pnpm cache:types
+# Đo HTTP trên DB week5_test_* đã nạp schema/index/seed/auth/cache:
+DB_DATABASE=week5_test_local pnpm cache:benchmark
+```
+
+Benchmark dùng dữ liệu sinh riêng và ghi user/template vào DB test, đọc hết response,
+không thêm delay giả. Cần các DB_* đúng cùng máy. Xem [CACHE](docs/CACHE.md) về
+privacy, invalidation, giới hạn và cách tái hiện benchmark.
+
 ## Kiểm thử
 
 ```bash
 pnpm typecheck
-pnpm test          # build + 35 pass, 2 integration suites skip theo mặc định
+pnpm test          # build + 37 pass, 3 integration suites skip theo mặc định
 pnpm test:auth     # auth memory
 pnpm test:api      # CRUD memory có JWT
 ```

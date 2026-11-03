@@ -119,3 +119,11 @@ Template vẫn chỉ trả author ID; dữ liệu tài khoản có projection ri
 `synchronize:false`, `migrationsRun:false`. Không sinh migration từ mapping user/category
 chưa đầy đủ; bootstrap bằng SQL đã có và áp dụng `05_auth_sessions.sql` tường minh.
 Migration auth bổ sung không được tự chạy khi khởi động API.
+
+## Cache tùy chọn — tuần 5
+
+GET chi tiết thêm X-Cache, body/authorization giữ hợp đồng tuần 3. Cache chỉ lưu
+projection public, kiểm tra metadata quyền/revision hiện tại từ DB trước khi dùng.
+Private owner/admin bypass; public chuyển private hoặc soft-delete không đọc từ
+cache cũ. PATCH/DELETE đổi revision và xóa key cũ. Không cache danh sách hoặc auth.
+[Thiết kế và cách bật](CACHE.md); mặc định CACHE_ENABLED=false.

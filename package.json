@@ -16,7 +16,7 @@
     "db:indexes": "node --import tsx scripts/run-sql.ts sql/02_indexes.sql",
     "db:seed": "node --import tsx scripts/seed.ts",
     "db:reset": "node --import tsx scripts/run-sql.ts sql/00_reset.sql",
-    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue",
+    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue && pnpm db:cache",
     "db:benchmark": "node --import tsx scripts/benchmark.ts",
     "demo:oop": "node --import tsx src/week01-practice/oop/demo.ts",
     "demo:di": "node --import tsx src/week01-practice/di/demo.ts",
@@ -29,7 +29,11 @@
     "test:auth": "pnpm build && node --test test/auth.api.test.cjs",
     "db:queue": "node --import tsx scripts/run-sql.ts sql/06_message_queue.sql",
     "worker:welcome": "node --require ts-node/register src/messaging/worker.ts",
-    "test:queue": "pnpm build && node --test test/messaging.integration.test.cjs"
+    "test:queue": "pnpm build && node --test test/messaging.integration.test.cjs",
+    "db:cache": "node --import tsx scripts/run-sql.ts sql/07_template_cache_revision.sql",
+    "test:cache": "pnpm build && node --test test/cache.integration.test.cjs",
+    "cache:types": "node --require ts-node/register scripts/redis-types.ts",
+    "cache:benchmark": "node --require ts-node/register scripts/benchmark-cache.ts"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",
@@ -45,6 +49,7 @@
     "dotenv": "^16.4.7",
     "nodemailer": "10.3.1",
     "pg": "^8.13.3",
+    "redis": "5.12.1",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
     "typeorm": "0.3.31"

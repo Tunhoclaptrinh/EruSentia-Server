@@ -14,6 +14,12 @@ export interface AppConfig {
     smtpHost: string;
     smtpPort: number;
   };
+  cache: {
+    enabled: boolean;
+    url: string;
+    namespace: string;
+    ttlSeconds: number;
+  };
   database: {
     host: string;
     port: number;
@@ -62,6 +68,24 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const namespace = env.QUEUE_NAMESPACE ?? "erusentia";
   if (!/^[a-z][a-z0-9_-]{0,47}$/.test(namespace))
     throw new Error("QUEUE_NAMESPACE must be a short lowercase identifier");
+  if (
+    env.CACHE_ENABLED !== undefined &&
+    !["true", "false"].includes(env.CACHE_ENABLED)
+  )
+    throw new Error("CACHE_ENABLED must be true or false");
+  const cacheEnabled = env.CACHE_ENABLED === "true";
+  if (cacheEnabled && store !== "postgres")
+    throw new Error("CACHE_ENABLED requires TEMPLATE_STORE=postgres");
+  const redisUrl = env.REDIS_URL ?? "redis://127.0.0.1:6379";
+  try {
+    if (!["redis:", "rediss:"].includes(new URL(redisUrl).protocol))
+      throw new Error();
+  } catch {
+    throw new Error("REDIS_URL must be a Redis URL");
+  }
+  const cacheNamespace = env.CACHE_NAMESPACE ?? "erusentia";
+  if (!/^[a-z][a-z0-9_-]{0,47}$/.test(cacheNamespace))
+    throw new Error("CACHE_NAMESPACE must be a short lowercase identifier");
   const secret = env.JWT_SECRET || undefined;
   if (secret && Buffer.byteLength(secret, "utf8") < 32)
     throw new Error("JWT_SECRET must contain at least 32 bytes");
@@ -91,6 +115,12 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       ),
       smtpHost: env.SMTP_HOST ?? "127.0.0.1",
       smtpPort: integer(env.SMTP_PORT, 1025, "SMTP_PORT"),
+    },
+    cache: {
+      enabled: cacheEnabled,
+      url: redisUrl,
+      namespace: cacheNamespace,
+      ttlSeconds: integer(env.CACHE_TTL_SECONDS, 60, "CACHE_TTL_SECONDS"),
     },
     database: {
       host: env.DB_HOST ?? "localhost",

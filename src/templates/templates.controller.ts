@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  Res,
 } from "@nestjs/common";
 import { UuidPipe } from "../common/uuid.pipe";
 import {
@@ -58,10 +59,36 @@ export class TemplatesController {
   @Get(":id")
   @ApiOperation({ summary: "Read a template" })
   @ApiParam({ name: "id", format: "uuid" })
-  @ApiOkResponse({ type: TemplateResponseDto })
+  @ApiOkResponse({
+    type: TemplateResponseDto,
+    headers: {
+      "X-Cache": {
+        description:
+          "Server-side projection cache path; authorization is always evaluated first.",
+        schema: {
+          type: "string",
+          enum: [
+            "HIT",
+            "MISS",
+            "COALESCED",
+            "BYPASS_DISABLED",
+            "BYPASS_PRIVATE",
+            "BYPASS_REDIS",
+          ],
+        },
+      },
+    },
+  })
   @ApiNotFoundResponse({ type: ApiErrorDto })
-  find(@Param("id", UuidPipe) id: string, @CurrentUser() user: UserIdentity) {
-    return this.service.find(id, user);
+  async find(
+    @Param("id", UuidPipe) id: string,
+    @CurrentUser() user: UserIdentity,
+    @Res({ passthrough: true })
+    response: { setHeader(name: string, value: string): void },
+  ) {
+    const result = await this.service.read(id, user);
+    response.setHeader("X-Cache", result.status);
+    return result.row;
   }
   @Post()
   @ApiOperation({ summary: "Create a template" })

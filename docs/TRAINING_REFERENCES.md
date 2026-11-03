@@ -57,3 +57,14 @@ dùng tag lưu trữ `typ-2026-week-4`. Giữ nguyên tag này khi cập nhật 
 
 [Message Queue](MESSAGE_QUEUE.md) mô tả triển khai hiện tại; nguồn/báo cáo tuần 3
 vẫn được giữ tại tag TYP `typ-2026-week-3`.
+
+## Tuần 5 — Caching và Redis
+
+Server nhánh `feat/week-5-redis-cache`; tài liệu TYP ở nhánh `week-5`.
+[Báo cáo tuần 5](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-5/week-5/WEEK5_REPORT.md),
+[mục lục](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-5/week-5/docs/00_GUIDE_INDEX.md)
+và [snapshot nguồn](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-5/week-5/SOURCE_SNAPSHOT.md)
+dùng tag lưu trữ `typ-2026-week-5`. Giữ nguyên tag khi cập nhật về sau;
+commit/tag cần được push để các đường dẫn GitHub truy cập được.
+
+[Redis cache](CACHE.md) mô tả triển khai hiện tại; các mốc tuần 1–4 được giữ nguyên.

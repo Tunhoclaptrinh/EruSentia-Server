@@ -6,17 +6,21 @@ import { MemoryTemplateStore } from "./persistence/memory-template.store";
 import { PostgresTemplateStore } from "./persistence/postgres-template.store";
 import { TEMPLATE_STORE } from "./template-store";
 import { TemplatesController } from "./templates.controller";
+import { TemplateCache, CACHE_SETTINGS } from "../cache/template-cache";
 import { TemplatesService } from "./templates.service";
 
 @Module({})
 export class TemplatesModule {
-  static register(store: AppConfig["store"]): DynamicModule {
+  static register(settings: AppConfig): DynamicModule {
+    const store = settings.store;
     return {
       module: TemplatesModule,
       imports: store === "postgres" ? [TypeOrmModule.forFeature(entities)] : [],
       controllers: [TemplatesController],
       providers: [
         TemplatesService,
+        TemplateCache,
+        { provide: CACHE_SETTINGS, useValue: settings.cache },
         {
           provide: TEMPLATE_STORE,
           useClass:
