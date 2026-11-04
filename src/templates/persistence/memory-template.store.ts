@@ -4,6 +4,7 @@ import {
   Injectable,
   Inject,
 } from "@nestjs/common";
+import { MEMORY_CATEGORIES } from "../../categories/categories";
 import { randomUUID } from "node:crypto";
 import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
@@ -23,24 +24,9 @@ import {
 export class MemoryTemplateStore implements TemplateStore {
   private readonly rows = new Map<string, TemplateRecord>();
   constructor(@Inject(AUTH_STORE) private readonly auth: AuthStore) {}
-  private readonly categories = new Map([
-    [
-      "c0000000-0000-0000-0000-000000000001",
-      {
-        id: "c0000000-0000-0000-0000-000000000001",
-        name: "Software Engineering",
-        slug: "software-engineering",
-      },
-    ],
-    [
-      "c0000000-0000-0000-0000-000000000002",
-      {
-        id: "c0000000-0000-0000-0000-000000000002",
-        name: "Project Management",
-        slug: "project-management",
-      },
-    ],
-  ]);
+  private readonly categories = new Map(
+    MEMORY_CATEGORIES.map(({ id, name, slug }) => [id, { id, name, slug }]),
+  );
 
   async list(query: QueryTemplatesDto, viewer: UserIdentity) {
     const rows = [...this.rows.values()].filter(

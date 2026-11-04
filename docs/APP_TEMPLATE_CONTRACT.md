@@ -1,6 +1,6 @@
 # Hợp đồng Template với App hiện tại
 
-Đối chiếu model App ngày 03/11/2026; bổ sung auth server ngày 04/11/2026. App hiện dùng
+Đối chiếu model App ngày 03/11/2026; bổ sung auth/category/CORS ngày 04/11/2026. App hiện dùng
 template HTML từ cấu hình/localStorage, chưa gọi API này. Server kiểm chứng HTTP/DB; tích hợp và render
 template qua API trên App nằm ngoài phạm vi kiểm thử hiện tại.
 
@@ -17,8 +17,8 @@ hiện có, với nội dung HTML minh họa mới.
 
 | Trường ở App | Trường server / quy tắc chuyển đổi trong lần tích hợp sau |
 |---|---|
-| `id` local | Server sinh UUID `id`; ID gốc tùy chọn lưu ở `contentJson.originId` |
-| `originId` | `contentJson.originId`; xác định ID nguồn theo ngữ cảnh khi import |
+| `id` local | Server sinh UUID `id`; bản sao local giữ remote reference riêng, không thay ID local bằng UUID server |
+| `originId` | Có thể giữ trong `contentJson.originId` theo nghĩa lineage nguồn; không mặc định đó là ID bản ghi remote |
 | `title` | `title` |
 | `desc` | `description` |
 | `html` | `contentJson.html`, giữ nguyên chuỗi, không đổi sang block JSON |
@@ -38,6 +38,10 @@ một UUID hoặc tự gán template là official. Quy tắc xuất bản/địn
 được chốt khi tích hợp App. Auth server đã có JWT/ownership ở tuần 3; frontend chưa
 gửi request hoặc quản lý token. Không bổ sung field giá/bán template vì App
 hiện tại không có hợp đồng mua bán đó.
+
+`GET /categories` có JWT đã bổ sung để client lấy taxonomy thật. Nguồn community cần
+phân biệt với nguồn local; thao tác save/delete local không tự biến thành publish/
+delete remote. Client xuất bản phải gửi `isPublic` tường minh vì server mặc định true.
 
 ## Envelope lưu trong JSONB
 
@@ -69,6 +73,11 @@ ngoài envelope là phiên bản nội dung, không phải schemaVersion hay opt
 Server chỉ lưu/trả HTML dưới dạng JSON, không thực thi hoặc chứng nhận HTML an toàn
 để chèn DOM. Luồng preview/sandbox của App chưa được kiểm chứng qua API. Các tests
 tuần 2 xác nhận chuỗi Unicode, HTML lớn và metadata được bảo toàn qua HTTP/DB/restart.
+
+Trước tích hợp cần runner cô lập cho HTML không tin cậy, auth client, summary list/
+filter format và điều kiện chống ghi đè. Không tự cập nhật nội dung đã chèn vào note
+khi bản remote thay đổi. Xem [chuẩn bị project](PROJECT_INTEGRATION.md); chi tiết
+triển khai App và ranh giới thực thi giữ trong tài liệu nội bộ của App.
 
 ## Nguồn đối chiếu local
 

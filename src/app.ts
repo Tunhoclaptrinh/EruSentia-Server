@@ -8,6 +8,7 @@ import { ApiExceptionFilter } from "./common/api-exception.filter";
 import { TemplatesModule } from "./templates/templates.module";
 import { entities } from "./templates/persistence/entities";
 import { setupOpenApi } from "./openapi";
+import { CategoriesModule } from "./categories/categories";
 import { AuthModule } from "./auth/auth.module";
 import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
 
@@ -33,6 +34,7 @@ class AppModule {
             ]
           : []),
         AuthModule.register(settings),
+        CategoriesModule.register(settings.store),
         TemplatesModule.register(settings),
       ],
     };
@@ -50,6 +52,15 @@ export async function createApplication(
       abortOnError: false,
     },
   );
+  app.enableCors({
+    origin: (origin, done) =>
+      done(null, !origin || settings.corsOrigins.includes(origin)),
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Authorization", "Content-Type"],
+    exposedHeaders: ["X-Cache", "WWW-Authenticate"],
+    credentials: false,
+    maxAge: 600,
+  });
   app.useBodyParser("json", { limit: "2mb" });
   app.useGlobalPipes(
     new ValidationPipe({

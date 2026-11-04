@@ -5,6 +5,7 @@ export interface AppConfig {
   port: number;
   store: "memory" | "postgres";
   swaggerEnabled: boolean;
+  corsOrigins: string[];
   auth: { secret: string; accessTtlSeconds: number; refreshTtlSeconds: number };
   queue: {
     enabled: boolean;
@@ -86,6 +87,38 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   const cacheNamespace = env.CACHE_NAMESPACE ?? "erusentia";
   if (!/^[a-z][a-z0-9_-]{0,47}$/.test(cacheNamespace))
     throw new Error("CACHE_NAMESPACE must be a short lowercase identifier");
+  const configuredOrigins =
+    env.CORS_ORIGINS === undefined
+      ? env.NODE_ENV === "production"
+        ? []
+        : ["http://localhost:5173", "http://127.0.0.1:5173"]
+      : env.CORS_ORIGINS.split(",")
+          .map((origin) => origin.trim())
+          .filter(Boolean);
+  const corsOrigins = [
+    ...new Set(
+      configuredOrigins.map((origin) => {
+        try {
+          const url = new URL(origin);
+          if (
+            origin.includes("*") ||
+            !["http:", "https:"].includes(url.protocol) ||
+            url.username ||
+            url.password ||
+            url.pathname !== "/" ||
+            url.search ||
+            url.hash
+          )
+            throw new Error();
+          return url.origin;
+        } catch {
+          throw new Error(
+            "CORS_ORIGINS must contain comma-separated HTTP(S) origins without credentials, paths or wildcards",
+          );
+        }
+      }),
+    ),
+  ];
   const secret = env.JWT_SECRET || undefined;
   if (secret && Buffer.byteLength(secret, "utf8") < 32)
     throw new Error("JWT_SECRET must contain at least 32 bytes");
@@ -95,6 +128,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     host: env.HOST ?? "127.0.0.1",
     port: integer(env.PORT, 3001, "PORT"),
     store,
+    corsOrigins,
     swaggerEnabled:
       env.SWAGGER_ENABLED === undefined
         ? env.NODE_ENV !== "production"

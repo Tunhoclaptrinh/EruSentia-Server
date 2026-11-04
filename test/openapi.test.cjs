@@ -45,7 +45,7 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
   assert.equal(response.status, 200);
   const spec = await response.json();
   assert.match(spec.openapi, /^3\./);
-  assert.equal(Object.keys(spec.paths).length, 8);
+  assert.equal(Object.keys(spec.paths).length, 9);
   assert.equal(spec.components.securitySchemes.bearer.scheme, "bearer");
   assert.equal(spec.paths["/auth/login"].post.security, undefined);
   assert.deepEqual(spec.paths["/templates"].get.security, [{ bearer: [] }]);
@@ -58,15 +58,29 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
     "get",
     "patch",
   ]);
-  assert(spec.paths["/templates/{id}"].get.responses[200].headers["X-Cache"].schema.enum.includes("HIT"));
+  assert(
+    spec.paths["/templates/{id}"].get.responses[200].headers[
+      "X-Cache"
+    ].schema.enum.includes("HIT"),
+  );
+  assert.equal(
+    spec.paths["/categories"].get.responses[200].content["application/json"]
+      .schema.type,
+    "array",
+  );
+  assert.deepEqual(spec.paths["/categories"].get.security, [{ bearer: [] }]);
   const queries = spec.paths["/templates"].get.parameters;
   assert.equal(queries.find((p) => p.name === "page").schema.default, 1);
   assert.equal(queries.find((p) => p.name === "size").schema.maximum, 100);
   assert(queries.every((p) => p.in === "query" && !p.required));
-  const unauthorized = spec.paths["/auth/me"].get.responses[401].content["application/json"].example;
+  const unauthorized =
+    spec.paths["/auth/me"].get.responses[401].content["application/json"]
+      .example;
   assert.equal(unauthorized.statusCode, 401);
   assert.equal(unauthorized.code, "UNAUTHORIZED");
-  const forbidden = spec.paths["/admin/users"].get.responses[403].content["application/json"].example;
+  const forbidden =
+    spec.paths["/admin/users"].get.responses[403].content["application/json"]
+      .example;
   assert.equal(forbidden.statusCode, 403);
   assert.equal(forbidden.code, "FORBIDDEN");
   const schemas = spec.components.schemas;

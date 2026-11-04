@@ -57,7 +57,9 @@ UUID nhận dạng hex `8-4-4-4-12` có dấu gạch nối, không bắt buộc 
 UUIDv4 để hỗ trợ seed tuần 1 (`a000...`, `c000...`). Những cách viết UUID khác mà
 PostgreSQL chấp nhận, như bỏ dấu gạch nối hoặc thêm ngoặc nhọn, không thuộc input API.
 
-Category cần tồn tại; tác giả lấy từ tài khoản JWT đang active/chưa soft-delete.
+Category cần tồn tại; lấy danh mục bằng `GET /categories` có JWT trước khi tạo.
+Response gồm id/name/slug/icon/description/displayOrder, không có mutation category.
+Tác giả lấy từ tài khoản JWT đang active/chưa soft-delete.
 Memory có hai category mẫu; tài khoản tạo qua register. Gửi authorId trong body trả
 400. User/creator chỉ sửa/xóa của mình; admin được quản lý mọi template.
 
@@ -127,3 +129,10 @@ projection public, kiểm tra metadata quyền/revision hiện tại từ DB tr�
 Private owner/admin bypass; public chuyển private hoặc soft-delete không đọc từ
 cache cũ. PATCH/DELETE đổi revision và xóa key cũ. Không cache danh sách hoặc auth.
 [Thiết kế và cách bật](CACHE.md); mặc định CACHE_ENABLED=false.
+
+## Chuẩn bị project
+
+`version` hiện chưa ngăn hai PATCH từ dữ liệu cũ cùng thành công. Chống ghi đè,
+history và summary list/filter format được đưa vào [kế hoạch tích hợp](PROJECT_INTEGRATION.md).
+Không dùng cache revision hoặc version string như concurrency protocol khi API
+chưa kiểm tra điều kiện đó. App chưa tích hợp API, server không chứng nhận HTML an toàn.

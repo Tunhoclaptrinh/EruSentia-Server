@@ -3,6 +3,7 @@
 Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 phát triển
 API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
 Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
+Tuần 5 bổ sung Redis cache; bước chuẩn bị project thêm CORS và danh mục có JWT.
 Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. App chưa tích hợp API.
 
 ## Cài đặt và database
@@ -68,6 +69,7 @@ sessions mất khi restart. PostgreSQL lưu tài khoản, template và sessions 
 | POST | `/auth/logout` | Cần refresh token của phiên; 204 |
 | GET | `/auth/me` | Bearer JWT; tài khoản hiện tại |
 | GET | `/admin/users?page=1&size=10` | Chỉ admin; dữ liệu tài khoản an toàn |
+| GET | `/categories` | JWT; lấy danh mục và ID để tạo Template |
 | GET | `/templates`, `/templates/:id` | JWT; public + private của mình; admin xem tất cả |
 | POST | `/templates` | JWT; authorId lấy từ người đăng nhập |
 | PATCH/DELETE | `/templates/:id` | Tác giả hoặc admin |
@@ -105,7 +107,7 @@ Mở **http://127.0.0.1:3001/docs**, JSON ở **/docs-json**. Thứ tự thực 
 4. Refresh bằng token mới nhất; cập nhật Authorize bằng access token vừa nhận.
 5. Logout bằng refresh token; request protected tiếp theo trả 401.
 
-Đặc tả có 11 operation và Bearer authentication. Swagger bật mặc định ngoài
+Đặc tả có 12 operation trên 9 path và Bearer authentication. Swagger bật mặc định ngoài
 production; `SWAGGER_ENABLED=false` tắt cả UI/JSON. Production mặc định tắt nếu không
 có override. Bộ ảnh Postman/collection v2.1 trong `tools/postman` thuộc tuần 2;
 chúng được tái hiện bằng [snapshot tuần 2](https://github.com/Tunhoclaptrinh/EruSentia-Server/tree/b9017f77f6b97a4935fd72d22f2e149f32c4b649),
@@ -202,7 +204,7 @@ privacy, invalidation, giới hạn và cách tái hiện benchmark.
 
 ```bash
 pnpm typecheck
-pnpm test          # build + 37 pass, 3 integration suites skip theo mặc định
+pnpm test          # build + 39 pass, 4 integration suites skip theo mặc định
 pnpm test:auth     # auth memory
 pnpm test:api      # CRUD memory có JWT
 ```
@@ -221,10 +223,24 @@ rotation/replay đồng thời, admin CLI, hash lưu trữ và persistence qua a
 Giới hạn thực nghiệm: chưa có rate limiting, email verification, reset password,
 MFA, cookie/CSRF flow, quản lý phiên qua UI hay kiểm thử tải. Chưa tích hợp App.
 
+## Chuẩn bị project / kết nối client
+
+CORS development mặc định cho `http://localhost:5173` và `http://127.0.0.1:5173`;
+production mặc định không mở cross-origin. Đặt `CORS_ORIGINS` bằng danh sách origin
+HTTP(S) chính xác khi cần; không dùng wildcard/null origin. Client dùng Bearer JWT,
+chưa có cookie flow. `GET /categories` trả taxonomy để chọn categoryId, riêng với
+nhóm chủ đề hoặc nguồn hiển thị ở client.
+
+`pnpm test:project` là suite opt-in bật auth/PostgreSQL/RabbitMQ/SMTP local/Redis
+cùng nhau, cần `RUN_PROJECT_TESTS=1` và DB rỗng `project_test_*`. Xem
+[chuẩn bị tích hợp](docs/PROJECT_INTEGRATION.md) để chạy/dọn và đọc các phần còn
+thiếu: dữ liệu HTML project, summary list, chống ghi đè và cô lập HTML ở client.
+
 ## Cấu trúc và tài liệu
 
 - `src/messaging/`: event contract, RabbitMQ transport, outbox dispatcher, email worker.
 - `src/auth/`: DTO, guard, JWT/password service, memory/PostgreSQL auth store.
+- `src/categories/`: danh mục chỉ đọc, dùng JWT và ID chung với Template store.
 - `src/templates/`: CRUD có quyền sở hữu, validation và persistence adapters.
 - `src/openapi.ts`: Swagger UI/JSON từ metadata DTO/controller.
 - `sql/05_auth_sessions.sql`: migration auth bổ sung; schema/seed tuần 1 giữ nguyên.

@@ -18,7 +18,7 @@ Chạy các lệnh dưới đây từ thư mục gốc của repo `EruSentia-Ser
 | `pnpm db:benchmark` | In execution plan cho truy vấn danh sách và full-text search |
 
 `pnpm db:reset` xóa schema public và các đối tượng bên trong. `pnpm db:fresh` chạy
-reset, schema, indexes, seed và db:auth. Chỉ dùng trên database có thể xóa dữ liệu.
+reset, schema, indexes, seed, db:auth, db:queue và db:cache. Chỉ dùng trên database có thể xóa dữ liệu.
 
 ## Build và demo
 
@@ -90,3 +90,18 @@ DB_DATABASE=week5_test_local pnpm cache:benchmark
 Đối chiếu DB_* trước lệnh ghi. Cache tests cần DB mới/rỗng, benchmark cần DB test đã
 nạp schema/auth/cache. db:fresh nay chạy thêm migration 07 và vẫn xóa toàn schema.
 [Hướng dẫn cache](CACHE.md). Không dùng db:fresh trên dữ liệu cần giữ.
+
+## Chuẩn bị project
+
+`GET /categories` dùng Bearer JWT để lấy category ID. `CORS_ORIGINS` cấu hình danh
+sách origin web chính xác, không dùng `*`/`null`. Kiểm thử stack chung trên DB mới:
+
+```bash
+docker exec sentia_postgres_dev createdb -U postgres project_test_local
+RUN_PROJECT_TESTS=1 DB_DATABASE=project_test_local pnpm test:project
+docker exec sentia_postgres_dev dropdb -U postgres project_test_local
+```
+
+Cần PostgreSQL, RabbitMQ, Mailpit và Redis dev đang chạy; DB_* phải trỏ đúng máy.
+Suite không reset DB có sẵn và tự dọn namespace/email của mình; người chạy dọn DB
+vừa tạo sau khi test đóng kết nối. [Hướng dẫn đầy đủ](PROJECT_INTEGRATION.md).
