@@ -32,16 +32,20 @@ import {
   ApiParam,
   ApiPayloadTooLargeResponse,
   ApiTags,
+  ApiExtraModels,
+  getSchemaPath,
 } from "@nestjs/swagger";
 import {
   ApiErrorDto,
   TemplatePageDto,
   TemplateResponseDto,
+  TemplateSummaryPageDto,
 } from "./dto/template-response.dto";
 import { CurrentUser } from "../auth/auth.guards";
 import type { UserIdentity } from "../auth/auth-store";
 
 @ApiTags("Templates")
+@ApiExtraModels(TemplatePageDto, TemplateSummaryPageDto)
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ type: ApiErrorDto })
 @ApiForbiddenResponse({ type: ApiErrorDto })
@@ -51,8 +55,19 @@ import type { UserIdentity } from "../auth/auth-store";
 export class TemplatesController {
   constructor(private readonly service: TemplatesService) {}
   @Get()
-  @ApiOperation({ summary: "List and paginate templates" })
-  @ApiOkResponse({ type: TemplatePageDto })
+  @ApiOperation({
+    summary: "List and paginate templates",
+    description:
+      "Use projection=summary for a catalog without HTML. contentFormat/schemaVersion filters apply before count and pagination. Defaults preserve the full week-2 contract.",
+  })
+  @ApiOkResponse({
+    schema: {
+      oneOf: [
+        { $ref: getSchemaPath(TemplatePageDto) },
+        { $ref: getSchemaPath(TemplateSummaryPageDto) },
+      ],
+    },
+  })
   list(@Query() query: QueryTemplatesDto, @CurrentUser() user: UserIdentity) {
     return this.service.list(query, user);
   }

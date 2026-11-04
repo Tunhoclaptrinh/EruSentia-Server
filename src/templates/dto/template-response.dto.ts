@@ -1,5 +1,10 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { TemplatePage, TemplateRecord } from "../template-store";
+import { ApiProperty, OmitType } from "@nestjs/swagger";
+import {
+  TemplatePage,
+  TemplateRecord,
+  TemplateSummary,
+  TemplateSummaryPage,
+} from "../template-store";
 
 class AuthorReferenceDto {
   @ApiProperty({ format: "uuid" }) id!: string;
@@ -49,6 +54,21 @@ export class TemplatePageDto implements TemplatePage {
   @ApiProperty({ type: "integer" }) size!: number;
   @ApiProperty({ type: "integer" }) totalPages!: number;
   @ApiProperty({ type: "integer" }) totalElements!: number;
+}
+
+export class TemplateSummaryDto
+  extends OmitType(TemplateResponseDto, ["contentJson"] as const)
+  implements TemplateSummary
+{
+  @ApiProperty({ type: String, nullable: true }) contentFormat!: string | null;
+  @ApiProperty({ type: Number, nullable: true }) schemaVersion!: number | null;
+}
+
+export class TemplateSummaryPageDto
+  extends OmitType(TemplatePageDto, ["data"] as const)
+  implements TemplateSummaryPage
+{
+  @ApiProperty({ type: [TemplateSummaryDto] }) data!: TemplateSummaryDto[];
 }
 
 export class ApiErrorDto {

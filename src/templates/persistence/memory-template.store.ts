@@ -36,6 +36,10 @@ export class MemoryTemplateStore implements TemplateStore {
         (!query.authorId || t.authorId === query.authorId) &&
         (!query.categoryId || t.categoryId === query.categoryId) &&
         (query.isPublic === undefined || t.isPublic === query.isPublic) &&
+        (query.contentFormat === undefined ||
+          t.contentJson?.format === query.contentFormat) &&
+        (query.schemaVersion === undefined ||
+          t.contentJson?.schemaVersion === query.schemaVersion) &&
         (!query.tag || t.tags.includes(query.tag)) &&
         (!query.search ||
           t.title.toLowerCase().includes(query.search.toLowerCase()) ||

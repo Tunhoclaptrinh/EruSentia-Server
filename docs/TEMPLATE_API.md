@@ -1,4 +1,4 @@
-# Template API — hợp đồng tuần 3
+# Template API — auth và catalog C0–C1
 
 NestJS + TypeORM trên PostgreSQL tuần 1. Dùng cùng 5 route với `TEMPLATE_STORE=memory`
 và `TEMPLATE_STORE=postgres` trên cùng hợp đồng HTTP.
@@ -31,6 +31,25 @@ không cam kết thứ tự Unicode giống nhau giữa hai adapter.
 `totalPages=0` nếu không có row; trang vượt cuối có `data=[]` nhưng vẫn giữ total.
 Data và count có thể khác snapshot khi có ghi đồng thời; OFFSET không tạo snapshot
 ổn định giữa các request. Đây là phân trang offset của bài tuần 2.
+
+### Catalog summary — đợt C0–C1
+
+`projection=full|summary` mặc định **full** để giữ tương thích. Dùng
+`GET /templates?projection=summary&contentFormat=erusentia-template-html&schemaVersion=1`
+cho danh sách nhẹ. Summary giữ metadata của template, bỏ `contentJson` và thêm
+`contentFormat: string|null`, `schemaVersion: number|null`. Không có HTML trong list
+summary; PostgreSQL cũng không chuyển full JSONB/HTML sang process API cho query này.
+GET `/templates/:id` vẫn trả toàn bộ nội dung theo quyền hiện hành.
+
+`contentFormat` dài 1..64 ký tự; `schemaVersion` là số nguyên 1..10000. Filter chạy
+trên server trước count/pagination, áp dụng với cả full và summary. Schema version
+JSON là number; string `"1"` không được coi như number `1`. Seed legacy không có
+format/schema vẫn xuất hiện nếu không lọc, với hai metadata summary là null.
+Không lọc một trang ở client rồi dùng total của dataset chưa được lọc.
+
+Summary, category và detail đều cần JWT, private của người khác vẫn bị loại khỏi
+data/count. Chưa có public gallery không đăng nhập hoặc optimistic concurrency
+cho PATCH; cache revision không thay expected revision.
 
 ### Tạo template
 
@@ -135,11 +154,12 @@ cache cũ. PATCH/DELETE đổi revision và xóa key cũ. Không cache danh sác
 ## Chuẩn bị project
 
 `version` hiện chưa ngăn hai PATCH từ dữ liệu cũ cùng thành công. Chống ghi đè,
-history và summary list/filter format nằm trong `week-6/PROJECT_PLAN.md` của
+history được lên kế hoạch trong `week-6/PROJECT_PLAN.md` của
 [TYP](https://github.com/Tunhoclaptrinh/trainning-typ-2026), nhánh `week-6-project-plan`.
 Worker welcome hiện route REGISTERED cho outbox; phải phân loại event trước khi thêm
 template event. Chưa có `/api/v1` hoặc API ratings/forks/notifications.
 
 Không dùng cache revision hoặc version string như concurrency protocol khi API chưa
-kiểm tra điều kiện đó. App chưa tích hợp API; yêu cầu cô lập HTML ở
+kiểm tra điều kiện đó. Summary/filter đã có ở C0–C1; client mới tích hợp tài khoản,
+chưa chạy template cộng đồng. Yêu cầu cô lập HTML ở
 [hợp đồng client](APP_TEMPLATE_CONTRACT.md).

@@ -38,6 +38,27 @@ export interface TemplatePage {
   totalElements: number;
 }
 
+export interface TemplateSummary extends Omit<TemplateRecord, "contentJson"> {
+  contentFormat: string | null;
+  schemaVersion: number | null;
+}
+export interface TemplateSummaryPage extends Omit<TemplatePage, "data"> {
+  data: TemplateSummary[];
+}
+
+export function summarizeTemplate(row: TemplateRecord): TemplateSummary {
+  const { contentJson, ...summary } = row;
+  return {
+    ...summary,
+    contentFormat:
+      typeof contentJson?.format === "string" ? contentJson.format : null,
+    schemaVersion:
+      typeof contentJson?.schemaVersion === "number"
+        ? contentJson.schemaVersion
+        : null,
+  };
+}
+
 // Catalog projection for HTTP. The week-1 ITemplateRepository remains an entity-oriented
 // domain port; this port includes pagination and related author/category projections.
 export interface TemplateStore {

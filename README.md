@@ -4,9 +4,27 @@ Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 
 API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
 Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
 Tuần 5 bổ sung Redis cache; bước chuẩn bị project thêm CORS và danh mục có JWT.
-Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. App chưa tích hợp API.
+Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. Đợt C0–C1 đã ghép tài khoản
+với client; thư viện cộng đồng, thực thi HTML remote và publish trên App đang ở bước tiếp theo.
 
-## Cài đặt và database
+## Stack project: chạy bằng một lệnh
+
+```bash
+pnpm stack:up          # PostgreSQL + RabbitMQ + Redis + Mailpit + API + worker
+pnpm stack:up api      # API và các dependency; không mở worker
+pnpm stack:up worker   # Worker cùng dependency
+pnpm stack:status
+pnpm stack:down        # Dừng, giữ volume
+```
+
+Trong repo App cạnh server, `pnpm stack:up` mở thêm App web;
+`pnpm dev:all` / `pnpm dev:all:desktop` chạy frontend trên host. Stack riêng dùng
+DB `eru_project_docker` và tự migrate/seed mỗi lần mở. Tài khoản ban đầu:
+`user@erusentia.test`, `creator@erusentia.test`, `admin@erusentia.test`; mật khẩu
+chung **`EruSentiaDemo!2026`**, chỉ dùng cho phát triển. Seed không ghi đè bản ghi
+đã chỉnh. [Hướng dẫn đầy đủ và các cổng](docs/LOCAL_DEVELOPMENT.md).
+
+## Cài đặt và database thực hành tuần học
 
 Đã kiểm tra với Node.js **24.21.0**, pnpm **12.11.2**, PostgreSQL **16.15**.
 
@@ -33,6 +51,36 @@ index sẽ báo lỗi để xử lý dữ liệu trước. Bootstrap ORM vẫn t
 Không dùng `db:fresh` trên database cần giữ: lệnh đó xóa schema để tạo lại.
 
 ## Cấu hình JWT và chạy
+
+### Database riêng cho project C0–C1
+
+Giữ database thực hành/benchmark để tái hiện tuần học. Với DB project **mới**:
+
+```bash
+# Chỉ tạo khi tên này chưa tồn tại; nếu đã có thì không xóa/reset.
+docker exec sentia_postgres_dev createdb -U postgres eru_project_local
+DB_DATABASE=eru_project_local pnpm project:migrate
+DB_DATABASE=eru_project_local pnpm project:seed
+```
+
+Đối chiếu DB_HOST/DB_PORT/DB_USERNAME/DB_PASSWORD trong `.env` với Compose trước khi
+chạy. CLI bắt buộc DB_DATABASE tường minh có prefix `eru_project_` hoặc `project_test_`;
+không nhận `sentia_hub_db`. Migration dùng journal `eru_schema_migrations`, checksum
+chuẩn hóa CRLF/LF, advisory lock và transaction từng file. Database đã có bảng nhưng
+chưa có journal bị từ chối để tránh tự nhận schema cũ. Không sửa migration đã áp;
+thay đổi sau phải thêm migration mới và kiểm tra upgrade.
+
+Seed project riêng có hai category và ba template trung tính: HTML public, HTML
+private và legacy để kiểm tra tương thích. Không nạp 1.000 dòng benchmark hoặc mã
+App. Tác giả của seed trung tính bị vô hiệu hóa; `project:seed` không tạo thông tin
+đăng nhập. `project:seed:demo` hoặc stack project bổ sung ba tài khoản phát triển
+ở bảng trong [hướng dẫn local](docs/LOCAL_DEVELOPMENT.md#tài-khoản-có-sẵn). Chạy lại
+seed không ghi đè các row đã có.
+
+Trong phiên triển khai 04/11/2026, `eru_project_local` đã được tạo/migrate/seed để
+dùng tiếp; các database `project_test_c0c1_*` chỉ phục vụ kiểm thử và được dọn sau lượt chạy.
+
+### Khóa JWT và tiến trình API
 
 Tạo khóa ngẫu nhiên rồi đặt `JWT_SECRET` trong .env riêng của máy:
 
@@ -83,8 +131,9 @@ Xem [hợp đồng auth](docs/AUTHENTICATION.md) và [Template API](docs/TEMPLAT
 
 ### Tạo tài khoản admin cho thực hành PostgreSQL
 
-Không có mật khẩu admin mặc định; seed tuần 1 chứa hash placeholder nên không dùng
-để đăng nhập. CLI tạo tài khoản mới, không ghi đè/nâng quyền tài khoản đã tồn tại:
+Seed tuần 1 chứa hash placeholder nên không dùng để đăng nhập. Stack project có
+admin demo riêng như mô tả ở trên. Với DB thực hành, CLI sau tạo tài khoản mới,
+không ghi đè/nâng quyền tài khoản đã tồn tại:
 
 ```bash
 read -r -s -p 'Admin password (12-128 characters): ' ADMIN_PASSWORD
@@ -117,7 +166,8 @@ không chạy nguyên collection cũ trên hợp đồng auth tuần 3.
 
 Welcome email dùng RabbitMQ **4.4.0**, Mailpit **1.32.0**, amqplib **2.2.1** và
 Nodemailer **10.3.1**. Mailpit là hộp thư nhận local, không gửi email ra Internet.
-App chưa gọi API; email này không xác minh địa chỉ hoặc kích hoạt tài khoản App.
+Email này không xác minh địa chỉ hoặc kích hoạt tài khoản. Client đăng ký có thể
+tạo welcome event khi API bật queue; Mailpit vẫn chỉ là môi trường nhận local.
 
 ```bash
 docker compose -f docker/docker-compose.queue.yml up -d --wait
@@ -161,7 +211,8 @@ Chi tiết kiến trúc, retry/DLQ và thao tác vận hành: [MESSAGE_QUEUE](do
 ## Redis cache — tuần 5
 
 Cache-aside cho **GET /templates/:id** của Template public; private, list và dữ liệu
-đăng nhập không được cache. App chưa tích hợp API. Redis **8.10.3**, node-redis
+đăng nhập không được cache. Giao diện community template chưa được mở ở lát cắt
+tài khoản C0–C1. Redis **8.10.3**, node-redis
 **5.12.1** (phù hợp peer TypeORM). CACHE_ENABLED=false mặc định giữ flow trước.
 
 ```bash
@@ -204,7 +255,7 @@ privacy, invalidation, giới hạn và cách tái hiện benchmark.
 
 ```bash
 pnpm typecheck
-pnpm test          # build + 39 pass, 4 integration suites skip theo mặc định
+pnpm test          # build; hiện có 46 pass, 6 suite opt-in skip theo mặc định
 pnpm test:auth     # auth memory
 pnpm test:api      # CRUD memory có JWT
 ```
@@ -221,7 +272,8 @@ docker exec sentia_postgres_dev dropdb -U postgres week3_test_local
 DB suite tự nạp schema/index/seed/migration auth, kiểm tra 19 test gồm CRUD, auth,
 rotation/replay đồng thời, admin CLI, hash lưu trữ và persistence qua app mới.
 Giới hạn thực nghiệm: chưa có rate limiting, email verification, reset password,
-MFA, cookie/CSRF flow, quản lý phiên qua UI hay kiểm thử tải. Chưa tích hợp App.
+MFA, cookie/CSRF flow, quản lý nhiều phiên qua UI hay kiểm thử tải. Client đã có
+luồng tài khoản cơ bản; chưa nghiệm thu toàn bộ sản phẩm hoặc bộ cài phát hành.
 
 ## Chuẩn bị project / kết nối client
 
@@ -239,6 +291,25 @@ không allow `Origin:null` đại trà hoặc tắt web security để kết n�
 
 `GET /categories` trả taxonomy để chọn categoryId, riêng với nhóm chủ đề hoặc nguồn
 hiển thị ở client. Xem [hợp đồng Template](docs/TEMPLATE_API.md).
+
+Catalog dùng `GET /templates?projection=summary&contentFormat=erusentia-template-html&schemaVersion=1`.
+Response không chứa `contentJson`/HTML; PostgreSQL chỉ chọn metadata cần thiết.
+Filter format/schema áp trước count/pagination. Bỏ `projection` vẫn giữ list full
+để tương thích; detail GET theo ID không đổi. Các endpoint này vẫn cần JWT.
+
+Client browser dev dùng `VITE_ERU_API_BASE_URL`; Electron main dùng `ERU_API_BASE_URL`.
+URL hiện là origin, chưa có `/api/v1`. Browser chỉ lưu phiên trong memory; Electron
+giữ token trong main process trong lần mở App. Chưa có remember login bền vững.
+Ví dụ chạy với DB project đã chuẩn bị:
+
+```bash
+DB_DATABASE=eru_project_local pnpm dev
+```
+
+Kiểm thử foundation trên DB mới/rỗng `project_test_*` dùng
+`RUN_FOUNDATION_TESTS=1 DB_DATABASE=project_test_new pnpm test:foundation`; suite
+kiểm tra từ chối schema không được theo dõi, rollback/resume, migration đồng thời,
+checksum/seed và catalog memory/PostgreSQL. Không reset DB có dữ liệu.
 
 `pnpm test:project` là suite opt-in bật auth/PostgreSQL/RabbitMQ/SMTP local/Redis
 cùng nhau, cần `RUN_PROJECT_TESTS=1` và DB rỗng `project_test_*`. Xem

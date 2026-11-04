@@ -3,9 +3,10 @@
 ## Phạm vi
 
 NestJS/TypeORM/PostgreSQL tuần 3 được mở rộng bằng RabbitMQ và worker TypeScript.
-App chưa tích hợp API. Use case: tài khoản đăng ký thành công nhận welcome email
+Client đã ghép tài khoản ở C0–C1. Use case: tài khoản đăng ký thành công nhận welcome email
 qua Mailpit local. Không có email verification, không gọi dịch vụ gửi email ngoài.
-API không đổi response/endpoint; Swagger vẫn 11 operation.
+API không đổi response/endpoint do queue; Swagger ở mốc tuần 4 có 11 operation,
+hiện có 12 sau bổ sung category discovery.
 
 `QUEUE_ENABLED=false` mặc định giữ flow tuần 3. Khi bật phải dùng PostgreSQL và áp
 `sql/06_message_queue.sql` sau auth. Không tự migrate; memory + queue bị từ chối.

@@ -6,8 +6,9 @@ import type { WelcomeMailer } from "./welcome-repository";
 export class LocalWelcomeMailer implements WelcomeMailer {
   private readonly transport;
   constructor(config: AppConfig["queue"]) {
-    // Local Mailpit only. External SMTP authentication/TLS needs a separate deployment design.
-    if (!["127.0.0.1", "localhost", "::1"].includes(config.smtpHost))
+    // Loopback or the exact Mailpit service in our private Compose network.
+    // Arbitrary SMTP hosts still require a separate authentication/TLS design.
+    if (!["127.0.0.1", "localhost", "::1", "mailpit"].includes(config.smtpHost))
       throw new Error("WELCOME_SMTP_MUST_BE_LOCAL_MAILPIT");
     this.transport = createTransport({
       host: config.smtpHost,

@@ -1,7 +1,8 @@
 # Hợp đồng Template với App hiện tại
 
 Đối chiếu model App ngày 03/11/2026; bổ sung auth/category/CORS ngày 04/11/2026. App hiện dùng
-template HTML từ cấu hình/localStorage, chưa gọi API này. Server kiểm chứng HTTP/DB; tích hợp và render
+template HTML từ cấu hình/localStorage, chưa gọi Template API này; tài khoản đã
+được ghép riêng ở C0–C1. Server kiểm chứng HTTP/DB; tích hợp và render
 template qua API trên App nằm ngoài phạm vi kiểm thử hiện tại.
 
 ## Phân biệt mô hình lưu trữ và mô hình giao diện

@@ -34,7 +34,19 @@
     "test:cache": "pnpm build && node --test test/cache.integration.test.cjs",
     "cache:types": "node --require ts-node/register scripts/redis-types.ts",
     "cache:benchmark": "node --require ts-node/register scripts/benchmark-cache.ts",
-    "test:project": "pnpm build && node --test test/project-stack.integration.test.cjs"
+    "test:project": "pnpm build && node --test test/project-stack.integration.test.cjs",
+    "project:migrate": "node --require ts-node/register scripts/project-db.ts migrate",
+    "project:seed": "node --require ts-node/register scripts/project-db.ts seed",
+    "test:foundation": "pnpm build && node --test test/foundation*.test.cjs",
+    "project:seed:demo": "node --require ts-node/register scripts/project-db.ts demo",
+    "stack:up": "node scripts/project-stack.mjs up",
+    "stack:down": "node scripts/project-stack.mjs down",
+    "stack:status": "node scripts/project-stack.mjs status",
+    "stack:logs": "node scripts/project-stack.mjs logs",
+    "stack:seed": "node scripts/project-stack.mjs seed",
+    "stack:config": "node scripts/project-stack.mjs config",
+    "test:demo": "pnpm build && node --test --test-isolation=none test/project-demo.test.cjs",
+    "stack:stop": "node scripts/project-stack.mjs stop"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",

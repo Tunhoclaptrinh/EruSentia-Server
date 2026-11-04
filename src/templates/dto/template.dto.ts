@@ -116,6 +116,36 @@ export class UpdateTemplateDto extends PartialType(CreateTemplateDto, {
 
 export class QueryTemplatesDto {
   @ApiPropertyOptional({
+    enum: ["full", "summary"],
+    default: "full",
+    description:
+      "summary omits HTML/contentJson; detail remains available by ID.",
+  })
+  @IsIn(["full", "summary"])
+  projection: "full" | "summary" = "full";
+
+  @ApiPropertyOptional({ maxLength: 64, example: "erusentia-template-html" })
+  @ValidateIf(absent)
+  @IsString()
+  @Length(1, 64)
+  contentFormat?: string;
+
+  @ApiPropertyOptional({
+    type: "integer",
+    minimum: 1,
+    maximum: 10000,
+    example: 1,
+  })
+  @ValidateIf(absent)
+  @Transform(({ value }) =>
+    typeof value === "string" && /^[0-9]+$/.test(value) ? Number(value) : value,
+  )
+  @IsInt()
+  @Min(1)
+  @Max(10000)
+  schemaVersion?: number;
+
+  @ApiPropertyOptional({
     type: "integer",
     minimum: 1,
     maximum: 10000,

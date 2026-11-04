@@ -52,6 +52,28 @@ export class PostgresTemplateStore implements TemplateStore {
       });
     if (input.isPublic !== undefined)
       query.andWhere("t.isPublic = :public", { public: input.isPublic });
+    if (input.contentFormat !== undefined)
+      query.andWhere("t.content_json ->> 'format' = :contentFormat", {
+        contentFormat: input.contentFormat,
+      });
+    if (input.schemaVersion !== undefined)
+      query.andWhere(
+        "t.content_json -> 'schemaVersion' = to_jsonb(CAST(:schemaVersion AS integer))",
+        { schemaVersion: input.schemaVersion },
+      );
+    if (input.projection === "summary") {
+      // Never transfer large HTML from PostgreSQL for a catalog request.
+      query.select(
+        this.templates.metadata.columns
+          .filter((column) => column.propertyName !== "contentJson")
+          .map((column) => `t.${column.propertyName}`),
+      );
+      query.addSelect("category");
+      query.addSelect(
+        "jsonb_build_object('format', t.content_json -> 'format', 'schemaVersion', t.content_json -> 'schemaVersion')",
+        "catalog_content_meta",
+      );
+    }
     if (input.tag)
       query.andWhere("t.tags @> :tags::text[]", { tags: [input.tag] });
     if (input.search) {
@@ -68,6 +90,20 @@ export class PostgresTemplateStore implements TemplateStore {
       .addOrderBy("t.id", direction)
       .skip((input.page - 1) * input.size)
       .take(input.size);
+    if (input.projection === "summary") {
+      const total = await query.getCount();
+      const { entities, raw } = await query.getRawAndEntities();
+      const metadata = new Map(
+        raw.map((row) => [row.t_id, row.catalog_content_meta]),
+      );
+      return pageOf(
+        entities.map((row) =>
+          this.project({ ...row, contentJson: metadata.get(row.id) }),
+        ),
+        total,
+        input,
+      );
+    }
     const [rows, total] = await query.getManyAndCount();
     return pageOf(
       rows.map((row) => this.project(row)),

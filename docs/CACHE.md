@@ -5,7 +5,8 @@
 GET /templates/:id dùng cache-aside khi CACHE_ENABLED=true. PostgreSQL là nguồn sự
 thật; chỉ cache projection public có HTML/JSON. Không cache private, user/session/
 JWT/refresh token, list hoặc errors. Body API giữ nguyên; thêm header X-Cache.
-App chưa tích hợp API. Redis client 5.12.1 được chọn để phù hợp TypeORM 0.3.31.
+Client hiện tích hợp tài khoản, chưa mở luồng đọc template cộng đồng. Redis client
+5.12.1 được chọn để phù hợp TypeORM 0.3.31.
 
 Compose cache riêng chạy Redis 8.10.3, localhost:6379, 128 MB/allkeys-lru, tắt RDB/AOF.
 Chỉ dành dev local; chưa ACL/TLS/cluster. API không dùng Redis để thay PostgreSQL auth.

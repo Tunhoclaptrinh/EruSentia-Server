@@ -93,6 +93,10 @@ nạp schema/auth/cache. db:fresh nay chạy thêm migration 07 và vẫn xóa t
 
 ## Kiểm thử stack project
 
+Đối với DB dev tách riêng, dùng [quy trình project:migrate/project:seed](../README.md#database-riêng-cho-project-c0c1).
+Journal không tự nhận database thực hành đã có bảng. Catalog nhẹ và các bộ lọc
+format/schema được mô tả trong [Template API](TEMPLATE_API.md#catalog-summary--đợt-c0c1).
+
 Suite bật auth/PostgreSQL/RabbitMQ/SMTP local/Redis cùng lúc. Chạy trên DB mới/rỗng,
 có tên `project_test_*`; nếu tên đã tồn tại, chọn tên mới thay vì reset DB.
 

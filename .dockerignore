@@ -1,0 +1,13 @@
+*
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!tsconfig.json
+!src/
+!src/**
+!scripts/
+!scripts/**
+!sql/
+!sql/**
+!docker/
+!docker/project-entrypoint.sh

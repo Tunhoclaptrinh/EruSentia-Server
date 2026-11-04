@@ -11,7 +11,11 @@ import {
   UpdateTemplateDto,
 } from "./dto/template.dto";
 import { TemplateCache } from "../cache/template-cache";
-import { TEMPLATE_STORE, TemplateStore } from "./template-store";
+import {
+  TEMPLATE_STORE,
+  TemplateStore,
+  summarizeTemplate,
+} from "./template-store";
 import type { UserIdentity } from "../auth/auth-store";
 
 @Injectable()
@@ -23,8 +27,11 @@ export class TemplatesService {
   read(id: string, viewer: UserIdentity) {
     return this.cache.read(id, viewer, () => this.store.find(id));
   }
-  list(query: QueryTemplatesDto, viewer: UserIdentity) {
-    return this.store.list(query, viewer);
+  async list(query: QueryTemplatesDto, viewer: UserIdentity) {
+    const page = await this.store.list(query, viewer);
+    return query.projection === "summary"
+      ? { ...page, data: page.data.map(summarizeTemplate) }
+      : page;
   }
   async find(id: string, viewer: UserIdentity) {
     const row = await this.store.find(id);
