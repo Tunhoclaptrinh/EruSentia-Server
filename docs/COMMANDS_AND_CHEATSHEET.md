@@ -91,17 +91,28 @@ DB_DATABASE=week5_test_local pnpm cache:benchmark
 nạp schema/auth/cache. db:fresh nay chạy thêm migration 07 và vẫn xóa toàn schema.
 [Hướng dẫn cache](CACHE.md). Không dùng db:fresh trên dữ liệu cần giữ.
 
-## Chuẩn bị project
+## Kiểm thử stack project
 
-`GET /categories` dùng Bearer JWT để lấy category ID. `CORS_ORIGINS` cấu hình danh
-sách origin web chính xác, không dùng `*`/`null`. Kiểm thử stack chung trên DB mới:
+Suite bật auth/PostgreSQL/RabbitMQ/SMTP local/Redis cùng lúc. Chạy trên DB mới/rỗng,
+có tên `project_test_*`; nếu tên đã tồn tại, chọn tên mới thay vì reset DB.
 
 ```bash
+docker compose -f docker/docker-compose.dev.yml up -d --wait
+docker compose -f docker/docker-compose.queue.yml up -d --wait
+docker compose -f docker/docker-compose.cache.yml up -d --wait
+
 docker exec sentia_postgres_dev createdb -U postgres project_test_local
-RUN_PROJECT_TESTS=1 DB_DATABASE=project_test_local pnpm test:project
+RUN_PROJECT_TESTS=1 DB_HOST=127.0.0.1 DB_PORT=5432 DB_USERNAME=postgres \
+  DB_PASSWORD=postgres_dev_password DB_DATABASE=project_test_local pnpm test:project
+# Dọn đúng DB vừa tạo sau khi test đóng kết nối và đã xem kết quả:
 docker exec sentia_postgres_dev dropdb -U postgres project_test_local
 ```
 
-Cần PostgreSQL, RabbitMQ, Mailpit và Redis dev đang chạy; DB_* phải trỏ đúng máy.
-Suite không reset DB có sẵn và tự dọn namespace/email của mình; người chạy dọn DB
-vừa tạo sau khi test đóng kết nối. [Hướng dẫn đầy đủ](PROJECT_INTEGRATION.md).
+Đối chiếu DB_* trước khi chạy. Suite nạp SQL 01/02/03/05/06/07, không gọi seed
+benchmark; kiểm tra 12 bảng, JWT/categories/Template, MISS/HIT/private, welcome email,
+refresh/logout. [Mã kiểm thử](../test/project-stack.integration.test.cjs) tự dọn đúng
+namespace RabbitMQ/Redis, email thử và đóng API/worker; người chạy dọn DB riêng.
+Không xóa mailbox/vhost chung hoặc Docker volume. Kết quả lượt chuẩn bị: 5/5 pass,
+gồm parent và 4 subtest; suite mặc định skip nếu chưa bật RUN_PROJECT_TESTS.
+
+Category API và CORS: [hướng dẫn kết nối client](../README.md#chuẩn-bị-project--kết-nối-client).

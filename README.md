@@ -103,7 +103,7 @@ Mở **http://127.0.0.1:3001/docs**, JSON ở **/docs-json**. Thứ tự thực 
 
 1. Register → login bằng Try it out.
 2. Sao chép `accessToken` vào **Authorize**, chỉ dán token, không thêm chữ Bearer.
-3. Gọi `/auth/me`, tạo/đọc/sửa/xóa template; không gửi authorId trong body.
+3. Gọi `/auth/me`, lấy danh mục từ `/categories`, tạo/đọc/sửa/xóa template; không gửi authorId trong body.
 4. Refresh bằng token mới nhất; cập nhật Authorize bằng access token vừa nhận.
 5. Logout bằng refresh token; request protected tiếp theo trả 401.
 
@@ -227,14 +227,24 @@ MFA, cookie/CSRF flow, quản lý phiên qua UI hay kiểm thử tải. Chưa t�
 
 CORS development mặc định cho `http://localhost:5173` và `http://127.0.0.1:5173`;
 production mặc định không mở cross-origin. Đặt `CORS_ORIGINS` bằng danh sách origin
-HTTP(S) chính xác khi cần; không dùng wildcard/null origin. Client dùng Bearer JWT,
-chưa có cookie flow. `GET /categories` trả taxonomy để chọn categoryId, riêng với
-nhóm chủ đề hoặc nguồn hiển thị ở client.
+HTTP(S) phân cách bằng dấu phẩy; giá trị rỗng tắt cross-origin. Origin được chuẩn hóa
+và bỏ trùng; không nhận wildcard/null/file origin, credentials, path, query hoặc
+fragment. Dấu `/` cuối origin được chấp nhận. Host/port khác nhau là origin khác nhau.
+
+Cho phép GET/POST/PATCH/DELETE/OPTIONS với Authorization/Content-Type; expose X-Cache
+và WWW-Authenticate, không bật credentials/cookie. Preflight hợp lệ trả 204. Origin
+ngoài danh sách không nhận allow-origin; CORS không thay JWT hoặc kiểm tra quyền.
+Swagger cùng origin và CLI không cần CORS. Electron packaged cần transport riêng,
+không allow `Origin:null` đại trà hoặc tắt web security để kết nối.
+
+`GET /categories` trả taxonomy để chọn categoryId, riêng với nhóm chủ đề hoặc nguồn
+hiển thị ở client. Xem [hợp đồng Template](docs/TEMPLATE_API.md).
 
 `pnpm test:project` là suite opt-in bật auth/PostgreSQL/RabbitMQ/SMTP local/Redis
 cùng nhau, cần `RUN_PROJECT_TESTS=1` và DB rỗng `project_test_*`. Xem
-[chuẩn bị tích hợp](docs/PROJECT_INTEGRATION.md) để chạy/dọn và đọc các phần còn
-thiếu: dữ liệu HTML project, summary list, chống ghi đè và cô lập HTML ở client.
+[lệnh chạy và dọn](docs/COMMANDS_AND_CHEATSHEET.md#kiểm-thử-stack-project).
+Kế hoạch chung ở `week-6/PROJECT_PLAN.md` của [TYP](https://github.com/Tunhoclaptrinh/trainning-typ-2026),
+nhánh `week-6-project-plan`: DB project/HTML, summary list, chống ghi đè và cô lập HTML.
 
 ## Cấu trúc và tài liệu
 

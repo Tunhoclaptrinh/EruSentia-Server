@@ -76,7 +76,7 @@ tuần 2 xác nhận chuỗi Unicode, HTML lớn và metadata được bảo to�
 
 Trước tích hợp cần runner cô lập cho HTML không tin cậy, auth client, summary list/
 filter format và điều kiện chống ghi đè. Không tự cập nhật nội dung đã chèn vào note
-khi bản remote thay đổi. Xem [chuẩn bị project](PROJECT_INTEGRATION.md); chi tiết
+khi bản remote thay đổi. Xem [kết nối client](../README.md#chuẩn-bị-project--kết-nối-client); chi tiết
 triển khai App và ranh giới thực thi giữ trong tài liệu nội bộ của App.
 
 ## Nguồn đối chiếu local

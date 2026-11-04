@@ -58,7 +58,9 @@ UUIDv4 để hỗ trợ seed tuần 1 (`a000...`, `c000...`). Những cách vi�
 PostgreSQL chấp nhận, như bỏ dấu gạch nối hoặc thêm ngoặc nhọn, không thuộc input API.
 
 Category cần tồn tại; lấy danh mục bằng `GET /categories` có JWT trước khi tạo.
-Response gồm id/name/slug/icon/description/displayOrder, không có mutation category.
+Response là mảng id/name/slug/icon/description/displayOrder, description có thể null;
+PostgreSQL sắp theo display_order rồi id. Không có mutation category; response dùng
+Cache-Control:no-store. Thiếu token trả 401 như các route protected khác.
 Tác giả lấy từ tài khoản JWT đang active/chưa soft-delete.
 Memory có hai category mẫu; tài khoản tạo qua register. Gửi authorId trong body trả
 400. User/creator chỉ sửa/xóa của mình; admin được quản lý mọi template.
@@ -133,6 +135,11 @@ cache cũ. PATCH/DELETE đổi revision và xóa key cũ. Không cache danh sác
 ## Chuẩn bị project
 
 `version` hiện chưa ngăn hai PATCH từ dữ liệu cũ cùng thành công. Chống ghi đè,
-history và summary list/filter format được đưa vào [kế hoạch tích hợp](PROJECT_INTEGRATION.md).
-Không dùng cache revision hoặc version string như concurrency protocol khi API
-chưa kiểm tra điều kiện đó. App chưa tích hợp API, server không chứng nhận HTML an toàn.
+history và summary list/filter format nằm trong `week-6/PROJECT_PLAN.md` của
+[TYP](https://github.com/Tunhoclaptrinh/trainning-typ-2026), nhánh `week-6-project-plan`.
+Worker welcome hiện route REGISTERED cho outbox; phải phân loại event trước khi thêm
+template event. Chưa có `/api/v1` hoặc API ratings/forks/notifications.
+
+Không dùng cache revision hoặc version string như concurrency protocol khi API chưa
+kiểm tra điều kiện đó. App chưa tích hợp API; yêu cầu cô lập HTML ở
+[hợp đồng client](APP_TEMPLATE_CONTRACT.md).
