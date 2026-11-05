@@ -73,11 +73,11 @@ eru_host() {
     --env-file docker/.env.hosted.local --project-name erusentia-hosted \
     -f docker/compose.project.yml -f docker/compose.hosted.yml "$@"
 }
-eru_host config --quiet
-eru_host build api
-eru_host up -d --wait postgres
-eru_host run --rm --no-deps setup
-eru_host up -d --no-build --wait --wait-timeout 180
+eru_host config --quiet &&
+eru_host build api &&
+eru_host up -d --wait postgres &&
+eru_host run --rm --no-deps setup &&
+eru_host up -d --no-build --wait --wait-timeout 180 &&
 eru_host ps
 ```
 
@@ -90,8 +90,9 @@ Không có sẵn tài khoản admin/creator trên hosted demo; nếu cần quả
 
 Mailpit chỉ nhận thư demo trong mạng Docker, không gửi email ra Internet. Không
 coi đây là xác minh email hoặc SMTP production. Xem hộp thư qua SSH tunnel từ máy
-cá nhân: `ssh -L 8026:127.0.0.1:8026 ubuntu@IP_VM`, rồi mở
-`http://127.0.0.1:8026`. Không public giao diện Mailpit/RabbitMQ.
+cá nhân: `ssh -L 18026:127.0.0.1:8026 ubuntu@IP_VM`, rồi mở
+`http://127.0.0.1:18026`. Cổng local 18026 tránh trùng Mailpit của stack dev ở
+8026; giữ cửa sổ SSH đang chạy khi xem hộp thư. Không public giao diện Mailpit/RabbitMQ.
 
 ## 3. Kiểm tra và nối App
 
