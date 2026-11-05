@@ -28,7 +28,9 @@ docker run -d --name "$test_container" \
   'cp /test-tls/server.crt /test-tls/server.key /tmp/; chown postgres:postgres /tmp/server.*; chmod 600 /tmp/server.key; exec docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/tmp/server.crt -c ssl_key_file=/tmp/server.key' >/dev/null
 test_ready=false
 for _ in $(seq 1 60); do
-  if docker exec "$test_container" pg_isready -U postgres >/dev/null 2>&1; then
+  # The initdb temporary server accepts Unix sockets before restarting. Wait for
+  # the final TCP listener so createdb/tests cannot race that shutdown on CI.
+  if docker exec "$test_container" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
     test_ready=true
     break
   fi
