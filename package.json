@@ -47,7 +47,8 @@
     "stack:seed": "node scripts/project-stack.mjs seed",
     "stack:config": "node scripts/project-stack.mjs config",
     "test:demo": "pnpm build && node --test --test-isolation=none test/project-demo.test.cjs",
-    "stack:stop": "node scripts/project-stack.mjs stop"
+    "stack:stop": "node scripts/project-stack.mjs stop",
+    "project:seed:community": "node --require ts-node/register scripts/seed-community.ts"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",

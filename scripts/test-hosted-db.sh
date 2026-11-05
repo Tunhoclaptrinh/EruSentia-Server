@@ -41,6 +41,7 @@ if [ "$test_ready" != true ]; then
   exit 1
 fi
 docker exec "$test_container" createdb -U postgres project_test_hosted
+docker exec "$test_container" createdb -U postgres project_test_community
 export DB_HOST=localhost
 export DB_PORT=$(docker port "$test_container" 5432/tcp | sed 's/.*://')
 export DB_USERNAME=postgres DB_PASSWORD=ci-only-disposable-password
@@ -49,3 +50,5 @@ export NODE_EXTRA_CA_CERTS="$test_tls_dir/ca.crt"
 export QUEUE_ENABLED=false CACHE_ENABLED=false
 export RUN_FOUNDATION_TESTS=1 RUN_HOSTED_TESTS=1
 node --test test/foundation-api.test.cjs test/hosted-startup.test.cjs
+
+DB_DATABASE=project_test_community RUN_COMMUNITY_TESTS=1 node --test test/community-demo.test.cjs

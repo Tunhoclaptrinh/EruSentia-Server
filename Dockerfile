@@ -18,6 +18,7 @@ COPY --from=dependencies --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --chown=node:node package.json ./
 COPY --chown=node:node sql ./sql
+COPY --chown=node:node tools/community ./tools/community
 COPY --chown=node:node docker/project-entrypoint.sh ./docker/project-entrypoint.sh
 USER node
 EXPOSE 3001

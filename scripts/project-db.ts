@@ -1,3 +1,4 @@
+import { seedCommunityDemo } from "../src/infrastructure/database/community-demo";
 import { seedProjectDemo } from "../src/infrastructure/database/project-demo";
 import { dbPool } from "../src/infrastructure/database/postgres";
 import {
@@ -34,6 +35,8 @@ async function main() {
         applied: await migrateProject(dbPool),
         fixtures: await seedProject(dbPool),
       });
+      if (process.env.PROJECT_COMMUNITY_DEMO !== "false")
+        console.log(await seedCommunityDemo(dbPool));
       if (process.env.PROJECT_DEMO_ACCOUNTS === "true")
         console.log(await seedProjectDemo(dbPool));
       break;
