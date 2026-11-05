@@ -225,3 +225,6 @@ validator.validateAndReport('React Dashboard Starter Kit');
 
 console.log('\n' + '='.repeat(60));
 console.log('✅ All OOP demos completed successfully!');
+
+// Keep this standalone demo out of the global TypeScript namespace.
+export {};

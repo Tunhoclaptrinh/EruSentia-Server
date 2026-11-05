@@ -44,3 +44,8 @@ coverage/
 .tools/
 .private-planning/
 
+
+# Generated project development configuration (stable local JWT secret)
+/docker/.env.project.local
+!/docker/.env.project.example
+!/docker/.env.hosted.example

@@ -1,0 +1,146 @@
+# Project development stack. Independent from the week-1/4/5 Docker stacks.
+x-backend: &backend
+  image: ${PROJECT_COMPOSE_NAME:-erusentia-project}-server
+  build:
+    context: .
+    dockerfile: Dockerfile
+  environment: &backend-env
+    NODE_ENV: development
+    HOST: 0.0.0.0
+    PORT: 3001
+    TEMPLATE_STORE: postgres
+    SWAGGER_ENABLED: "true"
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_USERNAME: eru
+    DB_PASSWORD: ${PROJECT_DB_PASSWORD:-eru_project_dev_password}
+    DB_DATABASE: eru_project_docker
+    JWT_SECRET: ${PROJECT_JWT_SECRET:?Use pnpm stack:up to initialize the local config}
+    PROJECT_DEMO_ACCOUNTS: "true"
+    QUEUE_ENABLED: "true"
+    AMQP_URL: amqp://eru:${PROJECT_RABBIT_PASSWORD:-eru_project_queue_password}@rabbitmq:5672
+    QUEUE_NAMESPACE: eru_project
+    SMTP_HOST: mailpit
+    SMTP_PORT: 1025
+    CACHE_ENABLED: "true"
+    REDIS_URL: redis://redis:6379
+    CACHE_NAMESPACE: eru_project
+    CORS_ORIGINS: ${PROJECT_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+  init: true
+  restart: unless-stopped
+  logging:
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: eru
+      POSTGRES_PASSWORD: ${PROJECT_DB_PASSWORD:-eru_project_dev_password}
+      POSTGRES_DB: eru_project_docker
+    ports: ["127.0.0.1:${PROJECT_POSTGRES_PORT:-5433}:5432"]
+    volumes: [project_postgres:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U eru -d eru_project_docker"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:4.4.0-management
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: eru
+      RABBITMQ_DEFAULT_PASS: ${PROJECT_RABBIT_PASSWORD:-eru_project_queue_password}
+    ports:
+      - "127.0.0.1:${PROJECT_AMQP_PORT:-5673}:5672"
+      - "127.0.0.1:${PROJECT_RABBIT_UI_PORT:-15673}:15672"
+    volumes: [project_rabbit:/var/lib/rabbitmq]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+  redis:
+    image: redis:8.10.3-alpine
+    ports: ["127.0.0.1:${PROJECT_REDIS_PORT:-6380}:6379"]
+    command:
+      [
+        redis-server,
+        --maxmemory,
+        128mb,
+        --maxmemory-policy,
+        allkeys-lru,
+        --save,
+        "",
+        --appendonly,
+        "no",
+      ]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    ports:
+      - "127.0.0.1:${PROJECT_SMTP_PORT:-1026}:1025"
+      - "127.0.0.1:${PROJECT_MAIL_UI_PORT:-8026}:8025"
+    restart: unless-stopped
+  api:
+    <<: *backend
+    ports: ["127.0.0.1:${PROJECT_API_PORT:-3001}:3001"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      mailpit: { condition: service_started }
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3001/auth/me',{signal:AbortSignal.timeout(3000)}).then(r=>process.exit(r.status===401?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 20
+  worker:
+    <<: *backend
+    environment:
+      <<: *backend-env
+      WORKER_READY_FILE: /tmp/erusentia-worker-ready
+    command: [node, dist/src/messaging/worker.js]
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "process.exit(require('node:fs').existsSync('/tmp/erusentia-worker-ready')?0:1)",
+        ]
+      interval: 5s
+      timeout: 3s
+      start_period: 15s
+      retries: 20
+    depends_on:
+      api: { condition: service_healthy }
+  setup:
+    <<: *backend
+    profiles: [tools]
+    restart: "no"
+    environment:
+      <<: *backend-env
+      PROJECT_BOOTSTRAP: "false"
+    command: [node, dist/scripts/project-db.js, bootstrap]
+    depends_on:
+      postgres: { condition: service_healthy }
+volumes:
+  project_postgres:
+  project_rabbit:

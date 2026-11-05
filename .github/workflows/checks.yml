@@ -1,0 +1,26 @@
+name: Backend checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+      - uses: pnpm/action-setup@v6
+        with:
+          cache: true
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - name: Validate hosted Compose configuration
+        run: |
+          PROJECT_DB_PASSWORD=ci-only-db-password PROJECT_RABBIT_PASSWORD=ci-only-queue-password PROJECT_JWT_SECRET=ci-only-secret-at-least-32-bytes-long HOSTED_API_DOMAIN=api.example.com \
+            docker compose --project-directory "$PWD" --profile tools -f docker/compose.project.yml -f docker/compose.hosted.yml config --quiet

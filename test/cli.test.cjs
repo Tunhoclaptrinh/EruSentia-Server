@@ -11,15 +11,18 @@ const env = {
   DB_USERNAME: "cli_test",
   DB_PASSWORD: "unused",
   DB_DATABASE: "cli_test",
+  TEMPLATE_STORE: "postgres",
+  ADMIN_EMAIL: "",
+  ADMIN_PASSWORD: "",
 };
 
-function run(script, args = []) {
+function run(script, args = [], extraEnv = {}) {
   const result = spawnSync(
     process.execPath,
     ["--import", "tsx", script, ...args],
     {
       cwd: root,
-      env,
+      env: { ...env, ...extraEnv },
       encoding: "utf8",
       timeout: 10_000,
     },
@@ -31,13 +34,19 @@ function run(script, args = []) {
 }
 
 test("database check fails and exits when PostgreSQL is unavailable", () => {
-  const output = run("src/main.ts");
+  const output = run("scripts/check-db.ts");
   assert.match(output, /Database check failed/);
   assert.doesNotMatch(output, /Server ready|listening on port/);
 });
 
 test("SQL runner rejects a missing argument before connecting", () => {
   assert.match(run("scripts/run-sql.ts"), /Please specify the SQL file path/);
+});
+
+test("HTTP API startup fails and exits when PostgreSQL is unavailable", () => {
+  const output = run("dist/src/main.js");
+  assert.match(output, /API startup failed/);
+  assert.doesNotMatch(output, /Template API .* listening at/);
 });
 
 test("SQL runner rejects a nonexistent file before connecting", () => {
@@ -60,4 +69,24 @@ test("benchmark propagates connection failure", () => {
 
 test("seed propagates connection failure", () => {
   assert.match(run("scripts/seed.ts"), /Seeding failed/);
+});
+
+test("admin provisioning rejects missing credentials without opening a database", () => {
+  assert.match(run("dist/scripts/create-admin.js"), /Set ADMIN_EMAIL/);
+});
+
+test("admin provisioning propagates DB failure without printing the password", () => {
+  const password = "LearningPass!2026";
+  const output = run("dist/scripts/create-admin.js", [], {
+    ADMIN_EMAIL: "admin@example.test",
+    ADMIN_PASSWORD: password,
+  });
+  assert.match(output, /Admin creation failed/);
+  assert(!output.includes(password));
+});
+
+test("welcome worker rejects disabled queue configuration before connecting", () => {
+  const output = run("src/messaging/worker.ts", [], { QUEUE_ENABLED: "false" });
+  assert.match(output, /Welcome worker startup failed/);
+  assert.doesNotMatch(output, /worker ready|amqp:\/\//);
 });

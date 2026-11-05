@@ -1,0 +1,14 @@
+# Optional week-5 cache; disposable data, independent of PostgreSQL/RabbitMQ storage.
+services:
+  redis:
+    image: redis:8.10.3-alpine
+    container_name: sentia_redis_dev
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 15

@@ -14,23 +14,29 @@ Chạy các lệnh dưới đây từ thư mục gốc của repo `EruSentia-Ser
 | `pnpm db:schema` | Tạo 9 bảng nghiệp vụ bằng `sql/01_schema.sql` |
 | `pnpm db:indexes` | Tạo các index bằng `sql/02_indexes.sql` |
 | `pnpm db:seed` | Nạp seed và 1.000 template benchmark trong một transaction |
+| `pnpm db:auth` | Áp dụng migration bổ sung refresh sessions và index email cho tuần 3 |
 | `pnpm db:benchmark` | In execution plan cho truy vấn danh sách và full-text search |
 
-`pnpm db:reset` xóa các bảng của dự án. `pnpm db:fresh` chạy reset, schema, indexes và seed. Chỉ dùng các lệnh reset trên database phát triển có thể xóa dữ liệu.
+`pnpm db:reset` xóa schema public và các đối tượng bên trong. `pnpm db:fresh` chạy
+reset, schema, indexes, seed, db:auth, db:queue và db:cache. Chỉ dùng trên database có thể xóa dữ liệu.
 
 ## Build và demo
 
 | Lệnh | Công dụng |
 |---|---|
 | `pnpm typecheck` | Kiểm tra TypeScript của source và scripts |
-| `pnpm test` | Kiểm tra lỗi đầu vào, lỗi kết nối và exit code của các CLI |
+| `pnpm test` | Build, kiểm tra CLI và HTTP contract memory; DB test skip nếu chưa bật |
+| `pnpm test:auth` | Kiểm thử JWT, quyền sở hữu và refresh rotation bằng memory |
+| `pnpm auth:admin` | Tạo admin mới từ ADMIN_EMAIL/ADMIN_PASSWORD; không ghi đè tài khoản |
 | `pnpm build` | Biên dịch source và scripts vào `dist/` |
-| `pnpm start` | Chạy `dist/src/main.js` để kiểm tra database |
-| `pnpm dev` | Theo dõi thay đổi và chạy lại kiểm tra database |
+| `pnpm start` | Khởi động HTTP API tại localhost:3001, mặc định dùng TypeORM/PostgreSQL |
+| `pnpm dev` | Theo dõi source TypeScript và khởi động lại NestJS HTTP API |
 | `pnpm demo:oop` | Chạy demo đóng gói, kế thừa, đa hình và trừu tượng |
 | `pnpm demo:di` | Chạy demo dependency injection và IoC container |
 
-Hiện chưa có HTTP listener, ORM adapter, ESLint hoặc Jest. Bộ kiểm thử CLI dùng test runner có sẵn của Node.js.
+Tuần 3 bổ sung JWT/ownership trên NestJS/TypeORM. Bộ kiểm thử CLI/HTTP dùng node:test.
+Xem [Template API](TEMPLATE_API.md), [Auth API](AUTHENTICATION.md) và README để chạy
+memory, DB integration và Swagger. Collection Postman giữ hợp đồng lịch sử tuần 2.
 
 ## Thực hành PostgreSQL
 
@@ -53,3 +59,64 @@ Bài này thêm 100.000 user benchmark và tạo `users_no_index`. Dùng databas
 [Báo cáo và lý thuyết tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/tree/typ-2026-week-1/week-1) được lưu tại repo TYP.
 
 Xem [bảng tham chiếu TYP](TRAINING_REFERENCES.md) để mở đúng bài Docker, Index, Transaction, OOP hoặc DI tương ứng.
+
+## Tuần 4 — welcome email qua RabbitMQ
+
+```bash
+docker compose -f docker/docker-compose.queue.yml up -d --wait
+pnpm db:queue
+QUEUE_ENABLED=true pnpm dev
+# Terminal khác, cùng DB_* và QUEUE_NAMESPACE:
+QUEUE_ENABLED=true pnpm worker:welcome
+# Chỉ dùng database mới/rỗng week4_test_*:
+RUN_QUEUE_TESTS=1 DB_DATABASE=week4_test_local pnpm test:queue
+```
+
+RabbitMQ UI `127.0.0.1:15672`, Mailpit UI `127.0.0.1:8025`. Đặt DB_* trước lệnh ghi.
+`db:fresh` nay chạy thêm migration queue sau auth và vẫn xóa toàn bộ schema hiện có.
+Không dùng trên dữ liệu cần giữ. [Hướng dẫn MQ](MESSAGE_QUEUE.md).
+
+## Tuần 5 — Redis cache
+
+```bash
+docker compose -f docker/docker-compose.cache.yml up -d --wait
+pnpm db:cache
+CACHE_ENABLED=true pnpm dev
+RUN_CACHE_TESTS=1 DB_DATABASE=week5_test_local pnpm test:cache
+pnpm cache:types
+DB_DATABASE=week5_test_local pnpm cache:benchmark
+```
+
+Đối chiếu DB_* trước lệnh ghi. Cache tests cần DB mới/rỗng, benchmark cần DB test đã
+nạp schema/auth/cache. db:fresh nay chạy thêm migration 07 và vẫn xóa toàn schema.
+[Hướng dẫn cache](CACHE.md). Không dùng db:fresh trên dữ liệu cần giữ.
+
+## Kiểm thử stack project
+
+Đối với DB dev tách riêng, dùng [quy trình project:migrate/project:seed](../README.md#database-riêng-cho-project-c0c1).
+Journal không tự nhận database thực hành đã có bảng. Catalog nhẹ và các bộ lọc
+format/schema được mô tả trong [Template API](TEMPLATE_API.md#catalog-summary--đợt-c0c1).
+
+Suite bật auth/PostgreSQL/RabbitMQ/SMTP local/Redis cùng lúc. Chạy trên DB mới/rỗng,
+có tên `project_test_*`; nếu tên đã tồn tại, chọn tên mới thay vì reset DB.
+
+```bash
+docker compose -f docker/docker-compose.dev.yml up -d --wait
+docker compose -f docker/docker-compose.queue.yml up -d --wait
+docker compose -f docker/docker-compose.cache.yml up -d --wait
+
+docker exec sentia_postgres_dev createdb -U postgres project_test_local
+RUN_PROJECT_TESTS=1 DB_HOST=127.0.0.1 DB_PORT=5432 DB_USERNAME=postgres \
+  DB_PASSWORD=postgres_dev_password DB_DATABASE=project_test_local pnpm test:project
+# Dọn đúng DB vừa tạo sau khi test đóng kết nối và đã xem kết quả:
+docker exec sentia_postgres_dev dropdb -U postgres project_test_local
+```
+
+Đối chiếu DB_* trước khi chạy. Suite nạp SQL 01/02/03/05/06/07, không gọi seed
+benchmark; kiểm tra 12 bảng, JWT/categories/Template, MISS/HIT/private, welcome email,
+refresh/logout. [Mã kiểm thử](../test/project-stack.integration.test.cjs) tự dọn đúng
+namespace RabbitMQ/Redis, email thử và đóng API/worker; người chạy dọn DB riêng.
+Không xóa mailbox/vhost chung hoặc Docker volume. Kết quả lượt chuẩn bị: 5/5 pass,
+gồm parent và 4 subtest; suite mặc định skip nếu chưa bật RUN_PROJECT_TESTS.
+
+Category API và CORS: [hướng dẫn kết nối client](../README.md#chuẩn-bị-project--kết-nối-client).

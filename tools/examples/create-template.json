@@ -1,0 +1,23 @@
+{
+  "categoryId": "c0000000-0000-0000-0000-000000000001",
+  "title": "Weekly learning planner",
+  "slug": "weekly-learning-planner-demo",
+  "description": "Reusable HTML planner for a learning week",
+  "contentJson": {
+    "format": "erusentia-template-html",
+    "schemaVersion": 1,
+    "html": "<section lang=\"vi\"><h2>Kế hoạch học tập</h2><p contenteditable=\"true\">Mục tiêu tuần này</p></section>",
+    "originId": "local-weekly-planner",
+    "guide": "Điền mục tiêu rồi chia nhỏ công việc theo ngày.",
+    "iconName": "CalendarOutlined",
+    "subjectCategory": "study",
+    "level": "semi",
+    "defaultWidth": "100%",
+    "defaultHeight": "auto",
+    "fitMode": "fit-page",
+    "aspectRatio": "auto",
+    "allowHeightResize": false
+  },
+  "tags": ["week2-demo", "study"],
+  "isPublic": false
+}

@@ -142,8 +142,35 @@ erDiagram
    ```
    *Mục đích:* Hỗ trợ truy vấn full-text search trên PostgreSQL; dùng EXPLAIN ANALYZE để kiểm tra execution plan và thời gian thực thi.
 
-Schema hiện có 9 bảng nghiệp vụ. Hai bảng `users_no_index` và `template_slots` xuất hiện trong ảnh thực hành là bảng phụ phục vụ bài học. Các chức năng HTTP, ORM, hàng đợi và phân quyền ứng dụng chưa được triển khai.
+Schema tuần 1 có 9 bảng nghiệp vụ. Tuần 3 thêm `auth_refresh_sessions` bằng
+`sql/05_auth_sessions.sql`, cùng unique index LOWER(email); tổng 10 bảng sau migration.
+Refresh session tham chiếu users, lưu token_hash, family_id, expires_at, used_at và
+revoked_at để rotation/revoke. Không lưu refresh token nguyên văn. Hai bảng lab
+`users_no_index`/`template_slots` trong ảnh tuần 1 không thuộc schema nghiệp vụ.
+NestJS/TypeORM dùng synchronize:false; JWT/RBAC/ownership ở [Auth API](AUTHENTICATION.md),
+CRUD ở [Template API](TEMPLATE_API.md). Hàng đợi chưa triển khai.
 
 [Báo cáo thực hành tuần 1](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/WEEK1_REPORT.md) nằm tại repo TYP.
 
 Lý thuyết chi tiết: [SQL cơ bản](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/02_sql_basics.md), [Index](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/03_index.md), [Locking](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/05_locking.md) và [Transaction](https://github.com/Tunhoclaptrinh/trainning-typ-2026/blob/typ-2026-week-1/week-1/docs/06_transaction.md).
+
+## Bổ sung tuần 4 — outbox và email ledger
+
+`sql/06_message_queue.sql` thêm 2 bảng, áp dụng thủ công sau migration auth:
+
+- `message_outbox`: id/event_type/payload/created_at/published_at. User và event
+  được commit chung khi đăng ký có bật queue; pending index chỉ lấy row chưa publish.
+- `welcome_email_deliveries`: event_id PK/FK outbox, user_id FK users, status
+  sent/skipped, message_id, processed_at. Ledger ngăn gửi lại các event đã commit.
+
+Đủ migration 05/06 thì có 12 bảng (9 nền + 1 auth + 2 queue). SQL schema/index/seed
+ban đầu giữ nguyên. Không tự migrate khi bootstrap và không dùng synchronize.
+SMTP nằm ngoài transaction DB, xem giới hạn gửi trùng trong [Message Queue](MESSAGE_QUEUE.md).
+
+## Tuần 5 — revision cho cache Template
+
+Migration 07 thêm cache_revision UUID vào templates và trigger BEFORE UPDATE sinh
+UUID mới, kể cả SQL update trực tiếp. Cột không được map/serialize vào HTTP DTO.
+Không thêm bảng; đủ migrations 05/06/07 vẫn có 12 bảng. Cache tests chỉ cần 05/07
+và queue tắt nên có 10 bảng. Visibility/revision được đọc từ DB trước cache lookup.
+Schema/index/seed và các migration tuần trước giữ nguyên. [Chi tiết cache](CACHE.md).
