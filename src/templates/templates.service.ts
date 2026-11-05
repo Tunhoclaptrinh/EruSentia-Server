@@ -17,6 +17,11 @@ import {
   summarizeTemplate,
 } from "./template-store";
 import type { UserIdentity } from "../auth/auth-store";
+import {
+  requireTemplateMatch,
+  templateEtag,
+  type RevisionsQueryDto,
+} from "./template-revisions";
 
 @Injectable()
 export class TemplatesService {
@@ -45,7 +50,12 @@ export class TemplatesService {
   create(input: CreateTemplateDto, viewer: UserIdentity) {
     return this.store.create({ ...input, authorId: viewer.id });
   }
-  async update(id: string, input: UpdateTemplateDto, viewer: UserIdentity) {
+  async update(
+    id: string,
+    input: UpdateTemplateDto,
+    viewer: UserIdentity,
+    match?: string,
+  ) {
     const current = await this.find(id, viewer);
     if (current.authorId !== viewer.id && viewer.role !== "admin")
       throw new ForbiddenException(
@@ -55,20 +65,74 @@ export class TemplatesService {
       throw new BadRequestException("At least one field must be provided");
     }
     const stamp = await this.cache.stamp(id);
-    const row = await this.store.update(id, input);
-    if (!row) throw new NotFoundException("Template not found");
+    const row = await this.store.update(
+      id,
+      input,
+      requireTemplateMatch(match),
+      viewer,
+    );
     await this.cache.invalidate(id, stamp);
     return row;
   }
-  async remove(id: string, viewer: UserIdentity) {
+  async remove(id: string, viewer: UserIdentity, match?: string) {
     const current = await this.find(id, viewer);
     if (current.authorId !== viewer.id && viewer.role !== "admin")
       throw new ForbiddenException(
         "Only the author or an admin can modify this template",
       );
     const stamp = await this.cache.stamp(id);
-    if (!(await this.store.remove(id)))
-      throw new NotFoundException("Template not found");
+    const row = await this.store.remove(
+      id,
+      requireTemplateMatch(match),
+      viewer,
+    );
     await this.cache.invalidate(id, stamp);
+    return row;
+  }
+  private async owned(id: string, viewer: UserIdentity) {
+    const row = await this.store.find(id, true);
+    if (!row || (row.authorId !== viewer.id && viewer.role !== "admin"))
+      throw new NotFoundException("Template not found");
+    return row;
+  }
+  async revisions(id: string, query: RevisionsQueryDto, viewer: UserIdentity) {
+    const row = await this.owned(id, viewer);
+    return {
+      ...(await this.store.revisions(id, query)),
+      templateId: id,
+      currentEtag: templateEtag(row),
+      deleted: !!row.deletedAt,
+    };
+  }
+  async revision(id: string, revision: number, viewer: UserIdentity) {
+    if (
+      !Number.isSafeInteger(revision) ||
+      revision < 1 ||
+      revision > 2147483647
+    )
+      throw new BadRequestException(
+        "Revision must be an integer from 1 to 2147483647",
+      );
+    await this.owned(id, viewer);
+    const row = await this.store.revision(id, revision);
+    if (!row) throw new NotFoundException("Revision not found");
+    return row;
+  }
+  async restore(
+    id: string,
+    revision: number,
+    viewer: UserIdentity,
+    match?: string,
+  ) {
+    await this.owned(id, viewer);
+    const stamp = await this.cache.stamp(id);
+    const row = await this.store.restore(
+      id,
+      revision,
+      requireTemplateMatch(match),
+      viewer,
+    );
+    await this.cache.invalidate(id, stamp);
+    return row;
   }
 }

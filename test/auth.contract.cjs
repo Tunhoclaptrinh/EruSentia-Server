@@ -1,3 +1,4 @@
+const { conditionalHeaders } = require("./conditional-headers.cjs");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { JwtService } = require("@nestjs/jwt");
@@ -27,10 +28,10 @@ async function authContract(t, mode) {
   async function request(method, route, expected, body, token) {
     const response = await fetch(base + route, {
       method,
-      headers: {
+      headers: await conditionalHeaders(base, method, route, {
         "content-type": "application/json",
         ...(token ? { authorization: `Bearer ${token}` } : {}),
-      },
+      }),
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
     const text = await response.text();
@@ -558,7 +559,12 @@ async function authContract(t, mode) {
       for (const id of createdIds)
         await fetch(`${base}/templates/${id}`, {
           method: "DELETE",
-          headers: { authorization: `Bearer ${adminPair.accessToken}` },
+          headers: await conditionalHeaders(
+            base,
+            "DELETE",
+            `/templates/${id}`,
+            { authorization: `Bearer ${adminPair.accessToken}` },
+          ),
         });
   }
   return { registeredId: alice?.id };

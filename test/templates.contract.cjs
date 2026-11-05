@@ -1,3 +1,4 @@
+const { conditionalHeaders } = require("./conditional-headers.cjs");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { readConfig } = require("../dist/src/config");
@@ -41,7 +42,7 @@ async function contract(t, store) {
   async function request(method, route, expected, body) {
     const response = await fetch(base + route, {
       method,
-      headers,
+      headers: await conditionalHeaders(base, method, route, headers),
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
     const text = await response.text();
@@ -371,7 +372,15 @@ async function contract(t, store) {
     });
   } finally {
     for (const id of ids)
-      await fetch(`${base}/templates/${id}`, { method: "DELETE", headers });
+      await fetch(`${base}/templates/${id}`, {
+        method: "DELETE",
+        headers: await conditionalHeaders(
+          base,
+          "DELETE",
+          `/templates/${id}`,
+          headers,
+        ),
+      });
   }
   return { ids, tag };
 }
