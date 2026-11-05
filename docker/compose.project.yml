@@ -17,6 +17,7 @@ x-backend: &backend
     DB_DATABASE: eru_project_docker
     JWT_SECRET: ${PROJECT_JWT_SECRET:?Use pnpm stack:up to initialize the local config}
     PROJECT_DEMO_ACCOUNTS: "true"
+    PROJECT_COMMUNITY_DEMO: "true"
     QUEUE_ENABLED: "true"
     AMQP_URL: amqp://eru:${PROJECT_RABBIT_PASSWORD:-eru_project_queue_password}@rabbitmq:5672
     QUEUE_NAMESPACE: eru_project

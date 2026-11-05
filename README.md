@@ -358,3 +358,8 @@ nhánh `week-6-project-plan`: DB project/HTML, summary list, chống ghi đè v�
 ITemplateRepository tuần 1 tách biệt TemplateStore dùng cho projection HTTP.
 [Thiết kế DB](docs/DATABASE_DESIGN.md) · [Lệnh thực hành](docs/COMMANDS_AND_CHEATSHEET.md) ·
 [Tài liệu TYP](docs/TRAINING_REFERENCES.md).
+
+## Nội dung cộng đồng cho demo
+
+[Bộ 14 mẫu HTML tương tác, seed local/Neon và kịch bản thử App](docs/COMMUNITY_DEMO.md).
+Seed nội dung không tạo tài khoản có thể đăng nhập, không reset dữ liệu và không áp dụng migration C3.

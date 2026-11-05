@@ -240,3 +240,10 @@ Nếu đổi password Neon, cập nhật Render Environment và redeploy có ch�
 Phương án này phục vụ demo/tích hợp. Full stack vẫn chạy bằng `pnpm stack:up` ở local;
 khi cần queue/worker/cache trên cloud, chọn VM hoặc cấu hình dịch vụ phù hợp trong
 [FREE_HOSTING.md](FREE_HOSTING.md).
+
+## Nội dung demo cộng đồng
+
+Bản server có bộ 14 mẫu tại [COMMUNITY_DEMO.md](COMMUNITY_DEMO.md). Bootstrap
+seed các mẫu còn thiếu bằng kết nối Neon sẵn có; không cần đưa mật khẩu ra khỏi
+Render. Giữ `PROJECT_DEMO_ACCOUNTS=false`. Có thể tắt seed nội dung ở lần khởi
+động sau bằng `PROJECT_COMMUNITY_DEMO=false`, không xóa dữ liệu đã thêm.

@@ -110,7 +110,7 @@ test(
     );
     assert.equal(
       (await pool.query("SELECT count(*)::int n FROM templates")).rows[0].n,
-      3,
+      17,
     );
     assert.equal((await fetch(first.base + "/auth/me")).status, 401);
     assert.equal((await fetch(first.base + "/docs")).status, 200);
@@ -154,7 +154,7 @@ test(
     );
     assert.equal(
       (await pool.query("SELECT count(*)::int n FROM templates")).rows[0].n,
-      3,
+      17,
     );
     await second.stop();
     const untrusted = spawn(
