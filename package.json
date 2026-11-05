@@ -38,6 +38,7 @@
     "project:migrate": "node --require ts-node/register scripts/project-db.ts migrate",
     "project:seed": "node --require ts-node/register scripts/project-db.ts seed",
     "test:foundation": "pnpm build && node --test test/foundation*.test.cjs",
+    "test:hosted": "pnpm build && bash scripts/test-hosted-db.sh",
     "project:seed:demo": "node --require ts-node/register scripts/project-db.ts demo",
     "stack:up": "node scripts/project-stack.mjs up",
     "stack:down": "node scripts/project-stack.mjs down",

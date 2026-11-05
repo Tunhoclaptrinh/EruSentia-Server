@@ -1,0 +1,49 @@
+# Render Free API + external Neon PostgreSQL. See docs/RENDER_NEON.md.
+services:
+  - type: web
+    name: erusentia-api
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: "10000"
+      - key: TEMPLATE_STORE
+        value: postgres
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_DATABASE
+        value: eru_project_render
+      - key: DB_SSL
+        value: "true"
+      - key: DB_POOL_MAX
+        value: "5"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://tunhoclaptrinh.github.io
+      - key: SWAGGER_ENABLED
+        value: "true"
+      - key: PROJECT_BOOTSTRAP
+        value: "true"
+      - key: PROJECT_DEMO_ACCOUNTS
+        value: "false"
+      - key: QUEUE_ENABLED
+        value: "false"
+      - key: CACHE_ENABLED
+        value: "false"

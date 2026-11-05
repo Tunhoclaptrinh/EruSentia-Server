@@ -3,6 +3,18 @@ const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { readConfig } = require("../dist/src/config");
 const { createApplication } = require("../dist/src/app");
+test("platform liveness is public with Swagger disabled and exposes no configuration", async (t) => {
+  const app = await createApplication(
+    readConfig({ TEMPLATE_STORE: "memory", SWAGGER_ENABLED: "false" }),
+    false,
+  );
+  t.after(() => app.close());
+  await app.listen(0, "127.0.0.1");
+  const response = await fetch((await app.getUrl()) + "/health");
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(await response.json(), { status: "ok" });
+});
 test("CORS configuration has exact development origins and a closed production default", () => {
   assert.deepEqual(readConfig({}).corsOrigins, [
     "http://localhost:5173",

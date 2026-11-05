@@ -90,3 +90,11 @@ test("welcome worker rejects disabled queue configuration before connecting", ()
   assert.match(output, /Welcome worker startup failed/);
   assert.doesNotMatch(output, /worker ready|amqp:\/\//);
 });
+
+test("project bootstrap rejects transaction-pooler endpoints before opening a database", () => {
+  const output = run("dist/scripts/project-db.js", ["bootstrap"], {
+    DB_DATABASE: "eru_project_render",
+    DB_HOST: "ep-example-pooler.ap-southeast-1.aws.neon.tech",
+  });
+  assert.match(output, /direct PostgreSQL endpoint/);
+});

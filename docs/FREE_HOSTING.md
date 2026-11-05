@@ -1,17 +1,22 @@
 # Backend demo miễn phí và phát hành App
 
-Cập nhật 05/11/2026. Hướng dẫn triển khai demo có kiểm soát; chưa phải nghiệm thu
+Cập nhật 06/11/2026. Hướng dẫn triển khai demo có kiểm soát; chưa phải nghiệm thu
 production. Không cần đưa repo App riêng tư lên máy chủ backend.
+
+**Lựa chọn hiện tại: [Render Free + Neon và CI/CD GitHub](RENDER_NEON.md)** cho API,
+Swagger và PostgreSQL. Queue/worker/cache không chạy trong bản hosted đó; stack local
+vẫn đầy đủ. Phần Oracle bên dưới dành cho nhu cầu đưa toàn bộ stack lên VM.
 
 ## Chọn nơi chạy
 
-**Đề xuất Oracle Cloud Always Free VM** cho stack hiện tại: API NestJS, PostgreSQL,
+**Oracle Cloud Always Free VM** phù hợp để giữ stack hiện tại: API NestJS, PostgreSQL,
 RabbitMQ, worker, Redis và Mailpit. Dùng Docker Compose cùng Caddy để giữ kiến trúc
 đã học và có HTTPS. Đây là đề xuất theo nhu cầu tài nguyên; vẫn cần kiểm tra image
 và chạy smoke test trên VM ARM thực tế.
 
 | Lựa chọn | Phạm vi phù hợp | Giới hạn cần biết |
 |---|---|---|
+| Render Free + Neon Free | Demo API/Swagger, PostgreSQL TLS; có cấu hình trong repo | API ngủ sau 15 phút; không có worker Free. Database dùng Neon, không dùng Render Postgres Free hết hạn sau 30 ngày. Xem [hướng dẫn](RENDER_NEON.md). |
 | Oracle Always Free A1 | Cả stack trên một VM, tự quản lý | Tài liệu hiện ghi tổng tương đương 2 OCPU/12 GB, block storage tổng 200 GB; phải đúng home region/quota, có thể hết capacity hoặc thu hồi máy ít hoạt động. |
 | Koyeb Free + Neon Free | Demo API nhỏ, sau khi cấu hình TLS PostgreSQL và giảm phạm vi | Koyeb: 512 MB, 0.1 vCPU, không worker/volume, ngủ sau 1 giờ không có traffic. Neon: 100 CU-giờ và 1 GB/project/tháng. Chưa có cấu hình triển khai này trong repo. |
 | Railway Free | Thử nghiệm ngắn, không khuyến nghị cho cả stack chạy liên tục | Sau trial, Free có $1 credit/tháng; không bảo đảm đủ stack này. |
@@ -83,7 +88,8 @@ eru_host ps
 
 Overlay giữ queue/cache và worker, dùng `NODE_ENV=production`, tắt bootstrap tự động
 trên API/worker và **không seed tài khoản mật khẩu mặc định**. `setup` chạy migrations
-và seed trung tính: tác giả bị khóa đăng nhập, hai danh mục, ba mẫu public. Tạo tài
+và seed trung tính: tác giả bị khóa đăng nhập, hai danh mục, ba fixture (một HTML
+public tương thích App, một private draft, một public legacy). Tạo tài
 khoản cá nhân qua App hoặc `/auth/register`; tài khoản mới là role `user`.
 Không có sẵn tài khoản admin/creator trên hosted demo; nếu cần quản trị, đọc luồng
 `pnpm auth:admin` trong [AUTHENTICATION.md](AUTHENTICATION.md) và chỉ chạy với DB đã chọn rõ.

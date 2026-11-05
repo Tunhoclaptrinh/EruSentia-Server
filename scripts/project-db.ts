@@ -8,6 +8,10 @@ import {
 
 async function main() {
   assertProjectDatabase(process.env.DB_DATABASE ?? "");
+  if (process.env.DB_HOST?.includes("-pooler."))
+    throw new Error(
+      "Project migrations require a direct PostgreSQL endpoint, not a -pooler hostname",
+    );
   if (
     (process.argv[2] === "demo" ||
       process.env.PROJECT_DEMO_ACCOUNTS === "true") &&

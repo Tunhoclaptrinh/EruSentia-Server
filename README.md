@@ -21,12 +21,13 @@ pnpm stack:down        # Dừng, giữ volume
 Để mở **cả App và backend**, từ thư mục cha `EruSentia` có `package.json` và README điều phối:
 
 ```bash
-pnpm start          # App web + toàn bộ backend/hạ tầng
-pnpm start:desktop  # Electron trên host + backend/hạ tầng Docker
+pnpm start          # App desktop Electron + toàn bộ backend/hạ tầng Docker
+pnpm start:desktop  # Alias của pnpm start
+pnpm start:web      # App web + backend/hạ tầng Docker
 pnpm stop           # Dừng Docker, giữ volume/dữ liệu
 ```
 
-`start:desktop` cần `pnpm setup:app` từ thư mục ngoài cùng hoặc
+`pnpm start`/`start:desktop` ở thư mục ngoài cùng cần `pnpm setup:app` hoặc
 `pnpm install --frozen-lockfile` trong App trước lần chạy đầu. Nếu chỉ clone từng
 repo và chưa có bộ điều phối, dùng các lệnh bên trong App/server.
 Các lệnh `stack:up`, `dev:all`, `dev:all:desktop` của App vẫn dùng được.
@@ -38,10 +39,15 @@ chung **`EruSentiaDemo!2026`**, chỉ dùng cho phát triển. Seed không ghi �
 
 ## Hosted demo miễn phí
 
-[Hướng dẫn Oracle Always Free, HTTPS và kết nối App](docs/FREE_HOSTING.md).
-Có Compose overlay riêng, không seed tài khoản mặc định, giữ queue/cache/worker.
-Đây là cấu hình demo cần nghiệm thu trên VM; chưa có backend public được triển khai
-hoặc CD tự động. Merge `main` chạy kiểm tra backend, không tự cấp hosting.
+- **Đang chọn: [Render Free + Neon, từng bước và CI/CD GitHub](docs/RENDER_NEON.md)**.
+  `render.yaml` tạo một API Docker có Swagger, PostgreSQL TLS tại Neon; Render chờ
+  GitHub Actions thành công trước auto-deploy. Queue/worker/cache tắt trên hosted demo,
+  stack local vẫn đầy đủ. Không seed tài khoản mật khẩu mặc định.
+- [Oracle Always Free để chạy đủ stack](docs/FREE_HOSTING.md): Compose overlay riêng,
+  giữ queue/cache/worker và Caddy HTTPS.
+
+Cấu hình đã có trong repo; cần tạo tài khoản/dịch vụ, điền credential và nghiệm thu
+trên cloud. Push `main` chỉ auto-deploy sau khi đã kết nối Render theo hướng dẫn.
 
 ## Cài đặt và database thực hành tuần học
 

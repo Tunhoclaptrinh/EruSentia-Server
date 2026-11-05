@@ -11,12 +11,14 @@ import { setupOpenApi } from "./openapi";
 import { CategoriesModule } from "./categories/categories";
 import { AuthModule } from "./auth/auth.module";
 import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
+import { HealthController } from "./common/health.controller";
 
 @Module({})
 class AppModule {
   static register(settings: AppConfig): DynamicModule {
     return {
       module: AppModule,
+      controllers: [HealthController],
       imports: [
         ...(settings.store === "postgres"
           ? [
@@ -29,7 +31,7 @@ class AppModule {
                 installExtensions: false,
                 logging: false,
                 retryAttempts: 1,
-                extra: { connectionTimeoutMillis: 5000 },
+                extra: { connectionTimeoutMillis: 10000 },
               }),
             ]
           : []),

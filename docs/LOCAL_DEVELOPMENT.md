@@ -33,7 +33,9 @@ EruSentia/
 | Dừng cả bộ, giữ volume/dữ liệu | `erusentia-app` | `pnpm stop` |
 
 Từ thư mục cha `EruSentia` có `package.json` và README điều phối, có thể chạy
-`pnpm start`, `pnpm start:desktop`, `pnpm dev` hoặc `pnpm stop`. Các lệnh gọi
+`pnpm start` mở Electron + backend, `pnpm start:desktop` là alias,
+`pnpm start:web` mở web Docker, `pnpm dev` mở Vite host + backend và `pnpm stop`
+dừng Docker. Các lệnh gọi
 launcher hiện có; không gộp hai repo thành pnpm workspace. Nếu chỉ clone từng
 repo, dùng các lệnh theo thư mục trong bảng trên.
 Các lệnh App `stack:up`, `stack:down`, `dev:all:desktop` vẫn dùng được qua cùng

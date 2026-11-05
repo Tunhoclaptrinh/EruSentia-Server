@@ -1,18 +1,21 @@
 import { Pool, PoolClient, PoolConfig, QueryResult, QueryResultRow } from "pg";
 import * as dotenv from "dotenv";
+import { readDatabaseSettings } from "./settings";
 
 dotenv.config();
 
+const database = readDatabaseSettings();
 const poolConfig: PoolConfig = {
-  host: process.env.DB_HOST || "localhost",
-  port: Number(process.env.DB_PORT) || 5432,
-  user: process.env.DB_USERNAME || "postgres",
-  password: process.env.DB_PASSWORD || "postgres_dev_password",
-  database: process.env.DB_DATABASE || "sentia_hub_db",
-  min: Number(process.env.DB_POOL_MIN) || 2,
-  max: Number(process.env.DB_POOL_MAX) || 10,
+  host: database.host,
+  port: database.port,
+  user: database.username,
+  password: database.password,
+  database: database.database,
+  ssl: database.ssl,
+  min: Math.min(Number(process.env.DB_POOL_MIN) || 2, database.poolSize),
+  max: database.poolSize,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
 };
 
 export const dbPool = new Pool(poolConfig);

@@ -26,7 +26,7 @@ async function main() {
     ...settings.database,
     user: settings.database.username,
     connectionTimeoutMillis: 5000,
-    max: 5,
+    max: Math.min(5, settings.database.poolSize),
   });
   pool.on("error", () => console.error("Worker database connection failed"));
   let stopping = false;

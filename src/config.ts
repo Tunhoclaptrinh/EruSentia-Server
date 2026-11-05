@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto";
+import { readDatabaseSettings } from "./infrastructure/database/settings";
 
 export interface AppConfig {
   host: string;
@@ -21,13 +22,7 @@ export interface AppConfig {
     namespace: string;
     ttlSeconds: number;
   };
-  database: {
-    host: string;
-    port: number;
-    username: string;
-    password: string;
-    database: string;
-  };
+  database: ReturnType<typeof readDatabaseSettings>;
 }
 
 function integer(
@@ -156,12 +151,6 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       namespace: cacheNamespace,
       ttlSeconds: integer(env.CACHE_TTL_SECONDS, 60, "CACHE_TTL_SECONDS"),
     },
-    database: {
-      host: env.DB_HOST ?? "localhost",
-      port: integer(env.DB_PORT, 5432, "DB_PORT"),
-      username: env.DB_USERNAME ?? "postgres",
-      password: env.DB_PASSWORD ?? "postgres_dev_password",
-      database: env.DB_DATABASE ?? "sentia_hub_db",
-    },
+    database: readDatabaseSettings(env),
   };
 }

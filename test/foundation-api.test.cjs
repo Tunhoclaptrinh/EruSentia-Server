@@ -222,6 +222,7 @@ test(
       user: config.username,
       password: config.password,
       database: config.database,
+      ssl: config.ssl,
     });
     t.after(() => pool.end());
     assert.equal(
