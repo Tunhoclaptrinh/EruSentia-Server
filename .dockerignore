@@ -11,3 +11,6 @@
 !sql/**
 !docker/
 !docker/project-entrypoint.sh
+!tools/
+!tools/community/
+!tools/community/catalog.json
