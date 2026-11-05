@@ -168,7 +168,7 @@ function decodeRecord(
   const value = JSON.parse(raw),
     row = value?.row;
   const fields =
-    "id authorId categoryId title slug description contentJson thumbnailUrl version isPublic tags viewsCount forksCount ratingAvg ratingsCount isFeatured createdAt updatedAt deletedAt author category".split(
+    "id authorId categoryId title slug description contentJson thumbnailUrl version revision isPublic tags viewsCount forksCount ratingAvg ratingsCount isFeatured createdAt updatedAt deletedAt author category".split(
       " ",
     );
   if (
@@ -178,6 +178,8 @@ function decodeRecord(
     row.id !== id ||
     row.authorId !== stamp.authorId ||
     row.isPublic !== true ||
+    !Number.isSafeInteger(row.revision) ||
+    row.revision < 1 ||
     !["categoryId", "title", "slug", "description", "version"].every(
       (k) => typeof row[k] === "string",
     ) ||

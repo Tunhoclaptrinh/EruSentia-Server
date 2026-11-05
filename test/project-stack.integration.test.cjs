@@ -1,3 +1,4 @@
+const { conditionalHeaders } = require("./conditional-headers.cjs");
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs/promises");
@@ -103,6 +104,7 @@ test(
       "05_auth_sessions.sql",
       "06_message_queue.sql",
       "07_template_cache_revision.sql",
+      "08_template_revisions.sql",
     ])
       await pool.query(
         (await fs.readFile(path.join(__dirname, "../sql", f), "utf8")).replace(
@@ -123,11 +125,11 @@ test(
     async function request(method, route, token, body) {
       const r = await fetch(base + route, {
         method,
-        headers: {
+        headers: await conditionalHeaders(base, method, route, {
           Origin: "http://localhost:5173",
           ...(token ? { Authorization: "Bearer " + token } : {}),
           ...(body ? { "content-type": "application/json" } : {}),
-        },
+        }),
         body: body ? JSON.stringify(body) : undefined,
       });
       return {
@@ -158,7 +160,7 @@ test(
               "SELECT count(*)::int n FROM information_schema.tables WHERE table_schema='public'",
             )
           ).rows[0].n,
-          12,
+          13,
         );
         owner = await account();
         other = await account();

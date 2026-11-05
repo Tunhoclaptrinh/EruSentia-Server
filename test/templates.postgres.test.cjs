@@ -44,6 +44,7 @@ test(
       "02_indexes.sql",
       "03_seed.sql",
       "05_auth_sessions.sql",
+      "08_template_revisions.sql",
     ]) {
       await client.query(
         (
@@ -187,7 +188,10 @@ test(
       );
       await fetch(`${await reader.getUrl()}/templates/${saved.id}`, {
         method: "DELETE",
-        headers: { authorization: `Bearer ${pair.accessToken}` },
+        headers: {
+          authorization: `Bearer ${pair.accessToken}`,
+          "if-match": response.headers.get("etag"),
+        },
       });
       const refreshed = await fetch(`${await reader.getUrl()}/auth/refresh`, {
         method: "POST",

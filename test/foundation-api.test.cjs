@@ -252,6 +252,7 @@ test(
             "05_auth_sessions.sql",
             "06_message_queue.sql",
             "07_template_cache_revision.sql",
+            "08_template_revisions.sql",
           ]) {
             await fs.copyFile(path.resolve("sql", file), path.join(root, file));
           }
@@ -291,14 +292,14 @@ test(
           migrateProject(pool),
           migrateProject(pool),
         ]);
-        assert.equal(results.flat().length, 3);
+        assert.equal(results.flat().length, 4);
         assert.equal(
           (
             await pool.query(
               "SELECT count(*)::int n FROM eru_schema_migrations",
             )
           ).rows[0].n,
-          5,
+          6,
         );
         assert.deepEqual(await migrateProject(pool), []);
         assert.equal(
