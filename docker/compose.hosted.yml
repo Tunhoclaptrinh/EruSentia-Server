@@ -1,0 +1,47 @@
+# Hosted demo overlay; always combine with compose.project.yml. See docs/FREE_HOSTING.md.
+x-hosted-env: &hosted-env
+  NODE_ENV: production
+  PROJECT_BOOTSTRAP: "false"
+  PROJECT_DEMO_ACCOUNTS: "false"
+  DB_PASSWORD: ${PROJECT_DB_PASSWORD:?Set a unique database password}
+  JWT_SECRET: ${PROJECT_JWT_SECRET:?Set a unique JWT secret of at least 32 bytes}
+  AMQP_URL: amqp://eru:${PROJECT_RABBIT_PASSWORD:?Set a unique URL-safe queue password}@rabbitmq:5672
+  CORS_ORIGINS: ${PROJECT_CORS_ORIGINS-https://tunhoclaptrinh.github.io}
+  SWAGGER_ENABLED: ${HOSTED_SWAGGER_ENABLED:-false}
+
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${PROJECT_DB_PASSWORD:?Set a unique database password}
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_PASS: ${PROJECT_RABBIT_PASSWORD:?Set a unique URL-safe queue password}
+  api:
+    environment:
+      <<: *hosted-env
+  worker:
+    environment:
+      <<: *hosted-env
+  setup:
+    environment:
+      <<: *hosted-env
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      HOSTED_API_DOMAIN: ${HOSTED_API_DOMAIN:?Set the public API hostname}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./docker/Caddyfile.hosted:/etc/caddy/Caddyfile:ro
+      - hosted_caddy_data:/data
+      - hosted_caddy_config:/config
+    depends_on:
+      api: { condition: service_healthy }
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  hosted_caddy_data:
+  hosted_caddy_config:

@@ -5,7 +5,8 @@ API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refre
 Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
 Tuần 5 bổ sung Redis cache; bước chuẩn bị project thêm CORS và danh mục có JWT.
 Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. Đợt C0–C1 đã ghép tài khoản
-với client; thư viện cộng đồng, thực thi HTML remote và publish trên App đang ở bước tiếp theo.
+với client; App đã bổ sung catalog template, xem thử cô lập và bản sao local ở C2.
+Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiếp theo.
 
 ## Stack project: chạy bằng một lệnh
 
@@ -17,12 +18,30 @@ pnpm stack:status
 pnpm stack:down        # Dừng, giữ volume
 ```
 
-Trong repo App cạnh server, `pnpm stack:up` mở thêm App web;
-`pnpm dev:all` / `pnpm dev:all:desktop` chạy frontend trên host. Stack riêng dùng
-DB `eru_project_docker` và tự migrate/seed mỗi lần mở. Tài khoản ban đầu:
+Để mở **cả App và backend**, từ thư mục cha `EruSentia` có `package.json` và README điều phối:
+
+```bash
+pnpm start          # App web + toàn bộ backend/hạ tầng
+pnpm start:desktop  # Electron trên host + backend/hạ tầng Docker
+pnpm stop           # Dừng Docker, giữ volume/dữ liệu
+```
+
+`start:desktop` cần `pnpm setup:app` từ thư mục ngoài cùng hoặc
+`pnpm install --frozen-lockfile` trong App trước lần chạy đầu. Nếu chỉ clone từng
+repo và chưa có bộ điều phối, dùng các lệnh bên trong App/server.
+Các lệnh `stack:up`, `dev:all`, `dev:all:desktop` của App vẫn dùng được.
+`pnpm start` **trong repo server** chỉ chạy API đã build; không khởi động App.
+Stack project dùng DB `eru_project_docker` và tự migrate/seed mỗi lần mở. Tài khoản ban đầu:
 `user@erusentia.test`, `creator@erusentia.test`, `admin@erusentia.test`; mật khẩu
 chung **`EruSentiaDemo!2026`**, chỉ dùng cho phát triển. Seed không ghi đè bản ghi
 đã chỉnh. [Hướng dẫn đầy đủ và các cổng](docs/LOCAL_DEVELOPMENT.md).
+
+## Hosted demo miễn phí
+
+[Hướng dẫn Oracle Always Free, HTTPS và kết nối App](docs/FREE_HOSTING.md).
+Có Compose overlay riêng, không seed tài khoản mặc định, giữ queue/cache/worker.
+Đây là cấu hình demo cần nghiệm thu trên VM; chưa có backend public được triển khai
+hoặc CD tự động. Merge `main` chạy kiểm tra backend, không tự cấp hosting.
 
 ## Cài đặt và database thực hành tuần học
 

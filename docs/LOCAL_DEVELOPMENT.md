@@ -1,5 +1,8 @@
 # Chạy EruSentia trên máy phát triển
 
+Đưa backend demo lên Internet: dùng [hướng dẫn hosting riêng](FREE_HOSTING.md),
+không dùng tài khoản/secret và launcher dev bên dưới trên môi trường public.
+
 Cấu hình này dùng cho máy cá nhân và dữ liệu minh họa. API, worker và hạ tầng chạy
 trong một Compose project riêng: `erusentia-project`. Không dùng volume/database
 của các bài thực hành tuần 1–5; không gọi `db:fresh` hoặc reset dữ liệu hiện có.
@@ -21,13 +24,21 @@ EruSentia/
 
 | Nhu cầu | Thư mục | Lệnh |
 |---|---|---|
-| Cả bộ backend + App web bằng Docker | `erusentia-app` | `pnpm stack:up` |
+| Cả bộ backend + App web bằng Docker | `erusentia-app` | `pnpm start` |
 | Backend Docker + App web trên host, có HMR | `erusentia-app` | `pnpm dev:all` |
-| Backend Docker + App Electron trên host | `erusentia-app` | `pnpm dev:all:desktop` |
+| Backend Docker + App Electron trên host | `erusentia-app` | `pnpm start:desktop` |
 | Chỉ backend: PostgreSQL, RabbitMQ, Redis, Mailpit, API, worker | `erusentia-server` | `pnpm stack:up` |
 | Xem trạng thái | Repo đang dùng | `pnpm stack:status` |
 | Xem log liên tục | Repo đang dùng | `pnpm stack:logs` hoặc `pnpm stack:logs api worker` |
-| Dừng cả bộ, giữ volume/dữ liệu | Repo đã dùng để mở cả bộ | `pnpm stack:down` |
+| Dừng cả bộ, giữ volume/dữ liệu | `erusentia-app` | `pnpm stop` |
+
+Từ thư mục cha `EruSentia` có `package.json` và README điều phối, có thể chạy
+`pnpm start`, `pnpm start:desktop`, `pnpm dev` hoặc `pnpm stop`. Các lệnh gọi
+launcher hiện có; không gộp hai repo thành pnpm workspace. Nếu chỉ clone từng
+repo, dùng các lệnh theo thư mục trong bảng trên.
+Các lệnh App `stack:up`, `stack:down`, `dev:all:desktop` vẫn dùng được qua cùng
+launcher. Trong server, `pnpm stack:down` dừng backend; `pnpm start` chỉ chạy API
+đã build, không mở App hay hạ tầng.
 
 Trước khi chạy frontend trên host, cài `pnpm install --frozen-lockfile` trong App.
 Electron chạy trên desktop của máy; container App chỉ chạy bản web. Build container
