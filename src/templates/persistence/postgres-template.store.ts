@@ -1,6 +1,16 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  PreconditionFailedException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { IsNull, Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
+import {
+  expectedRevision,
+  type RevisionsQueryDto,
+  type TemplateRevision,
+} from "../template-revisions";
 import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
   CreateTemplateInput,
@@ -31,9 +41,9 @@ export class PostgresTemplateStore implements TemplateStore {
     };
   }
 
-  private query() {
+  private query(manager?: EntityManager) {
     // Join category instead of issuing a lookup for every row; never load credentials.
-    return this.templates
+    return (manager ? manager.getRepository(TemplateEntity) : this.templates)
       .createQueryBuilder("t")
       .leftJoinAndSelect("t.category", "category");
   }
@@ -112,8 +122,10 @@ export class PostgresTemplateStore implements TemplateStore {
     );
   }
 
-  async find(id: string) {
-    const row = await this.query().where("t.id = :id", { id }).getOne();
+  async find(id: string, includeDeleted = false, manager?: EntityManager) {
+    const query = this.query(manager).where("t.id = :id", { id });
+    if (includeDeleted) query.withDeleted();
+    const row = await query.getOne();
     return row ? this.project(row) : null;
   }
 
@@ -131,33 +143,114 @@ export class PostgresTemplateStore implements TemplateStore {
 
   async create(input: CreateTemplateInput) {
     await this.checkReferences(input.authorId, input.categoryId);
-    const row = await this.templates.save(this.templates.create(input));
-    return (await this.find(row.id))!;
+    return this.templates.manager.transaction(async (manager) => {
+      await manager.query("SELECT set_config('eru.actor_id', $1, true)", [
+        input.authorId,
+      ]);
+      const repository = manager.getRepository(TemplateEntity);
+      const row = await repository.save(repository.create(input));
+      return (await this.find(row.id, false, manager))!;
+    });
   }
 
-  async update(id: string, input: UpdateTemplateDto) {
-    // Atomic partial UPDATE avoids save() re-inserting a concurrently removed entity.
-    // Explicit deletedAt predicate prevents PATCH from changing a soft-deleted row.
+  private async write(
+    id: string,
+    input: Omit<UpdateTemplateDto, "contentJson"> & {
+      contentJson?: unknown;
+      deletedAt?: Date | null;
+    },
+    tag: string,
+    actor: UserIdentity,
+    operation: "update" | "delete" | "restore",
+  ) {
+    const revision = expectedRevision(id, tag);
     await this.checkReferences(undefined, input.categoryId);
-    const { contentJson, ...columns } = input;
-    // Bind the whole JSON document; QueryDeepPartialEntity is not a JSON schema.
-    const query = this.templates
-      .createQueryBuilder()
-      .update()
-      .set({
-        ...columns,
-        ...(contentJson === undefined ? {} : { contentJson: () => ":content" }),
-      })
-      .where("id = :id", { id })
-      .andWhere("deleted_at IS NULL");
-    if (contentJson !== undefined)
-      query.setParameter("content", JSON.stringify(contentJson));
-    const result = await query.execute();
-    return result.affected ? this.find(id) : null;
+    return this.templates.manager.transaction(async (manager) => {
+      await manager.query(
+        "SELECT set_config('eru.actor_id', $1, true), set_config('eru.template_operation', $2, true)",
+        [actor.id, operation],
+      );
+      const { contentJson, ...columns } = input;
+      const query = manager
+        .getRepository(TemplateEntity)
+        .createQueryBuilder()
+        .update()
+        .set({
+          ...columns,
+          ...(contentJson === undefined
+            ? {}
+            : { contentJson: () => ":content" }),
+        })
+        .where("id = :id", { id })
+        .andWhere("revision = :revision", { revision });
+      if (operation !== "restore") query.andWhere("deleted_at IS NULL");
+      if (actor.role !== "admin")
+        query.andWhere("author_id = :actorId", { actorId: actor.id });
+      if (contentJson !== undefined)
+        query.setParameter("content", JSON.stringify(contentJson));
+      const result = await query.execute();
+      if (result.affected !== 1)
+        throw new PreconditionFailedException(
+          "Template changed; keep your draft and reload the current revision",
+        );
+      return (await this.find(id, true, manager))!;
+    });
   }
-
-  async remove(id: string) {
-    const result = await this.templates.softDelete({ id, deletedAt: IsNull() });
-    return result.affected === 1;
+  update(
+    id: string,
+    input: UpdateTemplateDto,
+    tag: string,
+    actor: UserIdentity,
+  ) {
+    return this.write(id, input, tag, actor, "update");
+  }
+  remove(id: string, tag: string, actor: UserIdentity) {
+    return this.write(id, { deletedAt: new Date() }, tag, actor, "delete");
+  }
+  async revisions(id: string, query: RevisionsQueryDto) {
+    const [{ count }] = await this.templates.manager.query(
+      "SELECT count(*)::int count FROM template_revisions WHERE template_id=$1",
+      [id],
+    );
+    const data = await this.templates.manager.query(
+      `SELECT template_id AS "templateId", revision, operation, actor_id AS "actorId", created_at AS "createdAt",
+      snapshot->>'title' AS title, snapshot->>'version' AS version, (snapshot->>'isPublic')::boolean AS "isPublic"
+      FROM template_revisions WHERE template_id=$1 ORDER BY revision DESC LIMIT $2 OFFSET $3`,
+      [id, query.size, (query.page - 1) * query.size],
+    );
+    return {
+      data,
+      page: query.page,
+      size: query.size,
+      totalElements: count,
+      totalPages: Math.ceil(count / query.size),
+    };
+  }
+  async revision(
+    id: string,
+    revision: number,
+  ): Promise<TemplateRevision | null> {
+    const rows = await this.templates.manager.query(
+      `SELECT template_id AS "templateId", revision, operation, actor_id AS "actorId", created_at AS "createdAt", snapshot
+      FROM template_revisions WHERE template_id=$1 AND revision=$2`,
+      [id, revision],
+    );
+    return rows[0] ?? null;
+  }
+  async restore(
+    id: string,
+    revision: number,
+    tag: string,
+    actor: UserIdentity,
+  ) {
+    const entry = await this.revision(id, revision);
+    if (!entry) throw new NotFoundException("Revision not found");
+    return this.write(
+      id,
+      { ...entry.snapshot, isPublic: false, deletedAt: null },
+      tag,
+      actor,
+      "restore",
+    );
   }
 }

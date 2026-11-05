@@ -21,6 +21,8 @@ export function setupOpenApi(app: INestApplication) {
     "404": "NOT_FOUND",
     "409": "CONFLICT",
     "413": "PAYLOAD_TOO_LARGE",
+    "412": "PRECONDITION_FAILED",
+    "428": "PRECONDITION_REQUIRED",
     "500": "INTERNAL_ERROR",
   };
   for (const [path, operations] of Object.entries(document.paths)) {

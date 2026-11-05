@@ -65,6 +65,7 @@ export class TemplateEntity {
   })
   thumbnailUrl!: string | null;
   @Column({ type: "varchar", length: 32, default: "1.0.0" }) version!: string;
+  @Column({ type: "integer", default: 1 }) revision!: number;
   @Column({ name: "is_public", type: "boolean", default: true })
   isPublic!: boolean;
   @Column({ name: "is_featured", type: "boolean", default: false })

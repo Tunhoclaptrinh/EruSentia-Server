@@ -32,6 +32,13 @@ export class TemplateResponseDto implements TemplateRecord {
   contentJson!: Record<string, unknown>;
   @ApiProperty({ type: String, nullable: true }) thumbnailUrl!: string | null;
   @ApiProperty() version!: string;
+  @ApiProperty({
+    type: "integer",
+    minimum: 1,
+    description:
+      "Concurrency revision; separate from the author-supplied version string.",
+  })
+  revision!: number;
   @ApiProperty() isPublic!: boolean;
   @ApiProperty({ type: [String] }) tags!: string[];
   @ApiProperty({ type: "integer" }) viewsCount!: number;

@@ -57,6 +57,7 @@ test(
       "03_seed.sql",
       "05_auth_sessions.sql",
       "06_message_queue.sql",
+      "08_template_revisions.sql",
       "06_message_queue.sql",
     ])
       await pool.query(
