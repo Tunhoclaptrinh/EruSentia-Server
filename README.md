@@ -230,8 +230,8 @@ Chi tiết kiến trúc, retry/DLQ và thao tác vận hành: [MESSAGE_QUEUE](do
 ## Redis cache — tuần 5
 
 Cache-aside cho **GET /templates/:id** của Template public; private, list và dữ liệu
-đăng nhập không được cache. Giao diện community template chưa được mở ở lát cắt
-tài khoản C0–C1. Redis **8.10.3**, node-redis
+đăng nhập không được cache. App C2 đã dùng catalog/detail để xem thử và lưu/chèn
+bản sao local. Redis **8.10.3**, node-redis
 **5.12.1** (phù hợp peer TypeORM). CACHE_ENABLED=false mặc định giữ flow trước.
 
 ```bash

@@ -160,6 +160,6 @@ Worker welcome hiện route REGISTERED cho outbox; phải phân loại event tr�
 template event. Chưa có `/api/v1` hoặc API ratings/forks/notifications.
 
 Không dùng cache revision hoặc version string như concurrency protocol khi API chưa
-kiểm tra điều kiện đó. Summary/filter đã có ở C0–C1; client mới tích hợp tài khoản,
-chưa chạy template cộng đồng. Yêu cầu cô lập HTML ở
+kiểm tra điều kiện đó. Summary/filter đã có ở C0–C1; C2 đã ghép catalog, xem thử,
+lưu/chèn bản sao local trên App. Xuất bản và cập nhật remote chưa triển khai. Yêu cầu cô lập HTML ở
 [hợp đồng client](APP_TEMPLATE_CONTRACT.md).

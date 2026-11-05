@@ -1,7 +1,8 @@
 # Authentication và authorization — tuần 3
 
 API quản lý Template dùng cùng NestJS/TypeORM/PostgreSQL của tuần 2. Đợt C0–C1 đã
-ghép tài khoản browser/Electron; luồng community template vẫn chưa mở trên App.
+ghép tài khoản browser/Electron; C2 đã bổ sung catalog, xem thử và bản sao template
+local. Giao diện Creator/Admin và xuất bản chưa triển khai.
 Swagger `/docs` hỗ trợ register/login, Authorize bằng accessToken và thao tác
 protected; đặc tả JSON ở `/docs-json`. Hướng dẫn môi trường ở [README](../README.md).
 

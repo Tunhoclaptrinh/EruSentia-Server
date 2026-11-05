@@ -118,8 +118,9 @@ mail ra Internet. Seed không tạo welcome email; đăng ký mới qua API khi 
 | `admin@erusentia.test` | `admin` | Xem danh sách user; đọc/sửa/xóa Template qua API theo quyền admin. |
 
 Đăng nhập bằng nút tài khoản trong App hoặc `/auth/login` trong Swagger. Đăng ký
-công khai chỉ tạo `user`, không được gửi role/admin từ form. UI App hiện có hồ sơ
-và xác thực; chưa có màn quản trị hay feed community để sử dụng toàn bộ quyền API.
+công khai chỉ tạo `user`, không được gửi role/admin từ form. UI App hiện có hồ sơ,
+xác thực và catalog template C2 để xem thử/lưu/chèn. Chưa có màn quản trị,
+xuất bản hoặc feed bài viết/bộ sưu tập cộng đồng.
 Không hiểu role `admin` là đã có sẵn giao diện quản trị.
 
 Seed tạo 3 hồ sơ cùng 4 Template do các role sở hữu: ghi chú cá nhân private, mục tiêu
@@ -211,8 +212,9 @@ file ví dụ và checkout mới vẫn mặc định web5173.
 ## Phạm vi bàn giao và cập nhật tài liệu
 
 Đợt này chốt nền tảng C0–C1, hợp đồng catalog summary, môi trường local và seed đủ
-ba role. App dùng được luồng tài khoản; giao diện Creator/Admin, community feed,
-xuất bản và lịch sử phiên bản vẫn thuộc các chặng tiếp theo trong roadmap App.
+ba role. App đã có luồng tài khoản và catalog template C2 với bản sao offline;
+giao diện Creator/Admin, feed bài viết/bộ sưu tập, xuất bản và lịch sử phiên bản
+vẫn thuộc các chặng tiếp theo trong roadmap App.
 
 Khi thay đổi lệnh chạy, biến cấu hình, API hoặc quyền, cập nhật hướng dẫn tương ứng
 và kết quả kiểm tra trong cùng commit. Tài liệu này đi cùng phiên bản mã nguồn;
