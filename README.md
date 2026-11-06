@@ -51,10 +51,10 @@ trên cloud. Push `main` chỉ auto-deploy sau khi đã kết nối Render theo 
 
 ## Cài đặt và database thực hành tuần học
 
-**Nhánh C3-A:** [revision, If-Match và lịch sử template](docs/TEMPLATE_REVISIONS.md)
-bổ sung chống ghi đè, history và restore private. Đây là thay đổi contract ghi:
-PATCH/DELETE cần If-Match; database cần migration `08_template_revisions.sql`.
-Nhánh này chưa được merge/deploy lên hosted demo.
+**C3:** [quản lý mẫu, If-Match và lịch sử](docs/TEMPLATE_REVISIONS.md) đã merge
+main và chạy trên Render/Neon. Tạo mới mặc định private; chia sẻ public cần giấy
+phép/ghi công. PATCH/DELETE/restore cần If-Match; database dùng migration
+`08_template_revisions.sql`. Backup và đối chiếu dữ liệu sau nâng schema đã đạt.
 
 Đã kiểm tra với Node.js **24.21.0**, pnpm **12.11.2**, PostgreSQL **16.15**.
 
@@ -150,8 +150,10 @@ sessions mất khi restart. PostgreSQL lưu tài khoản, template và sessions 
 | GET | `/admin/users?page=1&size=10` | Chỉ admin; dữ liệu tài khoản an toàn |
 | GET | `/categories` | JWT; lấy danh mục và ID để tạo Template |
 | GET | `/templates`, `/templates/:id` | JWT; public + private của mình; admin xem tất cả |
-| POST | `/templates` | JWT; authorId lấy từ người đăng nhập |
-| PATCH/DELETE | `/templates/:id` | Tác giả hoặc admin |
+| POST | `/templates` | JWT; authorId lấy từ người đăng nhập; mặc định private |
+| PATCH/DELETE | `/templates/:id` | Tác giả hoặc admin; cần If-Match |
+| GET | `/templates/:id/revisions`, `/templates/:id/revisions/:revision` | Tác giả hoặc admin; lịch sử và snapshot |
+| POST | `/templates/:id/restore` | Tác giả hoặc admin + If-Match; revision mới private |
 
 Thiếu/sai token trả 401. User/creator gọi API admin trả 403. Template riêng của người
 khác trả 404 và không được tính vào total; tài nguyên công khai được đọc nhưng chỉ

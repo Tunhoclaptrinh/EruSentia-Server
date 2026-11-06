@@ -1,8 +1,15 @@
 # C3 — Quản lý mẫu, conditional writes và lịch sử
 
 06/11/2026. Đợt C3 gộp nền tảng lịch sử, giao diện quản lý bản nháp và xuất bản có
-xác nhận. Nhánh làm việc hiện tại: `feat/integration-c3-creator`; chưa đưa migration
-lên Neon trong lượt kiểm thử local. App dùng cùng contract trên browser và broker Electron.
+xác nhận. [PR #4](https://github.com/Tunhoclaptrinh/EruSentia-Server/pull/4) đã merge
+main tại `96220d9ca185463cd0dc0e0697020c0896948ae6` và deploy lên Render.
+App dùng cùng contract trên browser và broker Electron.
+
+Đã backup đầy đủ Neon với chấp thuận của chủ dữ liệu và diễn tập restore/nâng
+schema trên PostgreSQL 18 tạm. Đối chiếu production lúc 16:24 UTC ngày 06/11/2026:
+journal 6, đủ 17 baseline history, nội dung 17 mẫu và 4 tài khoản giữ nguyên theo
+fingerprint. Health/OpenAPI/CORS/If-Match/ETag đạt. Backup được giữ riêng trên máy,
+không đưa vào repo; không tạo thêm tài khoản hay mẫu test trên production.
 
 ## Contract
 
@@ -138,10 +145,11 @@ PostgreSQL + Redis cache **13 pass** trên container riêng. Count gồm parent/
 không cộng thành số tình huống nghiệp vụ độc lập. RabbitMQ/worker không thay đổi
 trong C3-A; chưa chạy lại toàn bộ luồng email ở lượt này.
 
-## Trước khi đưa lên hosted
+## Các lần nâng cấp hosted tiếp theo
 
-Chưa chạy migration trên Neon của người dùng. Trước merge/deploy cần backup và
-kiểm tra restore DB khác, cập nhật các client ghi If-Match, xem dung lượng baseline
+Đợt Neon đầu tiên đã đối chiếu ở đầu tài liệu. Với database/môi trường khác,
+trước merge/deploy cần backup và kiểm tra restore DB khác, cập nhật các client ghi
+If-Match, xem dung lượng baseline
 và thống nhất cửa sổ chuyển đổi. Không để client/API cũ tiếp tục ghi vô điều kiện
 trong thời gian hai phiên bản cùng chạy. Rollback code không tự rollback history/schema.
 

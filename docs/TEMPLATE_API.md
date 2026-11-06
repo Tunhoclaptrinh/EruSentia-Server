@@ -1,7 +1,7 @@
-# Template API — auth và catalog C0–C1
+# Template API — auth, catalog và quản lý C3
 
-NestJS + TypeORM trên PostgreSQL tuần 1. Dùng cùng 5 route với `TEMPLATE_STORE=memory`
-và `TEMPLATE_STORE=postgres` trên cùng hợp đồng HTTP.
+NestJS + TypeORM trên PostgreSQL tuần 1. `TEMPLATE_STORE=memory`
+và `TEMPLATE_STORE=postgres` dùng cùng hợp đồng HTTP; C3 bổ sung revision/history.
 Bootstrap/test xem [README](../README.md).
 
 Mọi route dưới cần `Authorization: Bearer <accessToken>`. Register/login tại
@@ -16,14 +16,18 @@ với API. Có thể xem schema và gửi request bằng Try it out; cấu hình
 | Route | Kết quả |
 |-------|---------|
 | `GET /templates` | `{data, page, size, totalPages, totalElements}` |
-| `GET /templates/:id` | Một Template + `author: {id}`, `category: {id,name,slug}` |
-| `POST /templates` | 201 + Template mới |
-| `PATCH /templates/:id` | 200 + Template sau cập nhật |
-| `DELETE /templates/:id` | 204; set deleted_at, không xóa row khỏi PostgreSQL |
+| `GET /templates/:id` | Một Template + `revision`, `author: {id}`, `category: {id,name,slug}` và ETag |
+| `POST /templates` | 201 + Template mới private mặc định; revision 1 và ETag |
+| `PATCH /templates/:id` | Cần If-Match; 200 + revision/ETag mới |
+| `DELETE /templates/:id` | Cần If-Match; 204, soft-delete và giữ lịch sử |
+| `GET /templates/:id/revisions`, `GET /templates/:id/revisions/:revision` | Owner/Admin; metadata lịch sử hoặc snapshot |
+| `POST /templates/:id/restore` | Owner/Admin + If-Match; tạo revision mới private |
 
 List hỗ trợ `page` 1..10000, `size` 1..100; `authorId`, `categoryId`, `tag`, `search`,
 `isPublic=true|false`, `sort=createdAt|title`, `order=asc|desc`. Giá trị ngoài whitelist
 bị từ chối. Sắp xếp thêm ID làm tiebreaker; mặc định `(createdAt DESC, id DESC)`.
+`deleted=true` liệt kê riêng mẫu đã xóa, cần `authorId` của chính người đăng nhập
+hoặc quyền admin. Mặc định list loại row đã xóa. Contract đầy đủ ở [C3](TEMPLATE_REVISIONS.md).
 `search` là substring không phân biệt hoa thường, `%`/`_` là ký tự literal; chưa dùng
 GIN full-text index. Sort title theo collation PostgreSQL, memory theo thứ tự chuỗi JS;
 không cam kết thứ tự Unicode giống nhau giữa hai adapter.
@@ -48,8 +52,8 @@ format/schema vẫn xuất hiện nếu không lọc, với hai metadata summary
 Không lọc một trang ở client rồi dùng total của dataset chưa được lọc.
 
 Summary, category và detail đều cần JWT, private của người khác vẫn bị loại khỏi
-data/count. Chưa có public gallery không đăng nhập hoặc optimistic concurrency
-cho PATCH; cache revision không thay expected revision.
+data/count. Chưa có public gallery không đăng nhập. C3 dùng strong ETag/If-Match
+cho conditional writes; cache revision là cơ chế riêng, không thay điều kiện này.
 
 ### Tạo template
 
@@ -83,6 +87,8 @@ Cache-Control:no-store. Thiếu token trả 401 như các route protected khác.
 Tác giả lấy từ tài khoản JWT đang active/chưa soft-delete.
 Memory có hai category mẫu; tài khoản tạo qua register. Gửi authorId trong body trả
 400. User/creator chỉ sửa/xóa của mình; admin được quản lý mọi template.
+Thiếu `isPublic` tạo private. POST public hoặc PATCH có kết quả public cần
+`contentJson.sharing` với license/ghi công và xác nhận quyền; xem [quy tắc chia sẻ](TEMPLATE_REVISIONS.md#nháp-private-và-xác-nhận-xuất-bản).
 
 ### Đọc, sửa, xóa
 
@@ -90,12 +96,17 @@ Lấy ID từ response POST rồi thay vào lệnh:
 
 ```bash
 curl -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates?page=1&size=5&isPublic=false'
-curl -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates/<id>'
+curl -i -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates/<id>'
+# Đặt ETAG bằng toàn bộ ETag của response, gồm hai dấu ngoặc kép:
+# ETAG='"template:UUID_THAT:1"'
 curl -X PATCH 'http://127.0.0.1:3001/templates/<id>' \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "If-Match: $ETAG" \
   -H 'Content-Type: application/json' \
   -d '{"title":"Updated study planner"}'
-curl -i -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" 'http://127.0.0.1:3001/templates/<id>'
+# Đọc lại detail và cập nhật ETAG mới trước khi xóa:
+curl -i -X DELETE -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "If-Match: $ETAG" 'http://127.0.0.1:3001/templates/<id>'
 ```
 
 PATCH partial; field vắng giữ nguyên. `contentJson` thay **toàn bộ document**, không
@@ -123,7 +134,8 @@ khác trả 403. Thiếu/sai/hết hạn token hoặc phiên bị thu hồi tr�
 }
 ```
 
-Ví dụ thời điểm minh họa. Validation 400, missing row 404, duplicate slug 409; lỗi
+Ví dụ thời điểm minh họa. Validation 400, missing row 404, duplicate slug 409,
+thiếu If-Match 428, ETag cũ 412; lỗi
 không biết trả 500 với message chung. Không gửi SQL, constraint detail, password hash
 hoặc request body trong lỗi. `INVALID_REFERENCE` dùng khi PostgreSQL báo FK violation;
 reference pre-check trả `BAD_REQUEST`. Malformed JSON cũng trả 400 cùng envelope.
@@ -134,6 +146,7 @@ JSON body vượt 2 MiB trả 413. Nội dung HTML không được thực thi b�
 `TemplateEntity` map `category_id`, `content_json`, `rating_avg`, `views_count`,
 `forks_count`, `deleted_at` đúng SQL hiện có; không có `price`, `status`, `html_content`.
 `version` VARCHAR là phiên bản nội dung, không phải optimistic counter.
+`revision` INTEGER là counter C3; history/snapshot ghi cùng transaction với thay đổi.
 ManyToOne tới author/category, OneToMany chiều ngược; `onDelete: RESTRICT` đúng FK.
 API join category để lấy tên trong query trang; author chỉ trả ID, không load credentials.
 `AuthorEntity` map bảng users cho auth, với password_hash đặt select:false. Adapter
@@ -142,6 +155,8 @@ Template vẫn chỉ trả author ID; dữ liệu tài khoản có projection ri
 `synchronize:false`, `migrationsRun:false`. Không sinh migration từ mapping user/category
 chưa đầy đủ; bootstrap bằng SQL đã có và áp dụng `05_auth_sessions.sql` tường minh.
 Migration auth bổ sung không được tự chạy khi khởi động API.
+Với database project, entrypoint Docker chạy `node dist/scripts/project-db.js bootstrap`;
+`pnpm project:migrate` nâng schema có kiểm tra checksum. C3 thêm `08_template_revisions.sql`.
 
 ## Cache tùy chọn — tuần 5
 
@@ -153,13 +168,14 @@ cache cũ. PATCH/DELETE đổi revision và xóa key cũ. Không cache danh sác
 
 ## Chuẩn bị project
 
-`version` hiện chưa ngăn hai PATCH từ dữ liệu cũ cùng thành công. Chống ghi đè,
-history được lên kế hoạch trong `week-6/PROJECT_PLAN.md` của
-[TYP](https://github.com/Tunhoclaptrinh/trainning-typ-2026), nhánh `week-6-project-plan`.
+`version` vẫn là chuỗi của tác giả. Chống ghi đè bằng revision/If-Match và history
+đã triển khai ở [C3](TEMPLATE_REVISIONS.md), phát triển từ kế hoạch bài tổng hợp của
+[TYP](https://github.com/Tunhoclaptrinh/trainning-typ-2026).
 Worker welcome hiện route REGISTERED cho outbox; phải phân loại event trước khi thêm
 template event. Chưa có `/api/v1` hoặc API ratings/forks/notifications.
 
-Không dùng cache revision hoặc version string như concurrency protocol khi API chưa
-kiểm tra điều kiện đó. Summary/filter đã có ở C0–C1; C2 đã ghép catalog, xem thử,
-lưu/chèn bản sao local trên App. Xuất bản và cập nhật remote chưa triển khai. Yêu cầu cô lập HTML ở
+Không dùng cache revision hoặc version string thay strong ETag/If-Match.
+Summary/filter đã có ở C0–C1; C2 đã ghép catalog, xem thử,
+lưu/chèn bản sao local trên App. C3 bổ sung quản lý, sửa/khôi phục và chia sẻ remote
+có xác nhận giấy phép. Yêu cầu cô lập HTML ở
 [hợp đồng client](APP_TEMPLATE_CONTRACT.md).
