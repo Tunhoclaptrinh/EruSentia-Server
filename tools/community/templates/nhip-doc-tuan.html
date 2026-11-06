@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nhìn lại nhịp đọc trong tuần</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">DỮ LIỆU TRỰC QUAN</span>
+<h1 contenteditable="true">Nhìn lại nhịp đọc trong tuần</h1>
+<p class="intro">Nhìn thấy thời gian dành cho việc đọc.</p>
+</header>
+<div class="bars" role="img" aria-label="Giờ đọc minh họa từ thứ Hai đến thứ Sáu">
+<div class="bar" style="height:40%">T2 · 2h</div>
+<div class="bar" style="height:60%">T3 · 3h</div>
+<div class="bar" style="height:20%">T4 · 1h</div>
+<div class="bar" style="height:80%">T5 · 4h</div>
+<div class="bar" id="friday-bar" style="height:40%">T6 · 2h</div>
+</div>
+<div class="row">
+<label for="friday">Số giờ thứ Sáu</label>
+<input id="friday" type="range" min="0" max="5" step="0.5" value="2">
+<output id="hours">2 giờ</output>
+</div>
+<output id="total" class="result">Tổng: 12 giờ</output>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>document.querySelector('#friday').oninput=e=>{const n=Number(e.target.value);document.querySelector('#friday-bar').style.height=n*20+'%';document.querySelector('#friday-bar').textContent='T6 · '+n+'h';document.querySelector('#hours').textContent=n+' giờ';document.querySelector('#total').textContent='Tổng: '+(10+n)+' giờ'};</script></html>

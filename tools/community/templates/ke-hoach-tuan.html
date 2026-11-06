@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Một tuần có chủ đích</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">KẾ HOẠCH CÁ NHÂN</span>
+<h1 contenteditable="true">Một tuần có chủ đích</h1>
+<p class="intro">Chọn ít việc hơn. Hoàn thành điều quan trọng.</p>
+</header>
+<p>Một mục tiêu cụ thể giúp bạn quyết định việc nào cần làm trước.</p>
+<label for="focus">Trọng tâm tuần này</label>
+<input id="focus" value="Hoàn thành đề cương workshop" style="width:100%">
+<output id="done" class="result">0 / 4 việc</output>
+<progress value="0" max="4" aria-label="Tiến độ kế hoạch">
+</progress>
+<label class="task">
+<input type="checkbox">
+<span>Gom tài liệu và ghi nguồn</span>
+</label>
+<label class="task">
+<input type="checkbox">
+<span>Viết đề cương buổi chia sẻ</span>
+</label>
+<label class="task">
+<input type="checkbox">
+<span>Mời một người đọc và góp ý</span>
+</label>
+<label class="task">
+<input type="checkbox">
+<span>Tổng kết điều đã học</span>
+</label>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>const boxes=[...document.querySelectorAll('[type=checkbox]')];boxes.forEach(b=>b.addEventListener('change',()=>{const n=boxes.filter(x=>x.checked).length;document.querySelector('#done').textContent=n+' / 4 việc';document.querySelector('progress').value=n}));</script></html>

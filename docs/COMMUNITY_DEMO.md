@@ -1,110 +1,116 @@
-# Bộ nội dung cộng đồng để demo App
+# Bộ mẫu thực hành cộng đồng
 
-Bộ `erusentia-community-demo-v1` có **14 mẫu HTML/CSS/JS tự chứa**, được biên soạn
-riêng cho demo. Đây không phải nội dung của người dùng thật hoặc bản chép catalog
-template hệ thống của App. Các tác giả và dữ liệu đều là nhân vật/số liệu minh họa.
+Bộ **v2** gồm 14 tài liệu HTML/CSS/JavaScript tự chứa, biên soạn độc lập cho các
+hoạt động học tập và làm việc. Chúng là dữ liệu minh họa, không phải bài đăng của
+người dùng thật. Ba hồ sơ tác giả minh họa đều inactive; seed không tạo tài khoản
+đăng nhập hoặc số view/rating giả. Giấy phép MIT và ghi công được khai báo rõ cho
+nội dung mẫu; không áp dụng giấy phép này cho mã nguồn App.
 
-| Nội dung | Thao tác có thể thử |
+## Nội dung có thể dùng
+
+| Mẫu | Thao tác |
 |---|---|
-| Một tuần có chủ đích | Nhập trọng tâm, tích việc, xem tiến độ |
-| Đọc sâu và ghi nhớ | Ghi câu hỏi, tóm tắt và mở phần tự kiểm tra |
-| Ngân sách workshop | Đổi số lượng/đơn giá, xem từng dòng và tổng VND |
-| Thẻ ôn tập Web | Lật thẻ và chuyển câu hỏi HTML/CSS/JS |
+| Một tuần có chủ đích | Chỉnh trọng tâm, đánh dấu công việc, nhìn lại kết quả |
+| Đọc sâu và ghi nhớ | Ghi câu hỏi, ý chính và tóm tắt theo Cornell |
+| Ngân sách workshop | Sửa khoản chi, số lượng/đơn giá, thêm/xóa dòng, tính tổng |
+| Thẻ ôn tập Web | Tự trả lời, lật và chuyển ba thẻ HTML/CSS/JavaScript |
 | Nhịp đọc trong tuần | Đổi số giờ thứ Sáu, xem biểu đồ và tổng |
-| Chọn phương án có cơ sở | Đổi trọng số, so sánh điểm của hai lựa chọn |
-| Cuộc họp có bước tiếp theo | Ghi quyết định và đánh dấu việc cần làm |
-| Bàn giao tài liệu rõ ràng | Kiểm tra nội dung, liên kết, offline và riêng tư |
-| Mỗi ngày một bước nhỏ | Đánh dấu bảy ngày và đếm số buổi |
-| Một phiên tập trung | Bắt đầu, tạm dừng và đặt lại đồng hồ |
-| Tự kiểm tra kiến thức Web | Chọn đáp án và nhận giải thích |
-| Lộ trình workshop | Chọn mốc và theo dõi bước đang thực hiện |
-| Điểm cần chuẩn bị | Đổi khả năng/ảnh hưởng và xem điểm ưu tiên |
-| Chia chi phí | Đổi tổng tiền/số người, kiểm tra dữ liệu không hợp lệ |
+| Chọn phương án có cơ sở | Đổi trọng số và điểm số để so sánh hai lựa chọn |
+| Cuộc họp có bước tiếp theo | Ghi quyết định, người phụ trách và đầu việc |
+| Bàn giao tài liệu rõ ràng | Kiểm tra nội dung, liên kết và tài nguyên offline |
+| Mỗi ngày một bước nhỏ | Đánh dấu bảy ngày thực hành và ghi điều cần duy trì |
+| Một phiên tập trung | Đặt 1–180 phút, bắt đầu/tạm dừng/đặt lại đồng hồ |
+| Tự kiểm tra kiến thức Web | Trả lời một câu hỏi, xem đáp án và giải thích |
+| Lộ trình workshop | Chọn mốc chuẩn bị, theo dõi bước đang thực hiện |
+| Điểm cần chuẩn bị | Đổi khả năng/ảnh hưởng và ghi phương án phòng ngừa |
+| Chia chi phí | Đổi tổng tiền/số người, tính phần đóng góp làm tròn lên |
 
-Nguồn: [catalog.json](../tools/community/catalog.json). Mẫu dùng envelope
-`erusentia-template-html`, schema 1, tương thích catalog C2 hiện tại. Không có
-CDN, API ngoài, token, thông tin App, đường dẫn máy cá nhân, số view/rating giả
-hoặc tài khoản đăng nhập dùng chung trong bộ nội dung này.
+Mỗi mẫu có phần ghi chú riêng, giao diện sáng, hiển thị được ở 390 px và không
+phụ thuộc CDN/API/font bên ngoài. Đây là công cụ thực hành nhỏ; không thay cho
+phần mềm kế toán, quản lý dự án hoặc ngân hàng câu hỏi đầy đủ.
 
-## Seed local
+## Sửa nguồn và tạo catalog
 
-Với Docker project đã chạy và có `docker/.env.project.local`:
+- [manifest.json](../tools/community/manifest.json): ID, metadata, giấy phép và đường dẫn HTML.
+- [templates](../tools/community/templates): nguồn HTML/CSS/JS đọc và sửa được theo từng mẫu.
+- [theme.css](../tools/community/theme.css): giao diện tài liệu dùng chung, được nhúng lúc build.
+- [catalog.json](../tools/community/catalog.json): đầu ra tự chứa dùng cho seed; không sửa tay.
+- [previous-v1.json](../tools/community/previous-v1.json): fingerprint bất biến của bản gốc, dùng kiểm tra điều kiện nâng cấp; không cập nhật để ép ghi đè nội dung đã sửa.
+
+```bash
+pnpm community:build
+pnpm community:check
+```
+
+CI chạy `community:check` để phát hiện nguồn và catalog không đồng bộ. Mẫu mới
+phải được kiểm tra DTO/publication và tương tác trong App/HTML offline.
+
+## Seed mặc định: chỉ thêm phần còn thiếu
+
+Với Docker project đang chạy và có `docker/.env.project.local`:
 
 ```bash
 pnpm project:seed:community --local-project
 ```
 
-Kết quả lần đầu: `inserted: 14`, `preserved: 0`, `loginAccountsCreated: 0`.
-Chạy lại: `inserted: 0`, `preserved: 14`. Lệnh chỉ thêm nội dung, không chạy
-migration hay reset. Nó dùng database `eru_project_docker`, không dùng database
-thực hành tuần 1/3/4/5.
-
-Project bootstrap cũng chạy seed này khi `PROJECT_COMMUNITY_DEMO` không phải
-`false`. Docker project bật rõ `PROJECT_COMMUNITY_DEMO=true`, nên database mới
-cũng có nội dung sau khởi động. Không đổi mật khẩu các tài khoản demo local.
-
-## Neon qua Render
-
-Đối chiếu trực tiếp ngày **06/11/2026**: Neon có đủ **14 mẫu public, chưa xóa**,
-4 danh mục và 3 tác giả minh họa inactive. Nội dung JSONB của 14 mẫu khớp catalog.
-Chạy seed lại trả `inserted: 0`, `preserved: 14`, `loginAccountsCreated: 0`;
-5 migration và fingerprint dữ liệu ngoài bộ seed giữ nguyên. Kết nối client dùng
-TLS 1.3, xác minh chứng chỉ thành công. Với proxy của dịch vụ hosted, kiểm tra
-TLS tại client; không suy ra tình trạng mã hóa toàn tuyến chỉ từ `pg_stat_ssl`
-phía PostgreSQL. Không đưa thông tin kết nối hoặc credential vào báo cáo.
-
-Render đã giữ kết nối Neon trong các biến môi trường. Sau khi mã này được deploy,
-bước `project-db bootstrap` thêm những mẫu còn thiếu qua chính kết nối đó:
-
-1. CI kiểm tra server và PostgreSQL TLS đạt rồi Render build image mới.
-2. Bootstrap giữ nguyên năm migration đang triển khai, thêm bộ nội dung và tiếp
-   tục mở API. Không lấy migration C3 từ nhánh history.
-3. Log seed chỉ có dataset và số lượng thêm/giữ, không có mật khẩu/DSN.
-4. Tài khoản cá nhân vẫn đăng ký/đăng nhập bình thường. Không bật
-   `PROJECT_DEMO_ACCOUNTS` hoặc đưa mật khẩu demo local lên Render.
-
-Có thể đặt `PROJECT_COMMUNITY_DEMO=false` để bỏ seed nội dung ở các lần boot tiếp
-theo. Điều đó không xóa những mẫu đã thêm. Không xóa mẫu người dùng đã chỉnh,
-khôi phục mẫu đã soft-delete hoặc đặt lại public khi chạy lại seed.
-
-Nếu đối chiếu trực tiếp Neon, cấu hình các biến `DB_*` của dự án trong file
-**được Git bỏ qua** `.env.neon.local`, quyền file 600, rồi chạy:
+Neon dùng file `.env.neon.local` đã được Git bỏ qua, quyền 600, chứa `DB_*` của
+dự án với `DB_SSL=true`, endpoint trực tiếp, xác minh chứng chỉ:
 
 ```bash
 pnpm project:seed:community .env.neon.local
 ```
 
-Dùng endpoint trực tiếp, `DB_SSL=true` với kiểm tra chứng chỉ. Lệnh từ chối
-pooler endpoint vì dùng advisory lock theo session, từ chối database không có
-prefix project và từ chối hosted không TLS. Không gửi credential qua chat.
+Lần đầu thêm 14 mẫu. Chạy lại giữ nguyên các dòng đã có, kể cả nội dung đã sửa,
+private hoặc soft-delete. Lệnh không reset DB, không chạy migration, không đổi
+mật khẩu hay cập nhật bản sao trong vault người dùng. Bootstrap cũng chỉ thêm
+mẫu thiếu khi `PROJECT_COMMUNITY_DEMO` không phải `false`; không tự nâng v1 lên v2.
+Không bật tài khoản demo local trên Render.
 
-## Thử trong App
+## Nâng bộ v1 đã có lên v2
 
-1. Khởi chạy App local. Mở **Thư viện mẫu → Cộng đồng** và đăng nhập.
-2. Lọc thẻ `community-demo`: có 14 mẫu, trang đầu 12 và trang sau 2 mẫu.
-3. Thử tìm `Ngân sách workshop`, lọc danh mục **Cộng đồng · Chi phí** và xem mẫu.
-4. Đổi số lượng Tài liệu từ 24 thành 30: tổng tăng từ **1.658.000 ₫** lên
-   **1.730.000 ₫**. Bản xem thử không sửa dữ liệu template trên server.
-5. Lưu vào thư viện và chèn vào một ghi chú. Bản chèn bắt đầu từ mẫu gốc; đổi số
-   lượng trong ghi chú rồi lưu. Mở lại ghi chú và xuất HTML để kiểm tra offline.
-6. Mẫu đã lưu/chèn là bản sao của người dùng; seed không thay nội dung bản sao.
+Chỉ dùng sau khi API/schema C3 đã hoạt động (`08_template_revisions.sql`).
+Chạy dry-run trước, thay `--local-project` bằng `.env.neon.local` nếu dùng Neon:
 
-Local có các tài khoản user/creator/admin trong tài liệu phát triển. Bộ nội dung
-này chỉ tạo ba tác giả **inactive**, với mật khẩu ngẫu nhiên không được xuất ra.
-Các vai trò Creator/Admin UI, xuất bản, kiểm duyệt và kho bài viết đầy đủ chưa
-thuộc lát cắt C2; không giả lập rằng seed đã triển khai các tính năng đó.
+```bash
+pnpm project:seed:community --local-project --upgrade-curated --curated-only --dry-run
+pnpm project:seed:community --local-project --upgrade-curated --curated-only --backup-dir ../.local/backups/community
+```
 
-## An toàn và kiểm thử
+`--upgrade-curated` chỉ thay 14 dòng v1 còn đúng fingerprint gốc và chưa xóa.
+Dòng đã sửa riêng hoặc lên phiên bản khác được giữ. `--curated-only` chuyển hai
+fixture kỹ thuật cũ sang private nếu nội dung và chủ sở hữu inactive còn khớp;
+không xóa dòng. Có thể bỏ cờ này nếu vẫn muốn giữ fixture trong catalog.
 
-Seed dùng advisory lock, transaction và ID/slug riêng. Trùng danh tính/profile,
-danh mục hoặc slug của dữ liệu khác sẽ rollback toàn bộ, không nhận làm dữ liệu
-của seed. Chạy đồng thời không nhân đôi; chạy lại không UPDATE nên giữ nguyên
-nội dung, timestamps, counters, quyền hiển thị, trạng thái xóa và mật khẩu.
-Không thay migration SQL, không xóa database/volume và không seed thông tin riêng.
+Lệnh yêu cầu backup ngoài repository trước khi ghi: thư mục mới quyền **0700**,
+`before-upgrade.json` quyền **0600**, chỉ gồm các dòng mẫu đủ điều kiện; không gồm
+tài khoản, hash mật khẩu hay phiên đăng nhập. Backup lỗi thì transaction rollback.
+Advisory lock cùng row lock bảo vệ seed đồng thời; cập nhật qua trigger C3 tạo
+revision/history mới và đổi cache revision. Giữ chủ sở hữu, counters và dữ liệu
+ngoài bộ mẫu. Không import lại nguyên backup bằng SQL ghi đè lịch sử; khi cần
+khôi phục, dùng quy trình revision C3 và kiểm tra ETag/quyền phù hợp.
 
-`pnpm test:hosted` đã kiểm tra PostgreSQL TLS thật: DTO của cả 14 mẫu, seed lặp
-và đồng thời, không tạo tài khoản có thể đăng nhập, bảo toàn dữ liệu, API list/
-detail, phân trang, quyền truy cập và rollback khi trùng slug. Lượt startup thật
-của Render entrypoint kiểm tra cả restart và từ chối chứng chỉ không tin cậy.
-App có `scripts/check-community-demo.mjs` để thử 14 tương tác offline cùng luồng
-App/PostgreSQL local; profile/vault của lượt kiểm thử tách khỏi dữ liệu người dùng.
+## Dùng trong App
+
+1. Mở **Thư viện mẫu → Cộng đồng**, đăng nhập rồi tìm mẫu hoặc lọc thẻ `community-demo`.
+2. Chọn **Xem thử**. Thay số lượng Tài liệu từ 24 thành 30 trong ngân sách:
+   tổng đổi từ **1.658.000 ₫** thành **1.730.000 ₫**.
+3. Muốn dùng dữ liệu vừa nhập, chọn **Giữ dữ liệu đã nhập trong bản xem thử**,
+   rồi **Lưu bản đã tùy chỉnh** hoặc **Chèn vào ghi chú**. Không chọn thì dùng bản gốc.
+4. Lưu ghi chú, mở lại và xuất HTML. Bản sao giữ tương tác, nguồn/revision và
+   giấy phép; mẫu trên server vẫn giữ nguyên. Đồng hồ mở lại ở trạng thái tạm dừng.
+
+Tác giả có luồng nháp/lịch sử/chia sẻ của C3. Seed này không bổ sung quy trình
+kiểm duyệt Admin, xác minh email hoặc kho bài viết cộng đồng.
+
+## Kiểm chứng ngày 07/11/2026
+
+`pnpm test:hosted` kiểm tra PostgreSQL TLS, seed lặp/đồng thời, rollback, dry-run,
+backup CLI thật, giữ nội dung sửa/xóa và chỉ ẩn fixture gốc. App có
+`pnpm test:template-quality`: đọc catalog từ PostgreSQL tạm, thử cả 14 mẫu qua
+runner cô lập và mở sản phẩm HTML thật bằng `file://` khi chặn mạng.
+
+Local và Neon đã được dry-run, backup các dòng gốc rồi nâng 14 mẫu lên v2 và
+chuyển 2 fixture gốc sang private. Biên bản fingerprint và backup nằm tại
+`.local/backups/template-quality-2026-11-07` ở thư mục chứa App/server, không đưa
+vào Git. Kết quả bảo toàn dữ liệu và ảnh giao diện được ghi trong báo cáo chất
+lượng ở repo App; thay đổi nội dung không yêu cầu migration mới hay sửa engine HTML.

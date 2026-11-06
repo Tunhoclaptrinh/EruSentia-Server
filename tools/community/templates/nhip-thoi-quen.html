@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mỗi ngày một bước nhỏ</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">THÓI QUEN NHỎ</span>
+<h1 contenteditable="true">Mỗi ngày một bước nhỏ</h1>
+<p class="intro">Tiến bộ được tạo nên từng ngày.</p>
+</header>
+<p>Ví dụ: dành 15 phút đọc hoặc ghi lại một điều mới mỗi ngày.</p>
+<div class="days">
+<button aria-pressed="false">T2</button>
+<button aria-pressed="false">T3</button>
+<button aria-pressed="false">T4</button>
+<button aria-pressed="false">T5</button>
+<button aria-pressed="false">T6</button>
+<button aria-pressed="false">T7</button>
+<button aria-pressed="false">CN</button>
+</div>
+<output id="days" class="result">0 / 7 ngày</output>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>const days=[...document.querySelectorAll('.days button')];days.forEach(d=>d.onclick=()=>{d.setAttribute('aria-pressed',d.getAttribute('aria-pressed')!=='true');document.querySelector('#days').textContent=days.filter(x=>x.getAttribute('aria-pressed')==='true').length+' / 7 ngày'});</script></html>

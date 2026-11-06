@@ -1,13 +1,36 @@
 import { config, parse } from "dotenv";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdir, writeFile, realpath } from "node:fs/promises";
+import { resolve, join } from "node:path";
+import { randomUUID } from "node:crypto";
+import { parseArgs } from "node:util";
 import { Pool } from "pg";
 import { readDatabaseSettings } from "../src/infrastructure/database/settings";
 import { assertProjectDatabase } from "../src/infrastructure/database/project-migrations";
 import { seedCommunityDemo } from "../src/infrastructure/database/community-demo";
 
 async function main() {
-  const file = process.argv[2];
-  if (file === "--local-project") {
+  const { values, positionals } = parseArgs({
+    options: {
+      "local-project": { type: "boolean" },
+      "upgrade-curated": { type: "boolean" },
+      "curated-only": { type: "boolean" },
+      "backup-dir": { type: "string" },
+      "dry-run": { type: "boolean" },
+    },
+    allowPositionals: true,
+  });
+  if (positionals.length > 1 || (values["local-project"] && positionals.length))
+    throw new Error("Community seed accepts one env file or --local-project");
+  if (
+    (values["upgrade-curated"] || values["curated-only"]) &&
+    !values["dry-run"] &&
+    !values["backup-dir"]
+  )
+    throw new Error(
+      "Community upgrades require --backup-dir outside the repository",
+    );
+  const file = positionals[0];
+  if (values["local-project"]) {
     const local = parse(await readFile("docker/.env.project.local"));
     Object.assign(process.env, {
       NODE_ENV: "development",
@@ -18,7 +41,7 @@ async function main() {
       DB_DATABASE: "eru_project_docker",
       DB_SSL: "false",
     });
-  } else config({ path: file || ".env", quiet: true });
+  } else config({ path: file || ".env", quiet: true, override: !!file });
   for (const name of ["DB_HOST", "DB_USERNAME", "DB_PASSWORD", "DB_DATABASE"])
     if (!process.env[name]?.trim())
       throw new Error(`Missing ${name}; no database was changed`);
@@ -43,7 +66,52 @@ async function main() {
     console.error("Community seed connection interrupted"),
   );
   try {
-    console.log(await seedCommunityDemo(pool));
+    console.log(
+      await seedCommunityDemo(pool, {
+        upgradeExisting: values["upgrade-curated"],
+        hideFoundationExamples: values["curated-only"],
+        dryRun: values["dry-run"],
+        beforeUpgrade: values["backup-dir"]
+          ? async (rows) => {
+              const directory = join(
+                resolve(values["backup-dir"]!),
+                "community-" + Date.now() + "-" + randomUUID().slice(0, 8),
+              );
+              const repo = resolve(".");
+              if (directory === repo || directory.startsWith(repo + "/"))
+                throw new Error(
+                  "Community backups must stay outside the repository",
+                );
+              await mkdir(directory, { recursive: true, mode: 0o700 });
+              const actual = await realpath(directory);
+              const actualRepo = await realpath(repo);
+              if (actual === actualRepo || actual.startsWith(actualRepo + "/"))
+                throw new Error(
+                  "Community backups must stay outside the repository",
+                );
+              const path = join(directory, "before-upgrade.json");
+              await writeFile(
+                path,
+                JSON.stringify(
+                  {
+                    createdAt: new Date().toISOString(),
+                    dataset: "erusentia-community-demo-v1",
+                    templates: rows,
+                  },
+                  null,
+                  2,
+                ) + "\n",
+                { flag: "wx", mode: 0o600 },
+              );
+              console.log({
+                backup: path,
+                curatedTemplates: rows.length,
+                accountDataIncluded: false,
+              });
+            }
+          : undefined,
+      }),
+    );
   } finally {
     await pool.end();
   }

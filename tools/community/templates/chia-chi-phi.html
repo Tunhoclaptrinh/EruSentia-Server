@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chia chi phí buổi sinh hoạt</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">CÔNG CỤ NHÓM</span>
+<h1 contenteditable="true">Chia chi phí buổi sinh hoạt</h1>
+<p class="intro">Minh bạch chi phí, nhẹ nhàng phối hợp.</p>
+</header>
+<div class="row">
+<label for="amount">Tổng chi phí (VND)</label>
+<input id="amount" type="number" min="0" max="1000000000" value="480000">
+</div>
+<div class="row">
+<label for="people">Số người</label>
+<input id="people" type="number" min="1" max="10000" value="24">
+</div>
+<output id="share" class="result" aria-live="polite">
+</output>
+<p class="muted">Làm tròn lên đến đồng. Đây là ví dụ tính toán, không thực hiện thanh toán.</p>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>function split(){const a=document.querySelector('#amount'),p=document.querySelector('#people');if(!a.checkValidity()||!p.checkValidity()||!a.value||!p.value){document.querySelector('#share').textContent='Nhập tổng tiền hợp lệ và ít nhất 1 người.';return}document.querySelector('#share').textContent='Mỗi người dự kiến: '+new Intl.NumberFormat('vi-VN').format(Math.ceil(Number(a.value)/Number(p.value)))+' ₫'}document.querySelectorAll('input').forEach(e=>e.oninput=split);split();</script></html>

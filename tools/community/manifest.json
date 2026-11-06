@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 1,
+  "dataset": "erusentia-community-demo-v2",
+  "authors": [
+    {
+      "id": "ec000000-0000-4000-8000-000000000001",
+      "email": "community-demo-1@example.test",
+      "username": "eru-community-demo-1",
+      "displayName": "Nhóm học tập · Demo"
+    },
+    {
+      "id": "ec000000-0000-4000-8000-000000000002",
+      "email": "community-demo-2@example.test",
+      "username": "eru-community-demo-2",
+      "displayName": "Góc làm việc · Demo"
+    },
+    {
+      "id": "ec000000-0000-4000-8000-000000000003",
+      "email": "community-demo-3@example.test",
+      "username": "eru-community-demo-3",
+      "displayName": "Xưởng dữ liệu · Demo"
+    }
+  ],
+  "categories": [
+    {
+      "id": "ec100000-0000-4000-8000-000000000001",
+      "slug": "community-learning",
+      "name": "Cộng đồng · Học tập",
+      "key": "learning"
+    },
+    {
+      "id": "ec100000-0000-4000-8000-000000000002",
+      "slug": "community-planning",
+      "name": "Cộng đồng · Kế hoạch",
+      "key": "planning"
+    },
+    {
+      "id": "ec100000-0000-4000-8000-000000000003",
+      "slug": "community-visual",
+      "name": "Cộng đồng · Trực quan",
+      "key": "visual"
+    },
+    {
+      "id": "ec100000-0000-4000-8000-000000000004",
+      "slug": "community-finance",
+      "name": "Cộng đồng · Chi phí",
+      "key": "finance"
+    }
+  ],
+  "templates": [
+    {
+      "id": "ec200000-0000-4000-8000-000000000001",
+      "author": 0,
+      "category": "planning",
+      "slug": "community-demo-ke-hoach-tuan",
+      "title": "Một tuần có chủ đích",
+      "description": "Kế hoạch tuần với trọng tâm, checklist tương tác và phần nhìn lại kết quả.",
+      "tags": [
+        "community-demo",
+        "kế hoạch",
+        "checklist",
+        "tuần"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Kế hoạch tuần với trọng tâm, checklist tương tác và phần nhìn lại kết quả.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/ke-hoach-tuan.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000002",
+      "author": 1,
+      "category": "learning",
+      "slug": "community-demo-ghi-chep-cornell",
+      "title": "Đọc sâu và ghi nhớ",
+      "description": "Ghi câu hỏi, ý chính, tóm tắt và bước áp dụng theo phương pháp Cornell.",
+      "tags": [
+        "community-demo",
+        "học tập",
+        "Cornell",
+        "ghi chép"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "study",
+        "allowHeightResize": false,
+        "guide": "1. Ghi câu hỏi, ý chính, tóm tắt và bước áp dụng theo phương pháp Cornell.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/ghi-chep-cornell.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000003",
+      "author": 2,
+      "category": "finance",
+      "slug": "community-demo-ngan-sach-workshop",
+      "title": "Ngân sách workshop",
+      "description": "Điều chỉnh khoản chi, số lượng và đơn giá; thêm dòng và theo dõi tổng dự toán.",
+      "tags": [
+        "community-demo",
+        "workshop",
+        "ngân sách",
+        "bảng tính"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "finance",
+        "allowHeightResize": false,
+        "guide": "1. Điều chỉnh khoản chi, số lượng và đơn giá; thêm dòng và theo dõi tổng dự toán.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/ngan-sach-workshop.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000004",
+      "author": 0,
+      "category": "learning",
+      "slug": "community-demo-the-on-tap-web",
+      "title": "Thẻ ôn tập HTML · CSS · JavaScript",
+      "description": "Tự trả lời, lật thẻ kiến thức HTML/CSS/JavaScript và chuyển qua ba thẻ ôn tập.",
+      "tags": [
+        "community-demo",
+        "flashcard",
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "study",
+        "allowHeightResize": false,
+        "guide": "1. Tự trả lời, lật thẻ kiến thức HTML/CSS/JavaScript và chuyển qua ba thẻ ôn tập.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/the-on-tap-web.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000005",
+      "author": 1,
+      "category": "visual",
+      "slug": "community-demo-nhip-doc-tuan",
+      "title": "Nhìn lại nhịp đọc trong tuần",
+      "description": "Theo dõi nhịp đọc trong tuần, điều chỉnh dữ liệu và đọc biểu đồ trực tiếp.",
+      "tags": [
+        "community-demo",
+        "biểu đồ",
+        "dữ liệu",
+        "đọc sách"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "visual",
+        "allowHeightResize": false,
+        "guide": "1. Theo dõi nhịp đọc trong tuần, điều chỉnh dữ liệu và đọc biểu đồ trực tiếp.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/nhip-doc-tuan.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000006",
+      "author": 2,
+      "category": "planning",
+      "slug": "community-demo-ma-tran-quyet-dinh",
+      "title": "Chọn phương án có cơ sở",
+      "description": "Điều chỉnh trọng số, đối chiếu điểm số và ghi lại lý do chọn phương án.",
+      "tags": [
+        "community-demo",
+        "quyết định",
+        "trọng số",
+        "so sánh"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Điều chỉnh trọng số, đối chiếu điểm số và ghi lại lý do chọn phương án.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/ma-tran-quyet-dinh.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000007",
+      "author": 0,
+      "category": "planning",
+      "slug": "community-demo-bien-ban-hop",
+      "title": "Cuộc họp có bước tiếp theo",
+      "description": "Ghi quyết định, người phụ trách và các đầu việc cần hoàn thành sau cuộc họp.",
+      "tags": [
+        "community-demo",
+        "cuộc họp",
+        "biên bản",
+        "công việc"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Ghi quyết định, người phụ trách và các đầu việc cần hoàn thành sau cuộc họp.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/bien-ban-hop.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000008",
+      "author": 1,
+      "category": "planning",
+      "slug": "community-demo-checklist-ban-giao",
+      "title": "Bàn giao tài liệu rõ ràng",
+      "description": "Kiểm tra nội dung, liên kết và tài nguyên offline trước khi chia sẻ tài liệu.",
+      "tags": [
+        "community-demo",
+        "bàn giao",
+        "checklist",
+        "offline"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Kiểm tra nội dung, liên kết và tài nguyên offline trước khi chia sẻ tài liệu.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/checklist-ban-giao.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000009",
+      "author": 2,
+      "category": "learning",
+      "slug": "community-demo-nhip-thoi-quen",
+      "title": "Mỗi ngày một bước nhỏ",
+      "description": "Theo dõi bảy ngày thực hành và ghi lại điều giúp bạn duy trì thói quen.",
+      "tags": [
+        "community-demo",
+        "thói quen",
+        "đọc sách",
+        "tuần"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "study",
+        "allowHeightResize": false,
+        "guide": "1. Theo dõi bảy ngày thực hành và ghi lại điều giúp bạn duy trì thói quen.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/nhip-thoi-quen.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000010",
+      "author": 0,
+      "category": "planning",
+      "slug": "community-demo-phien-tap-trung",
+      "title": "Một phiên tập trung",
+      "description": "Ghi mục tiêu, bắt đầu/tạm dừng đồng hồ và nhìn lại kết quả sau phiên tập trung.",
+      "tags": [
+        "community-demo",
+        "tập trung",
+        "đồng hồ",
+        "mục tiêu"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Ghi mục tiêu, bắt đầu/tạm dừng đồng hồ và nhìn lại kết quả sau phiên tập trung.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/phien-tap-trung.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000011",
+      "author": 1,
+      "category": "learning",
+      "slug": "community-demo-tu-kiem-tra-web",
+      "title": "Tự kiểm tra kiến thức Web",
+      "description": "Tự kiểm tra kiến thức Web với đáp án, giải thích và câu hỏi để suy ngẫm.",
+      "tags": [
+        "community-demo",
+        "trắc nghiệm",
+        "HTML",
+        "kiến thức Web"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "study",
+        "allowHeightResize": false,
+        "guide": "1. Tự kiểm tra kiến thức Web với đáp án, giải thích và câu hỏi để suy ngẫm.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/tu-kiem-tra-web.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000012",
+      "author": 2,
+      "category": "planning",
+      "slug": "community-demo-lo-trinh-workshop",
+      "title": "Lộ trình một buổi workshop",
+      "description": "Đi theo từng mốc chuẩn bị workshop, theo dõi tiến độ và ghi chú phần cần xử lý.",
+      "tags": [
+        "community-demo",
+        "timeline",
+        "workshop",
+        "dự án"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Đi theo từng mốc chuẩn bị workshop, theo dõi tiến độ và ghi chú phần cần xử lý.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/lo-trinh-workshop.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000013",
+      "author": 0,
+      "category": "planning",
+      "slug": "community-demo-so-rui-ro",
+      "title": "Nhìn trước các điểm cần chuẩn bị",
+      "description": "Đánh giá mức ưu tiên rủi ro và ghi phương án phòng ngừa, người phụ trách.",
+      "tags": [
+        "community-demo",
+        "rủi ro",
+        "ma trận",
+        "dự án"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "productivity",
+        "allowHeightResize": false,
+        "guide": "1. Đánh giá mức ưu tiên rủi ro và ghi phương án phòng ngừa, người phụ trách.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/so-rui-ro.html"
+    },
+    {
+      "id": "ec200000-0000-4000-8000-000000000014",
+      "author": 1,
+      "category": "finance",
+      "slug": "community-demo-chia-chi-phi",
+      "title": "Chia chi phí buổi sinh hoạt",
+      "description": "Tính phần đóng góp, xử lý tiền lẻ và ghi rõ nội dung chi phí của một hoạt động.",
+      "tags": [
+        "community-demo",
+        "chi phí",
+        "tính toán",
+        "nhóm"
+      ],
+      "version": "2.0.0",
+      "contentJson": {
+        "format": "erusentia-template-html",
+        "schemaVersion": 1,
+        "subjectCategory": "finance",
+        "allowHeightResize": false,
+        "guide": "1. Tính phần đóng góp, xử lý tiền lẻ và ghi rõ nội dung chi phí của một hoạt động.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
+        "sharing": {
+          "license": "MIT",
+          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
+          "permissionConfirmed": true
+        }
+      },
+      "htmlFile": "templates/chia-chi-phi.html"
+    }
+  ]
+}

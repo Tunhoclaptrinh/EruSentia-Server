@@ -19,6 +19,7 @@ jobs:
         with:
           cache: true
       - run: pnpm install --frozen-lockfile
+      - run: pnpm community:check
       - run: pnpm typecheck
       - run: pnpm test
       - name: Validate hosted Compose configuration

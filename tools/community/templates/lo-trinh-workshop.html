@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lộ trình một buổi workshop</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">TỔ CHỨC HOẠT ĐỘNG</span>
+<h1 contenteditable="true">Lộ trình một buổi workshop</h1>
+<p class="intro">Biến một ý tưởng thành buổi chia sẻ.</p>
+</header>
+<label for="stage">Mốc đang thực hiện</label>
+<select id="stage">
+<option value="0">Xác định đầu ra</option>
+<option value="1">Chuẩn bị nội dung</option>
+<option value="2">Thử buổi chia sẻ</option>
+<option value="3">Tổ chức</option>
+<option value="4">Tổng kết</option>
+</select>
+<ol class="steps">
+<li>Xác định điều người tham gia mang về</li>
+<li>Chuẩn bị ghi chú và ví dụ</li>
+<li>Chạy thử với một nhóm nhỏ</li>
+<li>Tổ chức và thu nhận câu hỏi</li>
+<li>Tổng hợp phản hồi và tài liệu</li>
+</ol>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>const stage=document.querySelector('#stage');function mark(){document.querySelectorAll('.steps li').forEach((e,i)=>e.classList.toggle('active',i===Number(stage.value)))}stage.onchange=mark;mark();</script></html>
