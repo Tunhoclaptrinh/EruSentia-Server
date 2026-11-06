@@ -40,6 +40,20 @@ export interface RefreshSession {
   createdAt: Date;
 }
 
+export interface LoginSession {
+  id: string;
+  createdAt: Date;
+  lastRefreshedAt: Date;
+  expiresAt: Date;
+}
+export interface LoginSessionsPage {
+  data: LoginSession[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export const AUTH_STORE = Symbol("AUTH_STORE");
 export interface AuthStore {
   createUser(input: {
@@ -67,6 +81,22 @@ export interface AuthStore {
     now: Date,
   ): Promise<{ session: RefreshSession; user: UserAccount } | null>;
   revokeSessionFamily(hash: string, now: Date): Promise<void>;
+  listSessions(
+    userId: string,
+    page: number,
+    size: number,
+    now: Date,
+  ): Promise<LoginSessionsPage>;
+  revokeOwnedSession(
+    userId: string,
+    familyId: string,
+    now: Date,
+  ): Promise<void>;
+  revokeOtherSessions(
+    userId: string,
+    currentFamilyId: string,
+    now: Date,
+  ): Promise<void>;
   isSessionActive(
     userId: string,
     familyId: string,

@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
   Get,
   Header,
   HttpCode,
@@ -22,7 +24,7 @@ import {
 } from "@nestjs/swagger";
 import { ApiErrorDto } from "../templates/dto/template-response.dto";
 import { AUTH_STORE, AuthStore, UserIdentity } from "./auth-store";
-import { CurrentUser, Public, Roles } from "./auth.guards";
+import { CurrentSession, CurrentUser, Public, Roles } from "./auth.guards";
 import {
   LoginDto,
   RefreshDto,
@@ -31,14 +33,19 @@ import {
   UserDto,
   UsersPageDto,
   UsersQueryDto,
+  LoginSessionsPageDto,
 } from "./auth.dto";
+import { UuidPipe } from "../common/uuid.pipe";
 import { AuthService } from "./auth.service";
 
 @ApiTags("Authentication")
 @ApiBadRequestResponse({ type: ApiErrorDto })
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    @Inject(AUTH_STORE) private readonly store: AuthStore,
+  ) {}
   @Public()
   @Post("register")
   @Header("Cache-Control", "no-store")
@@ -95,6 +102,67 @@ export class AuthController {
   @ApiNoContentResponse()
   logout(@Body() body: RefreshDto) {
     return this.auth.logout(body.refreshToken);
+  }
+
+  @Get("sessions")
+  @Header("Cache-Control", "no-store")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "List this account's active login sessions",
+    description:
+      "Grouped by login family, with bounded pagination. Rotation time is not user activity. No device, IP, tokens or hashes are returned.",
+  })
+  @ApiOkResponse({ type: LoginSessionsPageDto })
+  @ApiUnauthorizedResponse({ type: ApiErrorDto })
+  async sessions(
+    @CurrentUser() user: UserIdentity,
+    @CurrentSession() current: string,
+    @Query() query: UsersQueryDto,
+  ) {
+    const page = await this.store.listSessions(
+      user.id,
+      query.page,
+      query.size,
+      new Date(),
+    );
+    return {
+      ...page,
+      data: page.data.map((row) => ({ ...row, current: row.id === current })),
+    };
+  }
+  @Post("sessions/revoke-others")
+  @HttpCode(204)
+  @Header("Cache-Control", "no-store")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Revoke the account's other active login sessions",
+    description:
+      "Preserves the caller's signed session. Includes rotated children. New logins after the operation are separate sessions.",
+  })
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({ type: ApiErrorDto })
+  revokeOthers(
+    @CurrentUser() user: UserIdentity,
+    @CurrentSession() current: string,
+  ) {
+    return this.store.revokeOtherSessions(user.id, current, new Date());
+  }
+  @Delete("sessions/:id")
+  @HttpCode(204)
+  @Header("Cache-Control", "no-store")
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Revoke one of this account's login sessions",
+    description:
+      "Idempotent 204 for unknown/other-account IDs. Its access and refresh tokens stop working on subsequent requests, including after rotation.",
+  })
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse({ type: ApiErrorDto })
+  revokeSession(
+    @CurrentUser() user: UserIdentity,
+    @Param("id", UuidPipe) id: string,
+  ) {
+    return this.store.revokeOwnedSession(user.id, id, new Date());
   }
 
   @Get("me")

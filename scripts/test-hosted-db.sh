@@ -43,6 +43,7 @@ fi
 docker exec "$test_container" createdb -U postgres project_test_hosted
 docker exec "$test_container" createdb -U postgres project_test_community
 docker exec "$test_container" createdb -U postgres project_test_revisions
+docker exec "$test_container" createdb -U postgres project_test_sessions
 export DB_HOST=localhost
 export DB_PORT=$(docker port "$test_container" 5432/tcp | sed 's/.*://')
 export DB_USERNAME=postgres DB_PASSWORD=ci-only-disposable-password
@@ -54,3 +55,5 @@ export RUN_VERSIONING_TESTS=1 C3_TEST_DATABASE=project_test_revisions
 node --test test/foundation-api.test.cjs test/hosted-startup.test.cjs test/template-revisions.test.cjs
 
 DB_DATABASE=project_test_community RUN_COMMUNITY_TESTS=1 node --test test/community-demo.test.cjs
+
+DB_DATABASE=project_test_sessions RUN_LOGIN_SESSION_TESTS=1 node --test test/account-sessions.test.cjs

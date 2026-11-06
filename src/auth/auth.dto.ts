@@ -74,3 +74,28 @@ export class UsersPageDto {
   @ApiProperty() totalPages!: number;
   @ApiProperty() totalElements!: number;
 }
+
+export class LoginSessionDto {
+  @ApiProperty({
+    format: "uuid",
+    description: "Login family identifier, never a credential.",
+  })
+  id!: string;
+  @ApiProperty({ type: String, format: "date-time" }) createdAt!: Date;
+  @ApiProperty({
+    type: String,
+    format: "date-time",
+    description: "Token rotation time; not last user activity.",
+  })
+  lastRefreshedAt!: Date;
+  @ApiProperty({ type: String, format: "date-time" }) expiresAt!: Date;
+  @ApiProperty() current!: boolean;
+}
+export class LoginSessionsPageDto extends PickType(UsersPageDto, [
+  "page",
+  "size",
+  "totalPages",
+  "totalElements",
+] as const) {
+  @ApiProperty({ type: [LoginSessionDto] }) data!: LoginSessionDto[];
+}

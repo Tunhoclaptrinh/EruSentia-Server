@@ -13,6 +13,7 @@ import {
   active,
   AuthStore,
   RefreshSession,
+  LoginSession,
   Role,
   userIdentity,
 } from "../auth-store";
@@ -158,6 +159,73 @@ export class PostgresAuthStore implements AuthStore {
           { familyId: session.familyId },
           { revokedAt: now },
         );
+    });
+  }
+  async listSessions(userId: string, page: number, size: number, now: Date) {
+    // Count/page share one database snapshot. Never select token hashes or other accounts.
+    return this.dataSource.transaction("REPEATABLE READ", async (manager) => {
+      const activeFamilies = `FROM auth_refresh_sessions WHERE user_id=$1 GROUP BY family_id
+        HAVING bool_or(used_at IS NULL AND revoked_at IS NULL AND expires_at > $2)`;
+      const [{ total }] = await manager.query(
+        `SELECT count(*)::int total FROM (SELECT family_id ${activeFamilies}) s`,
+        [userId, now],
+      );
+      const rows = await manager.query(
+        `SELECT family_id AS id, min(created_at) AS "createdAt", max(created_at) AS "lastRefreshedAt", max(expires_at) AS "expiresAt"
+        ${activeFamilies} ORDER BY min(created_at) DESC, family_id ASC LIMIT $3 OFFSET $4`,
+        [userId, now, size, (page - 1) * size],
+      );
+      return {
+        data: rows as LoginSession[],
+        page,
+        size,
+        totalElements: total,
+        totalPages: Math.ceil(total / size),
+      };
+    });
+  }
+  async revokeOwnedSession(userId: string, familyId: string, now: Date) {
+    await this.dataSource.transaction(async (manager) => {
+      // Same lock as rotation: revoking an older generation also catches a newly rotated child.
+      const own = await manager.existsBy(RefreshSessionEntity, {
+        userId,
+        familyId,
+      });
+      if (!own) return;
+      await manager.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1, 0))",
+        [familyId],
+      );
+      await manager.update(
+        RefreshSessionEntity,
+        { userId, familyId },
+        { revokedAt: now },
+      );
+    });
+  }
+  async revokeOtherSessions(
+    userId: string,
+    currentFamilyId: string,
+    now: Date,
+  ) {
+    await this.dataSource.transaction(async (manager) => {
+      // Snapshot the active families at this operation. A subsequent new login is a new session.
+      const families: { family_id: string }[] = await manager.query(
+        `SELECT DISTINCT family_id FROM auth_refresh_sessions
+        WHERE user_id=$1 AND family_id<>$2 AND used_at IS NULL AND revoked_at IS NULL AND expires_at>$3 ORDER BY family_id`,
+        [userId, currentFamilyId, now],
+      );
+      for (const { family_id: familyId } of families) {
+        await manager.query(
+          "SELECT pg_advisory_xact_lock(hashtextextended($1, 0))",
+          [familyId],
+        );
+        await manager.update(
+          RefreshSessionEntity,
+          { userId, familyId },
+          { revokedAt: now },
+        );
+      }
     });
   }
   isSessionActive(userId: string, familyId: string, now: Date) {

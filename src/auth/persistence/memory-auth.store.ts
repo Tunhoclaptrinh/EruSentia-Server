@@ -4,6 +4,7 @@ import {
   active,
   AuthStore,
   RefreshSession,
+  LoginSession,
   Role,
   UserAccount,
   userIdentity,
@@ -92,6 +93,57 @@ export class MemoryAuthStore implements AuthStore {
   async revokeSessionFamily(hash: string, now: Date) {
     const session = this.sessions.get(hash);
     if (session) this.revoke(session.familyId, now);
+  }
+  async listSessions(userId: string, page: number, size: number, now: Date) {
+    const families = new Map<string, LoginSession & { active: boolean }>();
+    for (const row of this.sessions.values()) {
+      if (row.userId !== userId) continue;
+      const group = families.get(row.familyId) || {
+        id: row.familyId,
+        createdAt: row.createdAt,
+        lastRefreshedAt: row.createdAt,
+        expiresAt: row.expiresAt,
+        active: false,
+      };
+      if (row.createdAt < group.createdAt) group.createdAt = row.createdAt;
+      if (row.createdAt > group.lastRefreshedAt)
+        group.lastRefreshedAt = row.createdAt;
+      if (!row.usedAt && !row.revokedAt && row.expiresAt > now)
+        group.active = true;
+      families.set(row.familyId, group);
+    }
+    const data = [...families.values()]
+      .filter((group) => group.active)
+      .map(({ active: _, ...row }) => row)
+      .sort(
+        (a, b) =>
+          b.createdAt.getTime() - a.createdAt.getTime() ||
+          a.id.localeCompare(b.id),
+      );
+    return structuredClone({
+      data: data.slice((page - 1) * size, page * size),
+      page,
+      size,
+      totalElements: data.length,
+      totalPages: Math.ceil(data.length / size),
+    });
+  }
+  async revokeOwnedSession(userId: string, familyId: string, now: Date) {
+    if (
+      [...this.sessions.values()].some(
+        (s) => s.userId === userId && s.familyId === familyId,
+      )
+    )
+      this.revoke(familyId, now);
+  }
+  async revokeOtherSessions(
+    userId: string,
+    currentFamilyId: string,
+    now: Date,
+  ) {
+    for (const session of this.sessions.values())
+      if (session.userId === userId && session.familyId !== currentFamilyId)
+        session.revokedAt = now;
   }
   async isSessionActive(userId: string, familyId: string, now: Date) {
     return [...this.sessions.values()].some(

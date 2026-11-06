@@ -20,6 +20,11 @@ export const CurrentUser = createParamDecorator(
     context.switchToHttp().getRequest().user,
 );
 
+export const CurrentSession = createParamDecorator(
+  (_: unknown, context: ExecutionContext): string =>
+    context.switchToHttp().getRequest().sessionId,
+);
+
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
@@ -42,7 +47,9 @@ export class AccessTokenGuard implements CanActivate {
         ? /^Bearer ([^\s]+)$/i.exec(authorization)
         : null;
     if (!match) throw new UnauthorizedException("Bearer access token required");
-    request.user = await this.auth.authenticate(match[1]);
+    const identity = await this.auth.authenticateSession(match[1]);
+    request.user = identity.user;
+    request.sessionId = identity.sessionId;
     return true;
   }
 }
