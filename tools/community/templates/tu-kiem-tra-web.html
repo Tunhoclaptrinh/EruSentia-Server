@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tự kiểm tra kiến thức Web</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">TỰ ĐÁNH GIÁ</span>
+<h1 contenteditable="true">Tự kiểm tra kiến thức Web</h1>
+<p class="intro">Hiểu nguyên lý, không chỉ nhớ đáp án.</p>
+</header>
+<fieldset>
+<legend>Để thay đổi màu và bố cục của một trang HTML, bạn dùng gì?</legend>
+<label class="task">
+<input type="radio" name="answer" value="html">HTML</label>
+<label class="task">
+<input type="radio" name="answer" value="css">CSS</label>
+<label class="task">
+<input type="radio" name="answer" value="js">JavaScript</label>
+</fieldset>
+<button id="check">Kiểm tra đáp án</button>
+<output id="feedback" class="result" aria-live="polite">Chọn một đáp án để bắt đầu.</output>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>document.querySelector('#check').onclick=()=>{const a=document.querySelector('input:checked');document.querySelector('#feedback').textContent=!a?'Bạn cần chọn một đáp án.':a.value==='css'?'Đúng. CSS quy định cách trình bày nội dung.':'Thử lại nhé. HTML là cấu trúc; JavaScript thường xử lý hành vi.'};</script></html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thẻ ôn tập HTML · CSS · JavaScript</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">ÔN TẬP CHỦ ĐỘNG</span>
+<h1 contenteditable="true">Thẻ ôn tập HTML · CSS · JavaScript</h1>
+<p class="intro">Nhớ kiến thức bằng cách tự trả lời.</p>
+</header>
+<p>Thử trả lời trước khi mở đáp án.</p>
+<div class="card">
+<small id="position">Thẻ 1 / 3</small>
+<p id="card-text" role="status">HTML đảm nhiệm vai trò gì?</p>
+</div>
+<div class="row">
+<button id="flip">Lật thẻ</button>
+<button id="next">Thẻ tiếp theo</button>
+</div>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>const cards=[['HTML đảm nhiệm vai trò gì?','Mô tả cấu trúc và ý nghĩa của nội dung.'],['CSS đảm nhiệm vai trò gì?','Quy định cách trình bày: màu, font, bố cục và trạng thái hiển thị.'],['JavaScript đảm nhiệm vai trò gì?','Xử lý hành vi và cập nhật nội dung theo tương tác.']];const root=document.querySelector('main');let index=Math.max(0,Math.min(cards.length-1,Number(root.dataset.cardIndex)||0)),back=root.dataset.cardBack==='true';function show(){root.dataset.cardIndex=String(index);root.dataset.cardBack=String(back);document.querySelector('#position').textContent='Thẻ '+(index+1)+' / 3';document.querySelector('#card-text').textContent=cards[index][back?1:0];document.querySelector('#flip').textContent=back?'Xem câu hỏi':'Lật thẻ'}document.querySelector('#flip').onclick=()=>{back=!back;show()};document.querySelector('#next').onclick=()=>{index=(index+1)%cards.length;back=false;show()};show();</script></html>

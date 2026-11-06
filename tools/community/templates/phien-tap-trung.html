@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Một phiên tập trung</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">KHÔNG GIAN TẬP TRUNG</span>
+<h1 contenteditable="true">Một phiên tập trung</h1>
+<p class="intro">Chỉ một việc, trong một phiên.</p>
+</header>
+<label for="goal">Một việc cần làm</label>
+<input id="goal" style="width:100%" value="Đọc và tóm tắt một phần tài liệu">
+<div class="row"><label for="duration">Thời lượng (phút)</label><input id="duration" type="number" min="1" max="180" value="25"></div>
+<div class="card">
+<strong id="clock" role="timer">25:00</strong>
+<p class="muted">Lưu ghi chú để giữ thời gian còn lại. Khi mở lại, bấm Tiếp tục để chạy.</p>
+</div>
+<div class="row">
+<button id="start">Bắt đầu</button>
+<button id="reset">Làm lại</button>
+</div>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>
+const root=document.querySelector('main'),clock=document.querySelector('#clock'),start=document.querySelector('#start'),duration=document.querySelector('#duration');
+let seconds=Number(root.dataset.remaining ?? 1500),timer=null;duration.disabled=false;
+if(!Number.isFinite(seconds)||seconds<0||seconds>10800)seconds=1500;
+function render(){root.dataset.remaining=String(seconds);clock.textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}
+function stop(){clearInterval(timer);timer=null;duration.disabled=false}
+start.textContent=seconds===0?'Đã hoàn thành':seconds===Number(duration.value)*60?'Bắt đầu':'Tiếp tục';
+start.onclick=()=>{if(timer){stop();start.textContent='Tiếp tục';return}if(!duration.value||!duration.checkValidity()){duration.reportValidity();return}if(seconds===0)return;duration.disabled=true;start.textContent='Tạm dừng';timer=setInterval(()=>{seconds=Math.max(0,seconds-1);render();if(seconds===0){stop();start.textContent='Đã hoàn thành'}},1000)};
+duration.oninput=()=>{if(duration.value&&duration.checkValidity()&&!timer){seconds=Number(duration.value)*60;start.textContent='Bắt đầu';render()}};
+document.querySelector('#reset').onclick=()=>{stop();seconds=duration.value&&duration.checkValidity()?Number(duration.value)*60:1500;start.textContent='Bắt đầu';render()};
+window.addEventListener('pagehide',stop);render();
+</script></html>

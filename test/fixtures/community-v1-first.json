@@ -1,0 +1,25 @@
+{
+  "id": "ec200000-0000-4000-8000-000000000001",
+  "author_id": "ec000000-0000-4000-8000-000000000001",
+  "category_id": "ec100000-0000-4000-8000-000000000002",
+  "title": "Một tuần có chủ đích",
+  "slug": "community-demo-ke-hoach-tuan",
+  "description": "Chọn trọng tâm, tích công việc và theo dõi tiến độ tuần. Nội dung minh họa do EruSentia biên soạn.",
+  "content_json": {
+    "format": "erusentia-template-html",
+    "schemaVersion": 1,
+    "html": "<!doctype html><html lang=\"vi\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Một tuần có chủ đích</title><style>*{box-sizing:border-box}body{margin:0;padding:24px;background:#fffaf8;color:#352b30;font:15px/1.65 system-ui,sans-serif}main{max-width:820px;margin:auto;padding:28px;background:#fff;border:1px solid #f0e2e2;border-radius:14px}h1{font-size:26px;line-height:1.3;color:#8f2644;margin:6px 0 12px}h2{font-size:18px}p{margin:12px 0}.kicker{font-size:11px;letter-spacing:.13em;color:#a06c78;text-transform:uppercase}.muted,small{font-size:12px;color:#7d6e75}button,input,textarea,select{font:inherit}button{padding:9px 15px;border:1px solid #e8c7d1;border-radius:7px;background:#fff1f5;color:#9f2248;cursor:pointer}button:hover{background:#ffe6ee}:focus-visible{outline:3px solid #bf3158;outline-offset:3px}input,textarea,select{padding:8px;border:1px solid #e5d8de;border-radius:6px;background:white;color:#352b30;max-width:100%}input[type=number]{width:100px}input[type=checkbox]{accent-color:#cf2b52;width:17px;height:17px}input[type=range]{accent-color:#cf2b52;max-width:100%;padding:0}label.task{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #f0e8eb}.task:has(input:checked) span{text-decoration:line-through;color:#8a7d84}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0}table{border-collapse:collapse;width:100%;font-size:13px;margin:18px 0}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid #efE5e9}th{background:#fcf3f5}td input{width:80px!important;padding:6px}output,.result{font-variant-numeric:tabular-nums;color:#972b4b;font-weight:600}.result{padding:16px;background:#fff2f5;border-radius:8px;margin:16px 0;display:block}.hint{padding:14px 18px;border-left:3px solid #d990a4;background:#fcf4f6;font-size:13px}progress{width:100%;height:10px;accent-color:#c42f56}details{padding:14px 0;border-bottom:1px solid #eadfe4}summary{cursor:pointer;color:#8f2644}.card{padding:30px;border:1px solid #e7d4de;border-radius:10px;background:#fdf7f9;min-height:165px;text-align:center;margin:20px 0}.card strong{font-size:20px}.bars{height:150px;display:flex;align-items:end;gap:16px;border-bottom:1px solid #e6d8df;margin-top:35px}.bar{flex:1;background:#d488a0;border-radius:6px 6px 0 0;text-align:center;font-size:12px;color:#76283f}.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.days button{padding:10px 4px}.days button[aria-pressed=true]{background:#a72a4e;color:white}.steps{padding:0;list-style:none}.steps li{padding:12px;border-left:3px solid #e6c8d4;margin:6px 0}.steps li.active{border-color:#bc2d56;background:#fff1f5}textarea{width:100%;min-height:90px}footer{border-top:1px solid #efe4e8;margin-top:24px;padding-top:14px;font-size:10px;color:#907c86}@media(max-width:500px){body{padding:12px}main{padding:20px}h1{font-size:23px}td,th{padding:8px 4px}td input{width:65px!important}.days{grid-template-columns:repeat(4,1fr)}}</style><main><header><span class=\"kicker\">planning</span><h1>Một tuần có chủ đích</h1></header><p>Một mục tiêu cụ thể giúp bạn quyết định việc nào cần làm trước.</p><label for=\"focus\">Trọng tâm tuần này</label><input id=\"focus\" value=\"Hoàn thành đề cương workshop\" style=\"width:100%\"><output id=\"done\" class=\"result\">0 / 4 việc</output><progress value=\"0\" max=\"4\" aria-label=\"Tiến độ kế hoạch\"></progress><label class=\"task\"><input type=\"checkbox\"><span>Gom tài liệu và ghi nguồn</span></label><label class=\"task\"><input type=\"checkbox\"><span>Viết đề cương buổi chia sẻ</span></label><label class=\"task\"><input type=\"checkbox\"><span>Mời một người đọc và góp ý</span></label><label class=\"task\"><input type=\"checkbox\"><span>Tổng kết điều đã học</span></label><footer>Nội dung cộng đồng minh họa do EruSentia biên soạn · Dữ liệu giả lập · Không tải tài nguyên mạng</footer></main><script>const boxes=[...document.querySelectorAll('[type=checkbox]')];boxes.forEach(b=>b.addEventListener('change',()=>{const n=boxes.filter(x=>x.checked).length;document.querySelector('#done').textContent=n+' / 4 việc';document.querySelector('progress').value=n}));</script></html>",
+    "subjectCategory": "productivity",
+    "allowHeightResize": false,
+    "guide": "Xem thử, lưu bản sao vào thư viện, chèn vào ghi chú và tương tác. Dữ liệu chỉ được giữ khi lưu bằng App; mẫu không gửi dữ liệu qua mạng."
+  },
+  "thumbnail_url": null,
+  "tags": [
+    "community-demo",
+    "kế hoạch",
+    "checklist",
+    "tuần"
+  ],
+  "version": "1.0.0",
+  "is_public": true
+}

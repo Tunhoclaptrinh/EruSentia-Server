@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nhìn trước các điểm cần chuẩn bị</title>
+<style>/* @community-theme */</style>
+<main data-catalog-version="2">
+<div class="document-topline">
+<span class="document-mark">eru<span>sentia</span>
+</span>
+<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+</div>
+<header>
+<span class="kicker">CHUẨN BỊ CHỦ ĐỘNG</span>
+<h1 contenteditable="true">Nhìn trước các điểm cần chuẩn bị</h1>
+<p class="intro">Nhìn trước để chuẩn bị tốt hơn.</p>
+</header>
+<p>Ví dụ: máy chiếu không kết nối được trước buổi chia sẻ.</p>
+<div class="row">
+<label for="probability">Khả năng xảy ra</label>
+<input id="probability" type="range" min="1" max="5" value="2">
+</div>
+<div class="row">
+<label for="impact">Mức ảnh hưởng</label>
+<input id="impact" type="range" min="1" max="5" value="4">
+</div>
+<output id="risk" class="result" aria-live="polite">
+</output>
+<div class="hint">Chuẩn bị phương án thay thế: màn hình dự phòng, bản PDF và tài liệu HTML offline. Điểm số là ví dụ hỗ trợ thảo luận.</div>
+<section class="reflection">
+<h2>Ghi chú của bạn</h2>
+<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
+</textarea>
+</section>
+<footer>
+<span>EruSentia · Bộ mẫu thực hành</span>
+<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+</footer>
+</main><script>function score(){const p=Number(document.querySelector('#probability').value),i=Number(document.querySelector('#impact').value);document.querySelector('#risk').textContent='Điểm ưu tiên: '+p+' × '+i+' = '+p*i+' / 25'}document.querySelectorAll('input').forEach(e=>e.oninput=score);score();</script></html>
