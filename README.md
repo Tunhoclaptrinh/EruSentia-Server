@@ -8,6 +8,8 @@ Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. Đợt C0�
 với client; App đã bổ sung catalog template, xem thử cô lập và bản sao local ở C2.
 Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiếp theo.
 
+Tài khoản C4: [quản lý phiên đăng nhập](docs/ACCOUNT_SESSIONS.md).
+
 ## Stack project: chạy bằng một lệnh
 
 ```bash

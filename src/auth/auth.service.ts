@@ -95,6 +95,9 @@ export class AuthService {
     return this.store.revokeSessionFamily(tokenHash(token), new Date());
   }
   async authenticate(token: string) {
+    return (await this.authenticateSession(token)).user;
+  }
+  async authenticateSession(token: string) {
     let payload: {
       sub?: string;
       sid?: string;
@@ -126,6 +129,6 @@ export class AuthService {
     ]);
     if (!active(user) || !validSession)
       throw new UnauthorizedException("Session is no longer active");
-    return userIdentity(user);
+    return { user: userIdentity(user), sessionId: payload.sid };
   }
 }

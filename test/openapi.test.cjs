@@ -45,7 +45,7 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
   assert.equal(response.status, 200);
   const spec = await response.json();
   assert.match(spec.openapi, /^3\./);
-  assert.equal(Object.keys(spec.paths).length, 12);
+  assert.equal(Object.keys(spec.paths).length, 15);
   assert.equal(spec.components.securitySchemes.bearer.scheme, "bearer");
   assert.equal(spec.paths["/auth/login"].post.security, undefined);
   assert.deepEqual(spec.paths["/templates"].get.security, [{ bearer: [] }]);
@@ -69,6 +69,24 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
     "array",
   );
   assert.deepEqual(spec.paths["/categories"].get.security, [{ bearer: [] }]);
+  for (const [route, method] of [
+    ["/auth/sessions", "get"],
+    ["/auth/sessions/{id}", "delete"],
+    ["/auth/sessions/revoke-others", "post"],
+  ]) {
+    assert.deepEqual(spec.paths[route][method].security, [{ bearer: [] }]);
+    assert(spec.paths[route][method].responses[401]);
+  }
+  const sessionQueries = spec.paths["/auth/sessions"].get.parameters;
+  assert.deepEqual(sessionQueries.map((p) => p.name).sort(), ["page", "size"]);
+  assert.equal(
+    sessionQueries.find((p) => p.name === "size").schema.maximum,
+    100,
+  );
+  assert.deepEqual(
+    Object.keys(spec.components.schemas.LoginSessionDto.properties).sort(),
+    ["id", "createdAt", "lastRefreshedAt", "expiresAt", "current"].sort(),
+  );
   const queries = spec.paths["/templates"].get.parameters;
   assert.equal(queries.find((p) => p.name === "page").schema.default, 1);
   assert.equal(queries.find((p) => p.name === "size").schema.maximum, 100);
