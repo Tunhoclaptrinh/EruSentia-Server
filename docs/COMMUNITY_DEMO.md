@@ -45,6 +45,14 @@ cũng có nội dung sau khởi động. Không đổi mật khẩu các tài kh
 
 ## Neon qua Render
 
+Đối chiếu trực tiếp ngày **06/11/2026**: Neon có đủ **14 mẫu public, chưa xóa**,
+4 danh mục và 3 tác giả minh họa inactive. Nội dung JSONB của 14 mẫu khớp catalog.
+Chạy seed lại trả `inserted: 0`, `preserved: 14`, `loginAccountsCreated: 0`;
+5 migration và fingerprint dữ liệu ngoài bộ seed giữ nguyên. Kết nối client dùng
+TLS 1.3, xác minh chứng chỉ thành công. Với proxy của dịch vụ hosted, kiểm tra
+TLS tại client; không suy ra tình trạng mã hóa toàn tuyến chỉ từ `pg_stat_ssl`
+phía PostgreSQL. Không đưa thông tin kết nối hoặc credential vào báo cáo.
+
 Render đã giữ kết nối Neon trong các biến môi trường. Sau khi mã này được deploy,
 bước `project-db bootstrap` thêm những mẫu còn thiếu qua chính kết nối đó:
 
