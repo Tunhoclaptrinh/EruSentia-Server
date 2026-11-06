@@ -193,6 +193,11 @@ test(
     );
 
     // A conflicting user-owned slug must roll back the whole seed, including newly inserted authors/categories.
+    // Reset only this test's disposable fixtures; production history blocks hard deletion.
+    await pool.query(
+      "DELETE FROM template_revisions WHERE template_id IN (SELECT id FROM templates WHERE author_id=ANY($1))",
+      [catalog.authors.map((author) => author.id)],
+    );
     await pool.query("DELETE FROM templates WHERE author_id=ANY($1)", [
       catalog.authors.map((author) => author.id),
     ]);

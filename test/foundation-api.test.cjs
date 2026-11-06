@@ -60,6 +60,7 @@ async function catalogContract(t, mode) {
     contentJson: {
       format: "erusentia-template-html",
       schemaVersion: 1,
+      sharing: require("./publication-fixture.cjs").sharing,
       html: "<section>" + "x".repeat(250_000) + "</section>",
       allowHeightResize: false,
     },

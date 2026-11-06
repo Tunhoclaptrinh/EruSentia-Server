@@ -50,6 +50,8 @@ export class PostgresTemplateStore implements TemplateStore {
 
   async list(input: QueryTemplatesDto, viewer: UserIdentity) {
     const query = this.query();
+    if (input.deleted === true)
+      query.withDeleted().andWhere("t.deletedAt IS NOT NULL");
     if (viewer.role !== "admin")
       query.andWhere("(t.isPublic = TRUE OR t.authorId = :viewerId)", {
         viewerId: viewer.id,
@@ -148,7 +150,9 @@ export class PostgresTemplateStore implements TemplateStore {
         input.authorId,
       ]);
       const repository = manager.getRepository(TemplateEntity);
-      const row = await repository.save(repository.create(input));
+      const row = await repository.save(
+        repository.create({ ...input, isPublic: input.isPublic ?? false }),
+      );
       return (await this.find(row.id, false, manager))!;
     });
   }

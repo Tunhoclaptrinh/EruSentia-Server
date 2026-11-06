@@ -42,7 +42,7 @@ export class MemoryTemplateStore implements TemplateStore {
   async list(query: QueryTemplatesDto, viewer: UserIdentity) {
     const rows = [...this.rows.values()].filter(
       (t) =>
-        !t.deletedAt &&
+        (query.deleted === true ? !!t.deletedAt : !t.deletedAt) &&
         (viewer.role === "admin" || t.isPublic || t.authorId === viewer.id) &&
         (!query.authorId || t.authorId === query.authorId) &&
         (!query.categoryId || t.categoryId === query.categoryId) &&
@@ -116,7 +116,7 @@ export class MemoryTemplateStore implements TemplateStore {
       thumbnailUrl: input.thumbnailUrl ?? null,
       version: input.version ?? "1.0.0",
       revision: 1,
-      isPublic: input.isPublic ?? true,
+      isPublic: input.isPublic ?? false,
       tags: input.tags ?? [],
       viewsCount: 0,
       forksCount: 0,

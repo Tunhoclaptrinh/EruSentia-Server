@@ -17,6 +17,7 @@ import {
   summarizeTemplate,
 } from "./template-store";
 import type { UserIdentity } from "../auth/auth-store";
+import { assertPublicTemplate } from "./template-publication";
 import {
   requireTemplateMatch,
   templateEtag,
@@ -33,6 +34,14 @@ export class TemplatesService {
     return this.cache.read(id, viewer, () => this.store.find(id));
   }
   async list(query: QueryTemplatesDto, viewer: UserIdentity) {
+    if (
+      query.deleted === true &&
+      (!query.authorId ||
+        (query.authorId !== viewer.id && viewer.role !== "admin"))
+    )
+      throw new ForbiddenException(
+        "Deleted templates require an explicit owned author scope",
+      );
     const page = await this.store.list(query, viewer);
     return query.projection === "summary"
       ? { ...page, data: page.data.map(summarizeTemplate) }
@@ -48,6 +57,7 @@ export class TemplatesService {
     return row;
   }
   create(input: CreateTemplateDto, viewer: UserIdentity) {
+    if (input.isPublic === true) assertPublicTemplate(input.contentJson);
     return this.store.create({ ...input, authorId: viewer.id });
   }
   async update(
@@ -64,6 +74,8 @@ export class TemplatesService {
     if (!Object.values(input).some((value) => value !== undefined)) {
       throw new BadRequestException("At least one field must be provided");
     }
+    if (input.isPublic ?? current.isPublic)
+      assertPublicTemplate(input.contentJson ?? current.contentJson);
     const stamp = await this.cache.stamp(id);
     const row = await this.store.update(
       id,

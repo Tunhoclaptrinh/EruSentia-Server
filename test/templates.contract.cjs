@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { readConfig } = require("../dist/src/config");
 const { createApplication } = require("../dist/src/app");
-const example = require("../tools/examples/create-template.json");
+const { example } = require("./publication-fixture.cjs");
 
 const categoryId = "c0000000-0000-0000-0000-000000000001";
 const category2 = "c0000000-0000-0000-0000-000000000002";
@@ -176,7 +176,12 @@ async function contract(t, store) {
         assert.equal(first.deletedAt, null);
         assert.deepEqual(first.contentJson, example.contentJson);
         assert(!JSON.stringify(first).includes("password"));
-        const second = await request("POST", "/templates", 201, payload("two"));
+        const second = await request(
+          "POST",
+          "/templates",
+          201,
+          payload("two", { isPublic: true }),
+        );
         ids.push(second.id);
         assert.equal(second.isPublic, true);
         const third = await request(
@@ -186,6 +191,11 @@ async function contract(t, store) {
           payload("three"),
         );
         ids.push(third.id);
+        assert.equal(
+          third.isPublic,
+          false,
+          "C3 creates private drafts when visibility is omitted",
+        );
       },
     );
     await t.test("list, count, stable pagination and filters", async () => {
@@ -213,8 +223,8 @@ async function contract(t, store) {
         `/templates?tag=${tag}&isPublic=false`,
         200,
       );
-      assert.equal(privateOnly.totalElements, 1);
-      assert.equal(privateOnly.data[0].id, first.id);
+      assert.equal(privateOnly.totalElements, 2);
+      assert(privateOnly.data.some((row) => row.id === first.id));
       const refs = await request(
         "GET",
         `/templates?tag=${tag}&authorId=${authorId}&categoryId=${categoryId}`,
@@ -260,6 +270,7 @@ async function contract(t, store) {
           contentJson: { html: "<p>Incomplete envelope</p>" },
         });
         const minimal = {
+          sharing: require("./publication-fixture.cjs").sharing,
           format: "erusentia-template-html",
           schemaVersion: 1,
           html: "<p>Updated</p>",

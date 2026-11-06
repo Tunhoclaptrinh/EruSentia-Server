@@ -7,7 +7,7 @@ const { createApplication } = require("../dist/src/app");
 const { readConfig } = require("../dist/src/config");
 const { AUTH_STORE } = require("../dist/src/auth/auth-store");
 const { Passwords } = require("../dist/src/auth/passwords");
-const example = require("../tools/examples/create-template.json");
+const { example } = require("./publication-fixture.cjs");
 
 async function authContract(t, mode) {
   const secret = "week3-test-only-signing-key-never-use-in-production";

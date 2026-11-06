@@ -11,7 +11,7 @@ const { AuthorEntity } = require("../dist/src/templates/persistence/entities");
 const {
   migrateProject,
 } = require("../dist/src/infrastructure/database/project-migrations");
-const example = require("../tools/examples/create-template.json");
+const { example } = require("./publication-fixture.cjs");
 
 async function revisionContract(t, mode) {
   const database = process.env.C3_TEST_DATABASE;
@@ -377,6 +377,34 @@ async function revisionContract(t, mode) {
       assert.equal(current.status, 204);
       assert.equal(current.etag, `"template:${id}:6"`);
       assert.equal((await request("GET", route, owner.token)).status, 404);
+      const trash = await request(
+        "GET",
+        `/templates?projection=summary&deleted=true&authorId=${owner.id}`,
+        owner.token,
+      );
+      assert.equal(trash.status, 200);
+      assert(trash.body.data.some((row) => row.id === id && row.deletedAt));
+      assert(!JSON.stringify(trash.body).includes("contentJson"));
+      assert.equal(
+        (
+          await request(
+            "GET",
+            `/templates?projection=summary&deleted=true&authorId=${owner.id}`,
+            other.token,
+          )
+        ).status,
+        403,
+      );
+      assert.equal(
+        (
+          await request(
+            "GET",
+            "/templates?projection=summary&deleted=true",
+            owner.token,
+          )
+        ).status,
+        403,
+      );
       const history = await request("GET", route + "/revisions", owner.token);
       assert.equal(history.body.deleted, true);
       assert.equal(history.body.currentEtag, current.etag);

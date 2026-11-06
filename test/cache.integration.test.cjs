@@ -121,6 +121,7 @@ test(
         contentJson: {
           format: "erusentia-template-html",
           schemaVersion: 1,
+          sharing: require("./publication-fixture.cjs").sharing,
           html: "<main>" + "content ".repeat(4000) + "</main>",
         },
       });

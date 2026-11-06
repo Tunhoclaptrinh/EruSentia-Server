@@ -90,7 +90,12 @@ export class CreateTemplateDto {
   @IsString()
   @MaxLength(512)
   thumbnailUrl?: string | null;
-  @ApiPropertyOptional({ default: true, example: false })
+  @ApiPropertyOptional({
+    default: false,
+    example: false,
+    description:
+      "Private by default. Public writes require license, attribution and explicit permission confirmation.",
+  })
   @ValidateIf(absent)
   @IsBoolean()
   isPublic?: boolean;
@@ -208,6 +213,17 @@ export class QueryTemplatesDto {
   )
   @IsBoolean()
   isPublic?: boolean;
+  @ApiPropertyOptional({
+    type: Boolean,
+    description:
+      "Only deleted records; requires an explicit authorId owned by the caller (or admin).",
+  })
+  @ValidateIf(absent)
+  @Transform(({ value }) =>
+    value === "true" ? true : value === "false" ? false : value,
+  )
+  @IsBoolean()
+  deleted?: boolean;
   @ApiPropertyOptional({ enum: ["createdAt", "title"], default: "createdAt" })
   @IsIn(["createdAt", "title"])
   sort: "createdAt" | "title" = "createdAt";

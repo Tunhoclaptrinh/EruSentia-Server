@@ -7,15 +7,55 @@ import {
   Matches,
   MaxLength,
   ValidateIf,
+  ValidateNested,
+  IsUrl,
 } from "class-validator";
+import { Type } from "class-transformer";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 const absent = (_: unknown, value: unknown) => value !== undefined;
+
+export class TemplateSharingDto {
+  @ApiProperty({ enum: ["MIT", "CC-BY-4.0"] })
+  @IsIn(["MIT", "CC-BY-4.0"])
+  license!: "MIT" | "CC-BY-4.0";
+  @ApiProperty({ maxLength: 500 })
+  @IsString()
+  @Length(1, 500)
+  @Matches(/\S/)
+  attribution!: string;
+  @ApiProperty({
+    enum: [true],
+    description:
+      "The publisher explicitly confirms the right to share this selected template.",
+  })
+  @Equals(true)
+  permissionConfirmed!: true;
+  @ApiPropertyOptional({ maxLength: 512 })
+  @ValidateIf(absent)
+  @IsUrl({
+    protocols: ["https", "http"],
+    require_protocol: true,
+    require_tld: false,
+  })
+  @MaxLength(512)
+  sourceUrl?: string;
+}
 
 // Storage envelope for the App's current standalone HTML templates. The HTTP API
 // does not execute HTML or turn local official/custom tabs into publishing roles.
 export class TemplateContentDto {
   [key: string]: unknown;
+
+  @ApiPropertyOptional({
+    type: () => TemplateSharingDto,
+    description:
+      "Required for public writes; private drafts may omit this. Applies only to the selected template, not the App source.",
+  })
+  @ValidateIf(absent)
+  @ValidateNested()
+  @Type(() => TemplateSharingDto)
+  sharing?: TemplateSharingDto;
 
   @ApiProperty({ enum: ["erusentia-template-html"] })
   @Equals("erusentia-template-html")

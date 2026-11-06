@@ -188,6 +188,7 @@ test(
           contentJson: {
             format: "erusentia-template-html",
             schemaVersion: 1,
+            sharing: require("./publication-fixture.cjs").sharing,
             html: "<div>Independent project fixture</div>",
             allowHeightResize: false,
           },

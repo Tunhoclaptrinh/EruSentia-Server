@@ -1,8 +1,8 @@
-# C3-A — Conditional writes và lịch sử template
+# C3 — Quản lý mẫu, conditional writes và lịch sử
 
-06/11/2026. Implementation trên nhánh `feat/integration-c3-history`, chưa merge
-`main` hoặc deploy lên Render/Neon. C3-B sẽ bổ sung giao diện quản lý/private drafts;
-C3-C xử lý xuất bản public, quyền sử dụng/license và lineage.
+06/11/2026. Đợt C3 gộp nền tảng lịch sử, giao diện quản lý bản nháp và xuất bản có
+xác nhận. Nhánh làm việc hiện tại: `feat/integration-c3-creator`; chưa đưa migration
+lên Neon trong lượt kiểm thử local. App dùng cùng contract trên browser và broker Electron.
 
 ## Contract
 
@@ -14,6 +14,7 @@ strong ETag dạng `"template:<uuid>:<revision>"`. DELETE 204 trả ETag trạng
 |---|---|
 | `GET /templates/:id` | JWT và quyền đọc hiện có; trả body + ETag |
 | `POST /templates` | Tạo revision 1 và một history entry `create` cùng transaction |
+| `GET /templates?projection=summary&authorId=UUID&deleted=true` | Danh sách đã xóa, chỉ chủ tài khoản tương ứng hoặc Admin; không trả HTML |
 | `PATCH /templates/:id` | `If-Match` đúng ETag đã đọc; một UPDATE có điều kiện, tạo revision mới |
 | `DELETE /templates/:id` | `If-Match`; soft-delete và giữ lịch sử, slug vẫn được giữ |
 | `GET /templates/:id/revisions?page=1&size=20` | Owner/Admin; metadata, không HTML; `size` tối đa 50 |
@@ -26,6 +27,40 @@ danh sách tag hoặc header không đúng định dạng trả 400. Chỉ hỗ 
 template ETag để không bỏ qua kiểm tra revision. Slug conflict vẫn là 409.
 Body validation/authorization được đánh giá trước; resource không có quyền đọc
 vẫn 404, người không được sửa mẫu public vẫn 403, không dùng 428 để lộ tài nguyên.
+
+### Nháp private và xác nhận xuất bản
+
+API C3 tạo mẫu **private khi thiếu `isPublic`**; App vẫn gửi `isPublic: false`
+tường minh. Đây là thay đổi so với mặc định public ở contract tuần 2 cũ; permalink
+trong báo cáo học giữ đúng phiên bản tại thời điểm đó. Các row và SQL lịch sử không
+bị sửa lại chỉ để thay mặc định API.
+
+POST public và PATCH có kết quả public cần `contentJson.sharing`:
+
+```json
+{
+  "license": "MIT",
+  "attribution": "Tên tác giả do người xuất bản chọn",
+  "permissionConfirmed": true,
+  "sourceUrl": "https://example.com/nguon-goc"
+}
+```
+
+`sourceUrl` là tùy chọn. Giấy phép nhận `MIT` hoặc `CC-BY-4.0`; xem điều khoản
+[MIT](https://opensource.org/license/mit) và [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Không tự gán giấy phép cho mẫu cũ, mẫu hệ thống hoặc mã App. Đây là xác nhận của
+người xuất bản, không phải bằng chứng API đã xác minh bản quyền. Mẫu public cũ
+vẫn đọc được; khi sửa public phải cung cấp metadata này hoặc chuyển private trước.
+
+HTML private giữ giới hạn 1.000.000 ký tự; public tối đa 980.000 để dành chỗ cho
+ghi nguồn trong bản sao offline. Request vẫn chịu giới hạn JSON 2 MB. Bộ lọc
+public chặn một số dạng credential phổ biến mà không trả lại giá trị khớp; không
+thay thế việc tác giả kiểm tra nội dung. App còn yêu cầu preview sẵn sàng và đóng
+gói tài nguyên mạng trước khi bật chia sẻ mẫu tự chứa. Việc xóa/chuyển private
+không thu hồi bản người khác đã tải.
+
+Danh sách `deleted=true` cần `authorId` tường minh và đúng tài khoản (trừ Admin).
+Mặc định list vẫn loại row đã xóa. Không mở API xóa vĩnh viễn hoặc xóa lịch sử.
 
 History chỉ Owner/Admin đọc được, kể cả khi bản hiện tại public. Điều này ngăn
 người đọc public xem các bản private cũ. History list còn trả `currentEtag` và
@@ -97,8 +132,8 @@ trước khi mở server C3; lệnh này không thay thế bootstrap/journal c�
 Không dùng `db:fresh` trên dữ liệu cần giữ. `pnpm db:fresh` vẫn là lệnh reset có chủ
 đích cho database thực hành, đã thêm schema revision ở cuối.
 
-Kết quả 06/11/2026: typecheck đạt; suite mặc định **59 pass, 8 opt-in skip**;
-hosted TLS/foundation/C3 **38 pass**; hồi quy PostgreSQL auth/CRUD **19 pass** và
+Kết quả 06/11/2026: typecheck đạt; suite mặc định **61 pass, 9 opt-in skip**;
+hosted TLS/foundation/C3 **38 pass**, community seed **2 pass** và
 PostgreSQL + Redis cache **13 pass** trên container riêng. Count gồm parent/subtest,
 không cộng thành số tình huống nghiệp vụ độc lập. RabbitMQ/worker không thay đổi
 trong C3-A; chưa chạy lại toàn bộ luồng email ở lượt này.
@@ -110,7 +145,6 @@ kiểm tra restore DB khác, cập nhật các client ghi If-Match, xem dung lư
 và thống nhất cửa sổ chuyển đổi. Không để client/API cũ tiếp tục ghi vô điều kiện
 trong thời gian hai phiên bản cùng chạy. Rollback code không tự rollback history/schema.
 
-History dùng full snapshot: dữ liệu lớn tăng dung lượng theo số lần sửa. C3-B/C4
-cần chốt quota và retention trước public publishing rộng; không tự xóa lịch sử để
-giữ Free tier. License/attribution, moderation và giao diện quản lý còn ở các lát
-cắt tiếp theo, chưa được đánh dấu hoàn thành bởi C3-A.
+History dùng full snapshot: dữ liệu lớn tăng dung lượng theo số lần sửa. C4 cần
+chốt quota, retention và moderation trước khi mở đóng góp rộng; không tự xóa lịch
+sử để giữ Free tier. Luồng quản lý/xuất bản C3 không thay thế vận hành pilot C4.
