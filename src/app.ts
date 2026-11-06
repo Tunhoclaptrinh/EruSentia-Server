@@ -58,8 +58,8 @@ export async function createApplication(
     origin: (origin, done) =>
       done(null, !origin || settings.corsOrigins.includes(origin)),
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Authorization", "Content-Type"],
-    exposedHeaders: ["X-Cache", "WWW-Authenticate"],
+    allowedHeaders: ["Authorization", "Content-Type", "If-Match"],
+    exposedHeaders: ["X-Cache", "WWW-Authenticate", "ETag"],
     credentials: false,
     maxAge: 600,
   });

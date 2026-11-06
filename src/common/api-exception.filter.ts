@@ -36,6 +36,8 @@ export class ApiExceptionFilter implements ExceptionFilter {
             404: "NOT_FOUND",
             409: "CONFLICT",
             413: "PAYLOAD_TOO_LARGE",
+            412: "PRECONDITION_FAILED",
+            428: "PRECONDITION_REQUIRED",
           } as Record<number, string>
         )[status] ?? "HTTP_ERROR";
     } else if (error instanceof QueryFailedError) {

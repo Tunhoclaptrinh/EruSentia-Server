@@ -4,6 +4,11 @@ import {
   UpdateTemplateDto,
 } from "./dto/template.dto";
 import type { UserIdentity } from "../auth/auth-store";
+import type {
+  TemplateRevision,
+  RevisionPage,
+  RevisionsQueryDto,
+} from "./template-revisions";
 
 export const TEMPLATE_STORE = Symbol("TEMPLATE_STORE");
 export type CreateTemplateInput = CreateTemplateDto & { authorId: string };
@@ -17,6 +22,7 @@ export interface TemplateRecord {
   contentJson: Record<string, unknown>;
   thumbnailUrl: string | null;
   version: string;
+  revision: number;
   isPublic: boolean;
   tags: string[];
   viewsCount: number;
@@ -63,10 +69,23 @@ export function summarizeTemplate(row: TemplateRecord): TemplateSummary {
 // domain port; this port includes pagination and related author/category projections.
 export interface TemplateStore {
   list(query: QueryTemplatesDto, viewer: UserIdentity): Promise<TemplatePage>;
-  find(id: string): Promise<TemplateRecord | null>;
+  find(id: string, includeDeleted?: boolean): Promise<TemplateRecord | null>;
   create(input: CreateTemplateInput): Promise<TemplateRecord>;
-  update(id: string, input: UpdateTemplateDto): Promise<TemplateRecord | null>;
-  remove(id: string): Promise<boolean>;
+  update(
+    id: string,
+    input: UpdateTemplateDto,
+    tag: string,
+    actor: UserIdentity,
+  ): Promise<TemplateRecord>;
+  remove(id: string, tag: string, actor: UserIdentity): Promise<TemplateRecord>;
+  revisions(id: string, query: RevisionsQueryDto): Promise<RevisionPage>;
+  revision(id: string, revision: number): Promise<TemplateRevision | null>;
+  restore(
+    id: string,
+    revision: number,
+    tag: string,
+    actor: UserIdentity,
+  ): Promise<TemplateRecord>;
 }
 
 export function pageOf(

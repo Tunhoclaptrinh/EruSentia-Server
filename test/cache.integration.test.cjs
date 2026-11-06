@@ -1,3 +1,4 @@
+const { conditionalHeaders } = require("./conditional-headers.cjs");
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs/promises");
@@ -56,6 +57,7 @@ test(
       "03_seed.sql",
       "05_auth_sessions.sql",
       "07_template_cache_revision.sql",
+      "08_template_revisions.sql",
       "07_template_cache_revision.sql",
     ])
       await pool.query(
@@ -82,10 +84,10 @@ test(
     async function api(method, route, token, body) {
       const r = await fetch(base + route, {
         method,
-        headers: {
+        headers: await conditionalHeaders(base, method, route, {
           ...(token ? { Authorization: "Bearer " + token } : {}),
           ...(body ? { "content-type": "application/json" } : {}),
-        },
+        }),
         body: body ? JSON.stringify(body) : undefined,
       });
       return {
@@ -119,6 +121,7 @@ test(
         contentJson: {
           format: "erusentia-template-html",
           schemaVersion: 1,
+          sharing: require("./publication-fixture.cjs").sharing,
           html: "<main>" + "content ".repeat(4000) + "</main>",
         },
       });

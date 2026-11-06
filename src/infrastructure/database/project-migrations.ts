@@ -10,6 +10,7 @@ const migrationFiles = [
   "05_auth_sessions.sql",
   "06_message_queue.sql",
   "07_template_cache_revision.sql",
+  "08_template_revisions.sql",
 ];
 const lockName = "erusentia-project-migrations-v1";
 

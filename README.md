@@ -51,6 +51,11 @@ trên cloud. Push `main` chỉ auto-deploy sau khi đã kết nối Render theo 
 
 ## Cài đặt và database thực hành tuần học
 
+**Nhánh C3-A:** [revision, If-Match và lịch sử template](docs/TEMPLATE_REVISIONS.md)
+bổ sung chống ghi đè, history và restore private. Đây là thay đổi contract ghi:
+PATCH/DELETE cần If-Match; database cần migration `08_template_revisions.sql`.
+Nhánh này chưa được merge/deploy lên hosted demo.
+
 Đã kiểm tra với Node.js **24.21.0**, pnpm **12.11.2**, PostgreSQL **16.15**.
 
 ```bash
@@ -62,6 +67,7 @@ pnpm db:schema
 pnpm db:indexes
 pnpm db:seed
 pnpm db:auth
+pnpm db:revisions  # C3: revision/history; không reset dữ liệu
 ```
 
 Compose dùng `sentia_hub_db` tại localhost:5432; Adminer ở http://localhost:8080,

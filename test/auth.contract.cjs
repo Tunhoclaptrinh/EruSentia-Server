@@ -1,3 +1,4 @@
+const { conditionalHeaders } = require("./conditional-headers.cjs");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { JwtService } = require("@nestjs/jwt");
@@ -6,7 +7,7 @@ const { createApplication } = require("../dist/src/app");
 const { readConfig } = require("../dist/src/config");
 const { AUTH_STORE } = require("../dist/src/auth/auth-store");
 const { Passwords } = require("../dist/src/auth/passwords");
-const example = require("../tools/examples/create-template.json");
+const { example } = require("./publication-fixture.cjs");
 
 async function authContract(t, mode) {
   const secret = "week3-test-only-signing-key-never-use-in-production";
@@ -27,10 +28,10 @@ async function authContract(t, mode) {
   async function request(method, route, expected, body, token) {
     const response = await fetch(base + route, {
       method,
-      headers: {
+      headers: await conditionalHeaders(base, method, route, {
         "content-type": "application/json",
         ...(token ? { authorization: `Bearer ${token}` } : {}),
-      },
+      }),
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
     const text = await response.text();
@@ -558,7 +559,12 @@ async function authContract(t, mode) {
       for (const id of createdIds)
         await fetch(`${base}/templates/${id}`, {
           method: "DELETE",
-          headers: { authorization: `Bearer ${adminPair.accessToken}` },
+          headers: await conditionalHeaders(
+            base,
+            "DELETE",
+            `/templates/${id}`,
+            { authorization: `Bearer ${adminPair.accessToken}` },
+          ),
         });
   }
   return { registeredId: alice?.id };
