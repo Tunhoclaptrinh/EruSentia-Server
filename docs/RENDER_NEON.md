@@ -113,7 +113,7 @@ Các biến còn lại đã nằm trong `render.yaml`:
 | `DB_DATABASE` / `DB_PORT` | `eru_project_render` / `5432` |
 | `DB_SSL` / `DB_POOL_MAX` | `true` / `5` |
 | `JWT_SECRET` | Render sinh ngẫu nhiên; giữ ổn định qua deploy |
-| `CORS_ORIGINS` | `https://tunhoclaptrinh.github.io` |
+| `CORS_ORIGINS` | `https://tunhoclaptrinh.github.io,https://eru-sentia.vercel.app` |
 | `SWAGGER_ENABLED` | `true` cho hosted demo |
 | `PROJECT_BOOTSTRAP` | `true`: migrate/seed trước mỗi lần mở API |
 | `PROJECT_DEMO_ACCOUNTS` | `false`: không tạo user/creator/admin có mật khẩu chung |
@@ -187,16 +187,20 @@ Không cần tạo commit rỗng để thử CD: dùng thay đổi hợp lệ ti
 
 ## 6. Nối App vào API
 
-### Web GitHub Pages
+### App web Vercel và landing GitHub Pages
 
-Trong **repo App** → Settings → Secrets and variables → Actions → **Variables**,
-tạo `ERU_API_BASE_URL` bằng URL Render, ví dụ `https://erusentia-api-….onrender.com`
-(không thêm `/docs`). Chạy lại workflow **Deploy GitHub Pages & Release Hub** trên
-`main`; URL được nhúng thành `VITE_ERU_API_BASE_URL` lúc build.
+App web chạy tại **https://eru-sentia.vercel.app/**. `pnpm build:web` dùng
+`VITE_ERU_API_BASE_URL` đã cấu hình hoặc URL mặc định
+`https://erusentia-api.onrender.com`. Vercel build bằng pnpm đúng phiên bản trong
+project; GitHub Pages chỉ phát landing, ảnh và tài liệu demo, không chứa bundle
+App đầy đủ. `ERU_API_BASE_URL` trong GitHub Actions vẫn cấu hình các build desktop.
 
-`CORS_ORIGINS` tại server chỉ chứa origin như `https://tunhoclaptrinh.github.io`,
-không thêm `/EruSentia/app/`. Nếu dùng web local, thêm chính xác origin/cổng hiện tại,
-phân cách dấu phẩy. Biến do Blueprint quản lý nên sửa `render.yaml` và review qua PR.
+Ngay cả khi App được nhúng trong landing, các request API của App có origin
+`https://eru-sentia.vercel.app`. Render phải có **cả hai origin** ở bảng trên;
+không dùng wildcard hoặc thêm đường dẫn. Cấu hình đã cập nhật trong `render.yaml`.
+Nếu Blueprint chưa tự đồng bộ, mở **Render → erusentia-api → Environment →
+CORS_ORIGINS**, điền đúng chuỗi trong bảng, bấm **Save, rebuild, and deploy**.
+Nếu dùng web local, thêm chính xác origin/cổng hiện tại, phân cách dấu phẩy.
 URL API là public configuration; JWT/database password không đặt trong repo App.
 
 ### Electron Linux
