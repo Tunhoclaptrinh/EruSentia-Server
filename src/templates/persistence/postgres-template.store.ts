@@ -26,7 +26,12 @@ import {
   SERVICE_CONTROL_SETTINGS,
   ServiceControlSettings,
 } from "../../service-controls/settings";
-import { assertTemplateQuota, TemplateUsage } from "../template-quota";
+import {
+  assertTemplateQuota,
+  assertRetainedQuota,
+  RetainedUsage,
+  TemplateUsage,
+} from "../template-quota";
 
 @Injectable()
 export class PostgresTemplateStore implements TemplateStore {
@@ -150,6 +155,23 @@ export class PostgresTemplateStore implements TemplateStore {
     );
     return { templates: row.templates, contentBytes: Number(row.bytes) };
   }
+  async retainedUsage(
+    authorId: string,
+    manager = this.templates.manager,
+  ): Promise<RetainedUsage> {
+    const [row] = await manager.query(
+      `SELECT count(*)::int AS templates,COALESCE(sum(content_bytes),0)::bigint AS bytes,
+      (SELECT count(*)::int FROM template_revisions r JOIN templates t ON t.id=r.template_id WHERE t.author_id=$1) AS revisions,
+      (SELECT COALESCE(sum(r.snapshot_bytes),0)::bigint FROM template_revisions r JOIN templates t ON t.id=r.template_id WHERE t.author_id=$1) AS history_bytes
+      FROM templates WHERE author_id=$1`,
+      [authorId],
+    );
+    return {
+      templates: row.templates,
+      revisions: row.revisions,
+      contentBytes: Number(row.bytes) + Number(row.history_bytes),
+    };
+  }
   private async quotaLock(authorId: string, manager: EntityManager) {
     await manager.query(
       "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
@@ -192,9 +214,15 @@ export class PostgresTemplateStore implements TemplateStore {
       await manager.query("SELECT set_config('eru.actor_id', $1, true)", [
         input.authorId,
       ]);
+      const retainedBefore = await this.retainedUsage(input.authorId, manager);
       const repository = manager.getRepository(TemplateEntity);
       const row = await repository.save(
         repository.create({ ...input, isPublic: input.isPublic ?? false }),
+      );
+      assertRetainedQuota(
+        this.limits,
+        retainedBefore,
+        await this.retainedUsage(input.authorId, manager),
       );
       return (await this.find(row.id, false, manager))!;
     });
@@ -257,6 +285,10 @@ export class PostgresTemplateStore implements TemplateStore {
         "SELECT set_config('eru.actor_id', $1, true), set_config('eru.template_operation', $2, true)",
         [actor.id, operation],
       );
+      const retainedBefore =
+        operation === "delete"
+          ? null
+          : await this.retainedUsage(hint.author_id, manager);
       const { contentJson, ...columns } = input;
       const query = manager
         .getRepository(TemplateEntity)
@@ -279,6 +311,12 @@ export class PostgresTemplateStore implements TemplateStore {
       if (result.affected !== 1)
         throw new PreconditionFailedException(
           "Template changed; keep your draft and reload the current revision",
+        );
+      if (retainedBefore)
+        assertRetainedQuota(
+          this.limits,
+          retainedBefore,
+          await this.retainedUsage(hint.author_id, manager),
         );
       return (await this.find(id, true, manager))!;
     });

@@ -39,6 +39,9 @@ export class MemoryAuthStore implements AuthStore {
   async findById(id: string) {
     return structuredClone(this.users.get(id) ?? null);
   }
+  findCredentialsById(id: string) {
+    return this.findById(id);
+  }
   async listUsers(page: number, size: number) {
     const rows = [...this.users.values()]
       .filter((u) => !u.deletedAt)

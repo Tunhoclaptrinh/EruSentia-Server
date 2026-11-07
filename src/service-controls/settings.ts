@@ -7,6 +7,10 @@ export interface ServiceControlSettings {
   writesPerUser: number;
   maxTemplates: number;
   maxContentBytes: number;
+  maxRetainedTemplates: number;
+  maxRetainedRevisions: number;
+  maxRetainedBytes: number;
+  maxReports: number;
   trustProxyHops: number;
 }
 export const SERVICE_CONTROL_SETTINGS = Symbol("SERVICE_CONTROL_SETTINGS");
@@ -37,6 +41,18 @@ export function serviceControlSettings(
       20 * 1024 * 1024,
       1024 * 1024 * 1024,
     ),
+    maxRetainedTemplates: integer("TEMPLATE_RETAINED_COUNT", 500, 100000),
+    maxRetainedRevisions: integer(
+      "TEMPLATE_RETAINED_REVISIONS",
+      10000,
+      1000000,
+    ),
+    maxRetainedBytes: integer(
+      "TEMPLATE_RETAINED_BYTES",
+      200 * 1024 * 1024,
+      2 * 1024 * 1024 * 1024,
+    ),
+    maxReports: integer("REPORT_RETAINED_COUNT", 1000, 100000),
     trustProxyHops: integer("TRUST_PROXY_HOPS", 0, 3, 0),
   };
 }

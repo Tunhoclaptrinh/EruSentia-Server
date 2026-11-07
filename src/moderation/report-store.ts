@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ForbiddenException,
   ConflictException,
   Inject,
   Injectable,
@@ -8,6 +10,11 @@ import {
   PreconditionFailedException,
 } from "@nestjs/common";
 import { DataSource } from "typeorm";
+import {
+  SERVICE_CONTROL_SETTINGS,
+  ServiceControlSettings,
+} from "../service-controls/settings";
+import { PolicyError } from "../service-controls/policy-error";
 import { randomUUID } from "node:crypto";
 import { TEMPLATE_STORE, TemplateStore } from "../templates/template-store";
 import { MemoryTemplateStore } from "../templates/persistence/memory-template.store";
@@ -35,6 +42,8 @@ export class ReportStore implements OnModuleInit {
   private readonly audit: AuditRecord[] = [];
   constructor(
     @Inject(TEMPLATE_STORE) private readonly templates: TemplateStore,
+    @Inject(SERVICE_CONTROL_SETTINGS)
+    private readonly settings: ServiceControlSettings,
     @Optional() private readonly db?: DataSource,
   ) {}
   async onModuleInit() {
@@ -73,6 +82,11 @@ export class ReportStore implements OnModuleInit {
           r.templateRevision === row.revision,
       );
       if (existing) return structuredClone(existing);
+      if (
+        [...this.reports.values()].filter((r) => r.reporterId === user.id)
+          .length >= this.settings.maxReports
+      )
+        throw new PolicyError("REPORT_QUOTA_EXCEEDED");
       const now = new Date(),
         report: ReportRecord = {
           id: randomUUID(),
@@ -105,6 +119,21 @@ export class ReportStore implements OnModuleInit {
         [id],
       );
       if (!row) throw absent();
+      await manager.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+        ["eru-report-quota:" + user.id],
+      );
+      const [existing] = await manager.query(
+        `SELECT ${projection} FROM template_reports WHERE template_id=$1 AND reporter_id=$2 AND template_revision=$3`,
+        [id, user.id, row.revision],
+      );
+      if (existing) return existing;
+      const [usage] = await manager.query(
+        "SELECT count(*)::int n FROM template_reports WHERE reporter_id=$1",
+        [user.id],
+      );
+      if (usage.n >= this.settings.maxReports)
+        throw new PolicyError("REPORT_QUOTA_EXCEEDED");
       const [report] = await manager.query(
         `INSERT INTO template_reports(template_id,reporter_id,template_revision,reported_title,reason_code,description)
         VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT (template_id,reporter_id,template_revision) DO NOTHING RETURNING ${projection}`,
@@ -177,6 +206,70 @@ export class ReportStore implements OnModuleInit {
       totalElements: count,
       totalPages: Math.ceil(count / query.size),
     };
+  }
+  async purgeTemplate(
+    id: string,
+    tag: string,
+    actor: UserIdentity,
+    slug: string,
+    passwordHash: string,
+  ) {
+    if (!this.db) {
+      const row = (this.templates as MemoryTemplateStore).moderationRecord(id);
+      if (!row || row.authorId !== actor.id) throw absent();
+      if (
+        [...this.reports.values()].some(
+          (r) => r.templateId === id && r.state === "open",
+        )
+      )
+        throw new PolicyError("RESOURCE_UNDER_REVIEW");
+      await (this.templates as MemoryTemplateStore).purgeRecord(
+        id,
+        tag,
+        actor,
+        slug,
+        passwordHash,
+      );
+      for (const [key, report] of this.reports)
+        if (report.templateId === id) this.reports.delete(key);
+      for (const entry of this.audit)
+        if (entry.templateId === id) {
+          entry.templateId = null;
+          entry.reportId = null;
+        }
+      return;
+    }
+    await this.db.transaction(async (manager) => {
+      await manager.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+        ["eru-template-quota:" + actor.id],
+      );
+      const [account] = await manager.query(
+        "SELECT id FROM users WHERE id=$1 AND password_hash=$2 AND is_active=true AND deleted_at IS NULL FOR SHARE",
+        [actor.id, passwordHash],
+      );
+      if (!account)
+        throw new ForbiddenException("Account changed; authenticate again");
+      const [row] = await manager.query(
+        "SELECT id,revision,deleted_at,slug FROM templates WHERE id=$1 AND author_id=$2 FOR UPDATE",
+        [id, actor.id],
+      );
+      if (!row) throw absent();
+      if (templateEtag(row) !== tag) throw stale();
+      if (!row.deleted_at || row.slug !== slug)
+        throw new BadRequestException(
+          "Permanent deletion requires a deleted template and exact slug confirmation",
+        );
+      const [pending] = await manager.query(
+        "SELECT EXISTS(SELECT 1 FROM template_reports WHERE template_id=$1 AND state='open') AS value",
+        [id],
+      );
+      if (pending.value) throw new PolicyError("RESOURCE_UNDER_REVIEW");
+      await manager.query(
+        "DELETE FROM templates WHERE id=$1 AND author_id=$2",
+        [id, actor.id],
+      );
+    });
   }
   async templateIdForReport(id: string): Promise<string> {
     const templateId = this.db

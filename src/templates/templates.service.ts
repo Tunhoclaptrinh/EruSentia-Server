@@ -17,6 +17,10 @@ import {
   summarizeTemplate,
 } from "./template-store";
 import type { UserIdentity } from "../auth/auth-store";
+import { PolicyError } from "../service-controls/policy-error";
+import { ReportStore } from "../moderation/report-store";
+import { AUTH_STORE, AuthStore, active } from "../auth/auth-store";
+import { Passwords } from "../auth/passwords";
 import { assertPublicTemplate } from "./template-publication";
 import {
   requireTemplateMatch,
@@ -29,6 +33,9 @@ export class TemplatesService {
   constructor(
     @Inject(TEMPLATE_STORE) private readonly store: TemplateStore,
     private readonly cache: TemplateCache,
+    private readonly reports: ReportStore,
+    @Inject(AUTH_STORE) private readonly accounts: AuthStore,
+    private readonly passwords: Passwords,
   ) {}
   read(id: string, viewer: UserIdentity) {
     return this.cache.read(id, viewer, () => this.store.find(id));
@@ -100,6 +107,33 @@ export class TemplatesService {
     );
     await this.cache.invalidate(id, stamp);
     return row;
+  }
+  async purge(
+    id: string,
+    viewer: UserIdentity,
+    password: string,
+    confirmSlug: string,
+    match?: string,
+  ) {
+    const current = await this.store.find(id, true);
+    if (!current || current.authorId !== viewer.id)
+      throw new NotFoundException("Owned template not found");
+    const account = await this.accounts.findCredentialsById(viewer.id);
+    if (
+      !active(account) ||
+      !(await this.passwords.verify(password, account.passwordHash))
+    )
+      throw new PolicyError("PASSWORD_CONFIRMATION_FAILED");
+    const tag = requireTemplateMatch(match),
+      stamp = await this.cache.stamp(id);
+    await this.reports.purgeTemplate(
+      id,
+      tag,
+      viewer,
+      confirmSlug,
+      account.passwordHash,
+    );
+    await this.cache.invalidate(id, stamp);
   }
   private async owned(id: string, viewer: UserIdentity) {
     const row = await this.store.find(id, true);

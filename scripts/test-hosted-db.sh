@@ -46,6 +46,7 @@ docker exec "$test_container" createdb -U postgres project_test_revisions
 docker exec "$test_container" createdb -U postgres project_test_sessions
 docker exec "$test_container" createdb -U postgres project_test_controls
 docker exec "$test_container" createdb -U postgres project_test_moderation
+docker exec "$test_container" createdb -U postgres project_test_retained
 export DB_HOST=localhost
 export DB_PORT=$(docker port "$test_container" 5432/tcp | sed 's/.*://')
 export DB_USERNAME=postgres DB_PASSWORD=ci-only-disposable-password
@@ -63,3 +64,5 @@ DB_DATABASE=project_test_sessions RUN_LOGIN_SESSION_TESTS=1 node --test test/acc
 DB_DATABASE=project_test_controls RUN_SERVICE_CONTROL_TESTS=1 node --test test/service-controls.test.cjs
 
 DB_DATABASE=project_test_moderation RUN_MODERATION_TESTS=1 node --test test/moderation.test.cjs
+
+DB_DATABASE=project_test_retained RUN_RETAINED_TESTS=1 node --test test/retained-resources.test.cjs

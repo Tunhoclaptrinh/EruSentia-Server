@@ -29,8 +29,8 @@ export interface ReportRecord {
 }
 export interface AuditRecord {
   id: string;
-  reportId: string;
-  templateId: string;
+  reportId: string | null;
+  templateId: string | null;
   actorId: string;
   action: Decision;
   reason: string;

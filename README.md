@@ -377,3 +377,7 @@ ITemplateRepository tuần 1 tách biệt TemplateStore dùng cho projection HTT
 Seed nội dung không tạo tài khoản có thể đăng nhập, không reset dữ liệu và không áp dụng migration C3.
 
 Kiểm duyệt nội dung C4-C: [quyền, API, migration và kiểm thử](docs/CONTENT_MODERATION.md).
+
+Vận hành C4-D: [request ID, log an toàn và thống kê process](docs/PILOT_OPERATIONS.md).
+
+C4-D: [hạn mức dữ liệu lưu giữ và xóa mẫu có xác nhận](docs/RETAINED_DATA.md).

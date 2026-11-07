@@ -21,7 +21,11 @@ import {
   ServiceControlSettings,
 } from "../../service-controls/settings";
 import { PolicyError } from "../../service-controls/policy-error";
-import { assertTemplateQuota, contentBytes } from "../template-quota";
+import {
+  assertTemplateQuota,
+  assertRetainedQuota,
+  contentBytes,
+} from "../template-quota";
 import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
   CreateTemplateInput,
@@ -120,6 +124,30 @@ export class MemoryTemplateStore implements TemplateStore {
     this.record(row, "update", actor.id);
     return structuredClone(row);
   }
+  async purgeRecord(
+    id: string,
+    tag: string,
+    actor: UserIdentity,
+    slug: string,
+    passwordHash: string,
+  ) {
+    const account = await this.auth.findCredentialsById(actor.id);
+    if (!active(account) || account.passwordHash !== passwordHash)
+      throw new ForbiddenException("Account changed; authenticate again");
+    const row = this.rows.get(id);
+    if (!row || row.authorId !== actor.id)
+      throw new NotFoundException("Owned template not found");
+    if (templateEtag(row) !== tag)
+      throw new PreconditionFailedException(
+        "Template changed; reload before permanent deletion",
+      );
+    if (!row.deletedAt || row.slug !== slug)
+      throw new BadRequestException(
+        "Permanent deletion requires a deleted template and exact slug confirmation",
+      );
+    this.rows.delete(id);
+    this.history.delete(id);
+  }
   async find(id: string, includeDeleted = false) {
     const row = this.rows.get(id);
     return row && (includeDeleted || !row.deletedAt)
@@ -127,6 +155,22 @@ export class MemoryTemplateStore implements TemplateStore {
       : null;
   }
 
+  private retained(authorId: string) {
+    const rows = [...this.rows.values()].filter(
+        (row) => row.authorId === authorId,
+      ),
+      history = rows.flatMap((row) => this.history.get(row.id) || []);
+    return {
+      templates: rows.length,
+      revisions: history.length,
+      contentBytes:
+        rows.reduce((n, row) => n + contentBytes(row.contentJson), 0) +
+        history.reduce((n, row) => n + contentBytes(row.snapshot), 0),
+    };
+  }
+  async retainedUsage(authorId: string) {
+    return this.retained(authorId);
+  }
   private used(authorId: string) {
     const rows = [...this.rows.values()].filter(
       (row) => row.authorId === authorId && !row.deletedAt,
@@ -192,6 +236,15 @@ export class MemoryTemplateStore implements TemplateStore {
       author: { id: input.authorId },
       category: this.categories.get(input.categoryId)!,
     };
+    const used = this.retained(row.authorId);
+    assertRetainedQuota(this.limits, used, {
+      templates: used.templates + 1,
+      revisions: used.revisions + 1,
+      contentBytes:
+        used.contentBytes +
+        contentBytes(row.contentJson) +
+        contentBytes(templateSnapshot(row)),
+    });
     this.rows.set(row.id, structuredClone(row));
     this.record(row, "create", input.authorId);
     return structuredClone(row);
@@ -253,6 +306,18 @@ export class MemoryTemplateStore implements TemplateStore {
         contentBytes: row.deletedAt ? 0 : contentBytes(row.contentJson),
       },
     );
+    if (operation !== "delete") {
+      const used = this.retained(row.authorId);
+      assertRetainedQuota(this.limits, used, {
+        ...used,
+        revisions: used.revisions + 1,
+        contentBytes:
+          used.contentBytes -
+          contentBytes(current.contentJson) +
+          contentBytes(row.contentJson) +
+          contentBytes(templateSnapshot(row)),
+      });
+    }
     row.category = this.categories.get(row.categoryId)!;
     this.rows.set(id, structuredClone(row));
     this.record(row, operation, actor.id);
