@@ -45,7 +45,7 @@ test("Swagger UI and OpenAPI describe an executable Template contract", async (t
   assert.equal(response.status, 200);
   const spec = await response.json();
   assert.match(spec.openapi, /^3\./);
-  assert.equal(Object.keys(spec.paths).length, 27);
+  assert.equal(Object.keys(spec.paths).length, 28);
   assert.equal(spec.components.securitySchemes.bearer.scheme, "bearer");
   assert.equal(spec.paths["/auth/login"].post.security, undefined);
   assert.deepEqual(spec.paths["/templates"].get.security, [{ bearer: [] }]);
