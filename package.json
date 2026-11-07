@@ -26,6 +26,7 @@
     "test:api:db": "pnpm build && node --test test/templates.postgres.test.cjs",
     "db:auth": "node --import tsx scripts/run-sql.ts sql/05_auth_sessions.sql",
     "auth:admin": "node --require ts-node/register scripts/create-admin.ts",
+    "test:account-email": "pnpm build && node scripts/test-account-email.mjs",
     "test:auth": "pnpm build && node --test test/auth.api.test.cjs",
     "db:queue": "node --import tsx scripts/run-sql.ts sql/06_message_queue.sql",
     "worker:welcome": "node --require ts-node/register src/messaging/worker.ts",

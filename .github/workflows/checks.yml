@@ -40,6 +40,8 @@ jobs:
           cache: true
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:hosted
+      - name: Local Mailpit account verification and reset
+        run: pnpm test:account-email
       - uses: docker/setup-buildx-action@v3
       - name: Build the Render Docker image
         run: docker buildx build --load --tag erusentia-render-ci .

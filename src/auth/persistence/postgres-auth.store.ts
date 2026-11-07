@@ -14,6 +14,7 @@ import {
   AuthStore,
   RefreshSession,
   LoginSession,
+  EmailPurpose,
   Role,
   userIdentity,
 } from "../auth-store";
@@ -83,6 +84,136 @@ export class PostgresAuthStore implements AuthStore {
       totalPages: Math.ceil(total / size),
       totalElements: total,
     };
+  }
+  async addSessionIfCredentialsMatch(
+    session: RefreshSession,
+    expectedPasswordHash: string,
+  ) {
+    return this.dataSource.transaction(async (manager) => {
+      const [user] = await manager.query(
+        "SELECT password_hash,is_active,deleted_at FROM users WHERE id=$1 FOR NO KEY UPDATE",
+        [session.userId],
+      );
+      if (
+        !user ||
+        !user.is_active ||
+        user.deleted_at ||
+        user.password_hash !== expectedPasswordHash
+      )
+        return false;
+      await manager.insert(RefreshSessionEntity, session);
+      return true;
+    });
+  }
+  async checkEmailSchema() {
+    await this.dataSource.query(
+      "SELECT user_id,purpose,token_hash,requested_at,expires_at,used_at FROM auth_email_actions LIMIT 0",
+    );
+    await this.dataSource.query(
+      "SELECT user_id,verified_at FROM auth_email_verifications LIMIT 0",
+    );
+  }
+  async emailVerifiedAt(userId: string) {
+    const [row] = await this.dataSource.query(
+      "SELECT verified_at FROM auth_email_verifications WHERE user_id=$1",
+      [userId],
+    );
+    return row?.verified_at || null;
+  }
+  async issueEmailAction(
+    userId: string,
+    purpose: EmailPurpose,
+    hash: string,
+    now: Date,
+    expiresAt: Date,
+  ) {
+    return this.dataSource.transaction(async (manager) => {
+      const [user] = await manager.query(
+        "SELECT is_active,deleted_at FROM users WHERE id=$1 FOR NO KEY UPDATE",
+        [userId],
+      );
+      if (!user || !user.is_active || user.deleted_at) return false;
+      const [previous] = await manager.query(
+        "SELECT requested_at FROM auth_email_actions WHERE user_id=$1 AND purpose=$2",
+        [userId, purpose],
+      );
+      if (previous && now.getTime() - previous.requested_at.getTime() < 60000)
+        return false;
+      await manager.query(
+        `INSERT INTO auth_email_actions(user_id,purpose,token_hash,requested_at,expires_at) VALUES($1,$2,$3,$4,$5)
+        ON CONFLICT(user_id,purpose) DO UPDATE SET token_hash=EXCLUDED.token_hash,requested_at=EXCLUDED.requested_at,expires_at=EXCLUDED.expires_at,used_at=NULL`,
+        [userId, purpose, hash, now, expiresAt],
+      );
+      return true;
+    });
+  }
+  private async emailActionLock(
+    manager: EntityManager,
+    hash: string,
+    purpose: EmailPurpose,
+    now: Date,
+  ) {
+    const [hint] = await manager.query(
+      "SELECT user_id FROM auth_email_actions WHERE token_hash=$1 AND purpose=$2",
+      [hash, purpose],
+    );
+    if (!hint) return null;
+    // NO KEY UPDATE serializes password changes with login without blocking session FK KEY SHARE.
+    // FOR UPDATE here would deadlock against rotation holding a family advisory lock.
+    const [user] = await manager.query(
+      "SELECT id,email,is_active,deleted_at FROM users WHERE id=$1 FOR NO KEY UPDATE",
+      [hint.user_id],
+    );
+    if (!user || !user.is_active || user.deleted_at) return null;
+    const [row] = await manager.query(
+      "SELECT * FROM auth_email_actions WHERE token_hash=$1 AND purpose=$2 FOR UPDATE",
+      [hash, purpose],
+    );
+    if (!row || row.used_at || row.expires_at <= now) return null;
+    return user as { id: string; email: string };
+  }
+  async consumeEmailVerification(hash: string, now: Date) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await this.emailActionLock(manager, hash, "verify", now);
+      if (!user) return false;
+      await manager.query(
+        "UPDATE auth_email_actions SET used_at=$2 WHERE token_hash=$1",
+        [hash, now],
+      );
+      await manager.query(
+        "INSERT INTO auth_email_verifications(user_id,verified_at) VALUES($1,$2) ON CONFLICT(user_id) DO NOTHING",
+        [user.id, now],
+      );
+      return true;
+    });
+  }
+  async consumePasswordReset(hash: string, passwordHash: string, now: Date) {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await this.emailActionLock(manager, hash, "reset", now);
+      if (!user) return null;
+      const families: { family_id: string }[] = await manager.query(
+        "SELECT DISTINCT family_id FROM auth_refresh_sessions WHERE user_id=$1 ORDER BY family_id",
+        [user.id],
+      );
+      for (const row of families)
+        await manager.query(
+          "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+          [row.family_id],
+        );
+      await manager.query(
+        "UPDATE users SET password_hash=$2,updated_at=$3 WHERE id=$1",
+        [user.id, passwordHash, now],
+      );
+      await manager.query(
+        "UPDATE auth_refresh_sessions SET revoked_at=$2 WHERE user_id=$1",
+        [user.id, now],
+      );
+      await manager.query(
+        "UPDATE auth_email_actions SET used_at=$2 WHERE token_hash=$1",
+        [hash, now],
+      );
+      return user.email;
+    });
   }
   async addSession(session: RefreshSession) {
     await this.sessions.insert(session);

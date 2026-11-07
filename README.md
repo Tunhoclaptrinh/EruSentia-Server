@@ -9,6 +9,7 @@ với client; App đã bổ sung catalog template, xem thử cô lập và bản
 Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiếp theo.
 
 Tài khoản C4: [quản lý phiên đăng nhập](docs/ACCOUNT_SESSIONS.md).
+Email C4-A2: [xác minh và đặt lại mật khẩu bằng Mailpit local](docs/ACCOUNT_EMAIL.md).
 
 ## Stack project: chạy bằng một lệnh
 

@@ -12,6 +12,7 @@ import {
   userIdentity,
 } from "./auth-store";
 import { LoginDto, RegisterDto } from "./auth.dto";
+import { AccountEmailService } from "./account-email.service";
 import { Passwords } from "./passwords";
 
 export const AUTH_SETTINGS = Symbol("AUTH_SETTINGS");
@@ -23,6 +24,7 @@ export class AuthService {
   constructor(
     @Inject(AUTH_STORE) private readonly store: AuthStore,
     private readonly passwords: Passwords,
+    private readonly email: AccountEmailService,
     private readonly jwt: JwtService,
     @Inject(AUTH_SETTINGS) private readonly settings: AppConfig["auth"],
   ) {}
@@ -32,6 +34,13 @@ export class AuthService {
       passwordHash: await this.passwords.hash(input.password),
       role: "user",
     });
+    if (this.email.enabled()) {
+      try {
+        await this.email.sendVerification(user.id);
+      } catch {
+        console.warn("ACCOUNT_EMAIL_INITIAL_REQUEST_FAILED");
+      }
+    }
     return userIdentity(user);
   }
   async login(input: LoginDto) {
@@ -56,7 +65,13 @@ export class AuthService {
       usedAt: null,
       revokedAt: null,
     };
-    await this.store.addSession(session);
+    if (
+      !(await this.store.addSessionIfCredentialsMatch(
+        session,
+        user.passwordHash,
+      ))
+    )
+      throw new UnauthorizedException("Invalid email or password");
     return this.tokens(user, session, refreshToken);
   }
   private async tokens(

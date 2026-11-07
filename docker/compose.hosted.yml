@@ -1,6 +1,7 @@
 # Hosted demo overlay; always combine with compose.project.yml. See docs/FREE_HOSTING.md.
 x-hosted-env: &hosted-env
   NODE_ENV: production
+  ACCOUNT_EMAIL_MODE: disabled
   PROJECT_BOOTSTRAP: "false"
   PROJECT_DEMO_ACCOUNTS: "false"
   DB_PASSWORD: ${PROJECT_DB_PASSWORD:?Set a unique database password}

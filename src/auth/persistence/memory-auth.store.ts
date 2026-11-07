@@ -5,6 +5,7 @@ import {
   AuthStore,
   RefreshSession,
   LoginSession,
+  EmailPurpose,
   Role,
   UserAccount,
   userIdentity,
@@ -53,6 +54,84 @@ export class MemoryAuthStore implements AuthStore {
       totalPages: Math.ceil(rows.length / size),
       totalElements: rows.length,
     };
+  }
+  private readonly emailActions = new Map<
+    string,
+    {
+      userId: string;
+      purpose: EmailPurpose;
+      hash: string;
+      requestedAt: Date;
+      expiresAt: Date;
+      usedAt: Date | null;
+    }
+  >();
+  private readonly verifiedEmails = new Map<string, Date>();
+  async addSessionIfCredentialsMatch(
+    session: RefreshSession,
+    expectedPasswordHash: string,
+  ) {
+    const user = this.users.get(session.userId);
+    if (!active(user || null) || user!.passwordHash !== expectedPasswordHash)
+      return false;
+    this.sessions.set(session.tokenHash, structuredClone(session));
+    return true;
+  }
+  async checkEmailSchema() {}
+  async emailVerifiedAt(userId: string) {
+    return structuredClone(this.verifiedEmails.get(userId) || null);
+  }
+  async issueEmailAction(
+    userId: string,
+    purpose: EmailPurpose,
+    hash: string,
+    now: Date,
+    expiresAt: Date,
+  ) {
+    if (!active(this.users.get(userId) || null)) return false;
+    const key = userId + ":" + purpose,
+      previous = this.emailActions.get(key);
+    if (previous && now.getTime() - previous.requestedAt.getTime() < 60000)
+      return false;
+    this.emailActions.set(key, {
+      userId,
+      purpose,
+      hash,
+      requestedAt: now,
+      expiresAt,
+      usedAt: null,
+    });
+    return true;
+  }
+  async consumeEmailVerification(hash: string, now: Date) {
+    const row = [...this.emailActions.values()].find(
+      (row) => row.hash === hash && row.purpose === "verify",
+    );
+    if (
+      !row ||
+      row.usedAt ||
+      row.expiresAt <= now ||
+      !active(this.users.get(row.userId) || null)
+    )
+      return false;
+    row.usedAt = now;
+    if (!this.verifiedEmails.has(row.userId))
+      this.verifiedEmails.set(row.userId, now);
+    return true;
+  }
+  async consumePasswordReset(hash: string, passwordHash: string, now: Date) {
+    const row = [...this.emailActions.values()].find(
+      (row) => row.hash === hash && row.purpose === "reset",
+    );
+    if (!row || row.usedAt || row.expiresAt <= now) return null;
+    const user = this.users.get(row.userId);
+    if (!active(user || null)) return null;
+    row.usedAt = now;
+    user!.passwordHash = passwordHash;
+    user!.updatedAt = now;
+    for (const session of this.sessions.values())
+      if (session.userId === row.userId) session.revokedAt = now;
+    return user!.email;
   }
   async addSession(session: RefreshSession) {
     this.sessions.set(session.tokenHash, structuredClone(session));

@@ -12,6 +12,7 @@ const migrationFiles = [
   "07_template_cache_revision.sql",
   "08_template_revisions.sql",
 ];
+const optionalMigration = "09_account_email.sql";
 const lockName = "erusentia-project-migrations-v1";
 
 export function assertProjectDatabase(name: string) {
@@ -47,6 +48,7 @@ export async function withProjectLock<T>(
 export async function migrateProject(
   pool: Pool,
   sqlRoot = resolve(process.cwd(), "sql"),
+  options: { accountEmail?: boolean } = {},
 ) {
   const migrations = await Promise.all(
     migrationFiles.map(async (id) => {
@@ -63,6 +65,23 @@ export async function migrateProject(
       };
     }),
   );
+  let optional: (typeof migrations)[number] | undefined;
+  try {
+    const source = (
+      await readFile(resolve(sqlRoot, optionalMigration), "utf8")
+    ).replace(/\r\n/g, "\n");
+    optional = {
+      id: optionalMigration,
+      checksum: createHash("sha256").update(source).digest("hex"),
+      sql: source,
+    };
+  } catch (error) {
+    if (
+      (error as NodeJS.ErrnoException).code !== "ENOENT" ||
+      options.accountEmail
+    )
+      throw error;
+  }
   return withProjectLock(pool, async (client) => {
     const existing = await client.query(
       "SELECT to_regclass('public.eru_schema_migrations') AS journal",
@@ -85,12 +104,17 @@ export async function migrateProject(
       )
     ).rows;
     for (const row of applied) {
-      const migration = migrations.find((item) => item.id === row.id);
+      const migration = [...migrations, ...(optional ? [optional] : [])].find(
+        (item) => item.id === row.id,
+      );
       if (!migration || migration.checksum !== row.checksum)
         throw new Error(`Migration history mismatch: ${row.id}`);
     }
     const completed: string[] = [];
-    for (const migration of migrations) {
+    for (const migration of [
+      ...migrations,
+      ...(options.accountEmail && optional ? [optional] : []),
+    ]) {
       if (applied.some((row) => row.id === migration.id)) continue;
       await client.query("BEGIN");
       try {
@@ -116,7 +140,15 @@ export async function seedProject(pool: Pool) {
   const passwordHash = await passwords.hash(randomBytes(32).toString("hex"));
   return withProjectLock(pool, async (client) => {
     const journal = await client.query("SELECT id FROM eru_schema_migrations");
-    if (journal.rows.length !== migrationFiles.length)
+    if (
+      !migrationFiles.every((id) =>
+        journal.rows.some((row) => row.id === id),
+      ) ||
+      journal.rows.some(
+        (row) =>
+          !migrationFiles.includes(row.id) && row.id !== optionalMigration,
+      )
+    )
       throw new Error("Run project:migrate before project:seed");
     await client.query("BEGIN");
     try {
