@@ -1,3 +1,9 @@
+import { AccountEmailController } from "./account-email.controller";
+import { AccountEmailService } from "./account-email.service";
+import {
+  ACCOUNT_EMAIL_CONFIG,
+  AccountEmailMailer,
+} from "./account-email.mailer";
 import { DynamicModule, Global, Module } from "@nestjs/common";
 import { APP_GUARD } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
@@ -34,7 +40,11 @@ export class AuthModule {
           ? [TypeOrmModule.forFeature([AuthorEntity, RefreshSessionEntity])]
           : []),
       ],
-      controllers: [AuthController, AdminUsersController],
+      controllers: [
+        AuthController,
+        AdminUsersController,
+        AccountEmailController,
+      ],
       providers: [
         { provide: AUTH_SETTINGS, useValue: settings.auth },
         {
@@ -46,6 +56,16 @@ export class AuthModule {
           useClass:
             settings.store === "postgres" ? PostgresAuthStore : MemoryAuthStore,
         },
+        {
+          provide: ACCOUNT_EMAIL_CONFIG,
+          useValue: {
+            ...settings.accountEmail,
+            smtpHost: settings.queue.smtpHost,
+            smtpPort: settings.queue.smtpPort,
+          },
+        },
+        AccountEmailMailer,
+        AccountEmailService,
         Passwords,
         AuthService,
         { provide: APP_GUARD, useClass: AccessTokenGuard },

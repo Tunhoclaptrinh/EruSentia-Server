@@ -54,6 +54,8 @@ export interface LoginSessionsPage {
   totalPages: number;
 }
 
+export type EmailPurpose = "verify" | "reset";
+
 export const AUTH_STORE = Symbol("AUTH_STORE");
 export interface AuthStore {
   createUser(input: {
@@ -74,6 +76,25 @@ export interface AuthStore {
     totalElements: number;
   }>;
   addSession(session: RefreshSession): Promise<void>;
+  addSessionIfCredentialsMatch(
+    session: RefreshSession,
+    expectedPasswordHash: string,
+  ): Promise<boolean>;
+  issueEmailAction(
+    userId: string,
+    purpose: EmailPurpose,
+    hash: string,
+    now: Date,
+    expiresAt: Date,
+  ): Promise<boolean>;
+  consumeEmailVerification(hash: string, now: Date): Promise<boolean>;
+  consumePasswordReset(
+    hash: string,
+    passwordHash: string,
+    now: Date,
+  ): Promise<string | null>;
+  checkEmailSchema(): Promise<void>;
+  emailVerifiedAt(userId: string): Promise<Date | null>;
   rotateSession(
     hash: string,
     nextHash: string,

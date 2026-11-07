@@ -109,6 +109,10 @@ Redis là cache có thể tạo lại. PostgreSQL và RabbitMQ dùng named volum
 mail ra Internet. Seed không tạo welcome email; đăng ký mới qua API khi worker
 đang chạy mới đi qua outbox → RabbitMQ → Mailpit.
 
+Launcher còn bật **xác minh email và quên/đặt lại mật khẩu local** trong API,
+gửi trực tiếp vào Mailpit; luồng này tách khỏi welcome worker. Tài khoản demo
+không tự xác minh khi seed. [Cách thử từng bước, cấu hình và migration email](ACCOUNT_EMAIL.md).
+
 ## Tài khoản có sẵn
 
 **Mật khẩu ban đầu chung: `EruSentiaDemo!2026`**

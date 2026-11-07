@@ -1,3 +1,4 @@
+import { accountEmailConfig } from "../src/auth/account-email.config";
 import { seedCommunityDemo } from "../src/infrastructure/database/community-demo";
 import { seedProjectDemo } from "../src/infrastructure/database/project-demo";
 import { dbPool } from "../src/infrastructure/database/postgres";
@@ -19,12 +20,19 @@ async function main() {
     process.env.NODE_ENV === "production"
   )
     throw new Error("Demo accounts are forbidden in production");
+  const accountEmail = accountEmailConfig(process.env);
   switch (process.argv[2]) {
     case "migrate":
-      console.log({ applied: await migrateProject(dbPool) });
+      console.log({
+        applied: await migrateProject(dbPool, undefined, {
+          accountEmail: accountEmail.enabled,
+        }),
+      });
       break;
     case "seed":
-      await migrateProject(dbPool);
+      await migrateProject(dbPool, undefined, {
+        accountEmail: accountEmail.enabled,
+      });
       console.log({
         demoFixtures: await seedProject(dbPool),
         demoOwnerCanLogin: false,
@@ -32,7 +40,9 @@ async function main() {
       break;
     case "bootstrap":
       console.log({
-        applied: await migrateProject(dbPool),
+        applied: await migrateProject(dbPool, undefined, {
+          accountEmail: accountEmail.enabled,
+        }),
         fixtures: await seedProject(dbPool),
       });
       if (process.env.PROJECT_COMMUNITY_DEMO !== "false")
@@ -41,7 +51,9 @@ async function main() {
         console.log(await seedProjectDemo(dbPool));
       break;
     case "demo":
-      await migrateProject(dbPool);
+      await migrateProject(dbPool, undefined, {
+        accountEmail: accountEmail.enabled,
+      });
       await seedProject(dbPool);
       console.log(
         await seedProjectDemo(dbPool, {

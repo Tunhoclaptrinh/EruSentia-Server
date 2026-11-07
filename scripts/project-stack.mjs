@@ -20,6 +20,7 @@ export const backendServices = [
 const defaults = {
   PROJECT_COMPOSE_NAME: "erusentia-project",
   PROJECT_API_PORT: "3001",
+  PROJECT_ACCOUNT_EMAIL_MODE: "mailpit",
   PROJECT_WEB_PORT: "5173",
   PROJECT_POSTGRES_PORT: "5433",
   PROJECT_AMQP_PORT: "5673",
@@ -74,6 +75,20 @@ export async function projectContext({ appDir } = {}) {
       throw new Error(`${key} must be 12–128 URL-safe letters/digits/_/-`);
   if (Buffer.byteLength(settings.PROJECT_JWT_SECRET || "") < 32)
     throw new Error("PROJECT_JWT_SECRET requires at least 32 bytes");
+  settings.PROJECT_ACCOUNT_EMAIL_APP_URL ||= `http://127.0.0.1:${settings.PROJECT_WEB_PORT}`;
+  if (!["disabled", "mailpit"].includes(settings.PROJECT_ACCOUNT_EMAIL_MODE))
+    throw new Error("PROJECT_ACCOUNT_EMAIL_MODE must be disabled or mailpit");
+  const emailApp = new URL(settings.PROJECT_ACCOUNT_EMAIL_APP_URL);
+  if (
+    emailApp.protocol !== "http:" ||
+    !["127.0.0.1", "localhost", "[::1]"].includes(emailApp.hostname) ||
+    emailApp.origin !== settings.PROJECT_ACCOUNT_EMAIL_APP_URL ||
+    emailApp.username ||
+    emailApp.password
+  )
+    throw new Error(
+      "PROJECT_ACCOUNT_EMAIL_APP_URL must be a loopback HTTP origin",
+    );
   settings.PROJECT_CORS_ORIGINS ||= `http://localhost:${settings.PROJECT_WEB_PORT},http://127.0.0.1:${settings.PROJECT_WEB_PORT}`;
   for (const origin of settings.PROJECT_CORS_ORIGINS.split(",")) {
     const url = new URL(origin.trim());

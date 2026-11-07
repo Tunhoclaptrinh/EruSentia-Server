@@ -57,6 +57,17 @@ export class ApiExceptionFilter implements ExceptionFilter {
         error instanceof Error ? error.message : "Unknown error",
       );
     const http = host.switchToHttp();
+    if (status === 429 && error instanceof HttpException) {
+      const seconds = (error as HttpException & { retryAfter?: unknown })
+        .retryAfter;
+      if (
+        typeof seconds === "number" &&
+        Number.isInteger(seconds) &&
+        seconds >= 1 &&
+        seconds <= 900
+      )
+        http.getResponse().setHeader("Retry-After", String(seconds));
+    }
     if (status === 401)
       http.getResponse().setHeader("WWW-Authenticate", "Bearer");
     http.getResponse().status(status).json({
