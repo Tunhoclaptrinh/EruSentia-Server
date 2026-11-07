@@ -6,6 +6,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { QueryFailedError } from "typeorm";
+import { PolicyError } from "../service-controls/policy-error";
 
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
@@ -38,8 +39,10 @@ export class ApiExceptionFilter implements ExceptionFilter {
             413: "PAYLOAD_TOO_LARGE",
             412: "PRECONDITION_FAILED",
             428: "PRECONDITION_REQUIRED",
+            429: "RATE_LIMITED",
           } as Record<number, string>
         )[status] ?? "HTTP_ERROR";
+      if (error instanceof PolicyError) code = error.policyCode;
     } else if (error instanceof QueryFailedError) {
       const pgCode = (error.driverError as { code?: string }).code;
       if (pgCode === "23505") {

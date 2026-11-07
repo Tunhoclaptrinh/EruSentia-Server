@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
   PreconditionFailedException,
@@ -20,6 +21,11 @@ import {
 } from "../template-store";
 import type { UserIdentity } from "../../auth/auth-store";
 import { AuthorEntity, CategoryEntity, TemplateEntity } from "./entities";
+import {
+  SERVICE_CONTROL_SETTINGS,
+  ServiceControlSettings,
+} from "../../service-controls/settings";
+import { assertTemplateQuota, TemplateUsage } from "../template-quota";
 
 @Injectable()
 export class PostgresTemplateStore implements TemplateStore {
@@ -30,6 +36,8 @@ export class PostgresTemplateStore implements TemplateStore {
     private readonly authors: Repository<AuthorEntity>,
     @InjectRepository(CategoryEntity)
     private readonly categories: Repository<CategoryEntity>,
+    @Inject(SERVICE_CONTROL_SETTINGS)
+    private readonly limits: ServiceControlSettings,
   ) {}
 
   private project(row: TemplateEntity): TemplateRecord {
@@ -131,6 +139,30 @@ export class PostgresTemplateStore implements TemplateStore {
     return row ? this.project(row) : null;
   }
 
+  async usage(
+    authorId: string,
+    manager = this.templates.manager,
+  ): Promise<TemplateUsage> {
+    const [row] = await manager.query(
+      "SELECT count(*)::int AS templates, COALESCE(sum(content_bytes),0)::bigint AS bytes FROM templates WHERE author_id=$1 AND deleted_at IS NULL",
+      [authorId],
+    );
+    return { templates: row.templates, contentBytes: Number(row.bytes) };
+  }
+  private async quotaLock(authorId: string, manager: EntityManager) {
+    await manager.query(
+      "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+      ["eru-template-quota:" + authorId],
+    );
+  }
+  private async charge(content: unknown, manager: EntityManager) {
+    const [row] = await manager.query(
+      "SELECT octet_length($1::jsonb::text)::bigint AS bytes",
+      [JSON.stringify(content)],
+    );
+    return Number(row.bytes);
+  }
+
   private async checkReferences(authorId?: string, categoryId?: string) {
     if (
       authorId &&
@@ -146,6 +178,16 @@ export class PostgresTemplateStore implements TemplateStore {
   async create(input: CreateTemplateInput) {
     await this.checkReferences(input.authorId, input.categoryId);
     return this.templates.manager.transaction(async (manager) => {
+      await this.quotaLock(input.authorId, manager);
+      assertTemplateQuota(
+        this.limits,
+        await this.usage(input.authorId, manager),
+        { templates: 0, contentBytes: 0 },
+        {
+          templates: 1,
+          contentBytes: await this.charge(input.contentJson, manager),
+        },
+      );
       await manager.query("SELECT set_config('eru.actor_id', $1, true)", [
         input.authorId,
       ]);
@@ -170,6 +212,44 @@ export class PostgresTemplateStore implements TemplateStore {
     const revision = expectedRevision(id, tag);
     await this.checkReferences(undefined, input.categoryId);
     return this.templates.manager.transaction(async (manager) => {
+      const [hint] = await manager.query(
+        "SELECT author_id FROM templates WHERE id=$1",
+        [id],
+      );
+      if (!hint || (actor.role !== "admin" && hint.author_id !== actor.id))
+        throw new PreconditionFailedException(
+          "Template changed; keep your draft and reload the current revision",
+        );
+      await this.quotaLock(hint.author_id, manager);
+      const [current] = await manager.query(
+        "SELECT revision,deleted_at,content_bytes FROM templates WHERE id=$1",
+        [id],
+      );
+      if (
+        !current ||
+        current.revision !== revision ||
+        (current.deleted_at && operation !== "restore")
+      )
+        throw new PreconditionFailedException(
+          "Template changed; keep your draft and reload the current revision",
+        );
+      const afterDeleted = operation === "delete",
+        afterBytes =
+          input.contentJson === undefined
+            ? Number(current.content_bytes)
+            : await this.charge(input.contentJson, manager);
+      assertTemplateQuota(
+        this.limits,
+        await this.usage(hint.author_id, manager),
+        {
+          templates: current.deleted_at ? 0 : 1,
+          contentBytes: current.deleted_at ? 0 : Number(current.content_bytes),
+        },
+        {
+          templates: afterDeleted ? 0 : 1,
+          contentBytes: afterDeleted ? 0 : afterBytes,
+        },
+      );
       await manager.query(
         "SELECT set_config('eru.actor_id', $1, true), set_config('eru.template_operation', $2, true)",
         [actor.id, operation],

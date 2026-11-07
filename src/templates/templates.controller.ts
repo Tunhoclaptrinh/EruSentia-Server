@@ -46,6 +46,7 @@ import {
   TemplateSummaryPageDto,
 } from "./dto/template-response.dto";
 import { CurrentUser } from "../auth/auth.guards";
+import { RateLimited } from "../service-controls/service-controls";
 import type { UserIdentity } from "../auth/auth-store";
 import {
   RevisionsPageDto,
@@ -79,6 +80,7 @@ const matchHeader = {
 @ApiBadRequestResponse({ type: ApiErrorDto })
 @ApiInternalServerErrorResponse({ type: ApiErrorDto })
 @Controller("templates")
+@RateLimited("write")
 export class TemplatesController {
   constructor(private readonly service: TemplatesService) {}
   @Get()

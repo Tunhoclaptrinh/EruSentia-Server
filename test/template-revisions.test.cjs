@@ -79,6 +79,7 @@ async function revisionContract(t, mode) {
         );
         assert.deepEqual(await migrateProject(pool), [
           "08_template_revisions.sql",
+          "10_service_controls.sql",
         ]);
         assert.deepEqual(await migrateProject(pool), []);
         const existing = (

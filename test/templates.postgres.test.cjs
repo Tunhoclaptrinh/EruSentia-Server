@@ -45,6 +45,7 @@ test(
       "03_seed.sql",
       "05_auth_sessions.sql",
       "08_template_revisions.sql",
+      "10_service_controls.sql",
     ]) {
       await client.query(
         (
