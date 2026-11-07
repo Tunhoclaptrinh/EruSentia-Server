@@ -40,6 +40,10 @@ export class TemplateResponseDto implements TemplateRecord {
   })
   revision!: number;
   @ApiProperty() isPublic!: boolean;
+  @ApiProperty({ enum: ["visible", "hidden"] }) moderationState!:
+    "visible" | "hidden";
+  @ApiProperty({ type: String, nullable: true }) moderationReason!:
+    string | null;
   @ApiProperty({ type: [String] }) tags!: string[];
   @ApiProperty({ type: "integer" }) viewsCount!: number;
   @ApiProperty({ type: "integer" }) forksCount!: number;

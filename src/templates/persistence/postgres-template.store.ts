@@ -20,6 +20,7 @@ import {
   TemplateStore,
 } from "../template-store";
 import type { UserIdentity } from "../../auth/auth-store";
+import { PolicyError } from "../../service-controls/policy-error";
 import { AuthorEntity, CategoryEntity, TemplateEntity } from "./entities";
 import {
   SERVICE_CONTROL_SETTINGS,
@@ -222,7 +223,7 @@ export class PostgresTemplateStore implements TemplateStore {
         );
       await this.quotaLock(hint.author_id, manager);
       const [current] = await manager.query(
-        "SELECT revision,deleted_at,content_bytes FROM templates WHERE id=$1",
+        "SELECT revision,deleted_at,content_bytes,moderation_state FROM templates WHERE id=$1",
         [id],
       );
       if (
@@ -233,6 +234,8 @@ export class PostgresTemplateStore implements TemplateStore {
         throw new PreconditionFailedException(
           "Template changed; keep your draft and reload the current revision",
         );
+      if (current.moderation_state === "hidden" && input.isPublic === true)
+        throw new PolicyError("TEMPLATE_RESTRICTED");
       const afterDeleted = operation === "delete",
         afterBytes =
           input.contentJson === undefined

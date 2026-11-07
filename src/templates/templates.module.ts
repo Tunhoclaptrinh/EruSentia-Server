@@ -1,3 +1,5 @@
+import { ReportStore } from "../moderation/report-store";
+import { ReportsController } from "../moderation/reports.controller";
 import { DynamicModule, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppConfig } from "../config";
@@ -17,9 +19,14 @@ export class TemplatesModule {
     return {
       module: TemplatesModule,
       imports: store === "postgres" ? [TypeOrmModule.forFeature(entities)] : [],
-      controllers: [TemplatesController, TemplateUsageController],
+      controllers: [
+        TemplatesController,
+        TemplateUsageController,
+        ReportsController,
+      ],
       providers: [
         TemplatesService,
+        ReportStore,
         TemplateCache,
         { provide: CACHE_SETTINGS, useValue: settings.cache },
         {

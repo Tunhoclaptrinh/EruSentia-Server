@@ -375,3 +375,5 @@ ITemplateRepository tuần 1 tách biệt TemplateStore dùng cho projection HTT
 
 [Bộ 14 mẫu HTML tương tác, seed local/Neon và kịch bản thử App](docs/COMMUNITY_DEMO.md).
 Seed nội dung không tạo tài khoản có thể đăng nhập, không reset dữ liệu và không áp dụng migration C3.
+
+Kiểm duyệt nội dung C4-C: [quyền, API, migration và kiểm thử](docs/CONTENT_MODERATION.md).

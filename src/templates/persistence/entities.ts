@@ -68,6 +68,15 @@ export class TemplateEntity {
   @Column({ type: "integer", default: 1 }) revision!: number;
   @Column({ name: "is_public", type: "boolean", default: true })
   isPublic!: boolean;
+  @Column({
+    name: "moderation_state",
+    type: "varchar",
+    length: 16,
+    default: "visible",
+  })
+  moderationState!: "visible" | "hidden";
+  @Column({ name: "moderation_reason", type: "text", nullable: true })
+  moderationReason!: string | null;
   @Column({ name: "is_featured", type: "boolean", default: false })
   isFeatured!: boolean;
   @Column({ name: "forks_count", type: "integer", default: 0 })
