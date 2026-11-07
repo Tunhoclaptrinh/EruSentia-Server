@@ -15,7 +15,7 @@ import { PolicyError } from "./policy-error";
 import { ApiTooManyRequestsResponse } from "@nestjs/swagger";
 export const RATE_SCOPE = Symbol("rate_scope");
 export const RATE_SECRET = Symbol("rate_secret");
-export type RateScope = "login" | "register" | "refresh" | "write";
+export type RateScope = "login" | "register" | "refresh" | "write" | "report";
 export const RateLimited = (scope: RateScope) =>
   applyDecorators(
     SetMetadata(RATE_SCOPE, scope),
@@ -86,13 +86,13 @@ export class ServiceControls implements OnModuleInit {
           windowSeconds: 900,
         },
       ];
-    } else if (scope === "write") {
+    } else if (scope === "write" || scope === "report") {
       if (!request.user) return; // Authentication guard rejects unauthenticated writes first.
       buckets = [
         {
-          key: key("write\0" + request.user.id),
-          limit: this.settings.writesPerUser,
-          windowSeconds: 60,
+          key: key(scope + "\0" + request.user.id),
+          limit: scope === "report" ? 10 : this.settings.writesPerUser,
+          windowSeconds: scope === "report" ? 900 : 60,
         },
       ];
     } else {

@@ -25,6 +25,8 @@ export interface TemplateRecord {
   version: string;
   revision: number;
   isPublic: boolean;
+  moderationState: "visible" | "hidden";
+  moderationReason: string | null;
   tags: string[];
   viewsCount: number;
   forksCount: number;

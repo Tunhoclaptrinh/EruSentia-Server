@@ -101,7 +101,7 @@ test(
     assert.equal(
       (await pool.query("SELECT count(*)::int n FROM eru_schema_migrations"))
         .rows[0].n,
-      7,
+      8,
     );
     assert.equal(
       (await pool.query("SELECT count(*)::int n FROM users WHERE is_active"))

@@ -59,6 +59,7 @@ test(
       "07_template_cache_revision.sql",
       "08_template_revisions.sql",
       "10_service_controls.sql",
+          "11_content_moderation.sql",
       "07_template_cache_revision.sql",
     ])
       await pool.query(

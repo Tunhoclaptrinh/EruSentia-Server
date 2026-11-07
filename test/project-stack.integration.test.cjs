@@ -106,6 +106,7 @@ test(
       "07_template_cache_revision.sql",
       "08_template_revisions.sql",
       "10_service_controls.sql",
+          "11_content_moderation.sql",
     ])
       await pool.query(
         (await fs.readFile(path.join(__dirname, "../sql", f), "utf8")).replace(

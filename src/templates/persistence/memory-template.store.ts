@@ -20,6 +20,7 @@ import {
   SERVICE_CONTROL_SETTINGS,
   ServiceControlSettings,
 } from "../../service-controls/settings";
+import { PolicyError } from "../../service-controls/policy-error";
 import { assertTemplateQuota, contentBytes } from "../template-quota";
 import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
@@ -90,6 +91,35 @@ export class MemoryTemplateStore implements TemplateStore {
     );
   }
 
+  moderationRecord(id: string) {
+    return structuredClone(this.rows.get(id) ?? null);
+  }
+  applyModeration(
+    id: string,
+    state: "visible" | "hidden",
+    reason: string,
+    tag: string,
+    actor: UserIdentity,
+  ) {
+    const current = this.rows.get(id);
+    if (!current || current.deletedAt)
+      throw new NotFoundException("Template not found");
+    if (tag !== templateEtag(current))
+      throw new PreconditionFailedException(
+        "Template changed; reload before deciding",
+      );
+    const row = {
+      ...current,
+      isPublic: false,
+      moderationState: state,
+      moderationReason: reason,
+      revision: current.revision + 1,
+      updatedAt: new Date(),
+    };
+    this.rows.set(id, row);
+    this.record(row, "update", actor.id);
+    return structuredClone(row);
+  }
   async find(id: string, includeDeleted = false) {
     const row = this.rows.get(id);
     return row && (includeDeleted || !row.deletedAt)
@@ -148,6 +178,8 @@ export class MemoryTemplateStore implements TemplateStore {
       version: input.version ?? "1.0.0",
       revision: 1,
       isPublic: input.isPublic ?? false,
+      moderationState: "visible",
+      moderationReason: null,
       tags: input.tags ?? [],
       viewsCount: 0,
       forksCount: 0,
@@ -206,6 +238,8 @@ export class MemoryTemplateStore implements TemplateStore {
       revision: current.revision + 1,
       updatedAt: new Date(),
     };
+    if (current.moderationState === "hidden" && row.isPublic)
+      throw new PolicyError("TEMPLATE_RESTRICTED");
     this.validate(row, id);
     assertTemplateQuota(
       this.limits,
