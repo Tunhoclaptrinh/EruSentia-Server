@@ -37,6 +37,7 @@ import {
 } from "./auth.dto";
 import { UuidPipe } from "../common/uuid.pipe";
 import { AuthService } from "./auth.service";
+import { RateLimited } from "../service-controls/service-controls";
 
 @ApiTags("Authentication")
 @ApiBadRequestResponse({ type: ApiErrorDto })
@@ -48,6 +49,7 @@ export class AuthController {
   ) {}
   @Public()
   @Post("register")
+  @RateLimited("register")
   @Header("Cache-Control", "no-store")
   @ApiOperation({
     summary: "Register a user account",
@@ -62,6 +64,7 @@ export class AuthController {
 
   @Public()
   @Post("login")
+  @RateLimited("login")
   @HttpCode(200)
   @Header("Cache-Control", "no-store")
   @ApiOperation({
@@ -77,6 +80,7 @@ export class AuthController {
 
   @Public()
   @Post("refresh")
+  @RateLimited("refresh")
   @HttpCode(200)
   @Header("Cache-Control", "no-store")
   @ApiOperation({
@@ -131,6 +135,7 @@ export class AuthController {
     };
   }
   @Post("sessions/revoke-others")
+  @RateLimited("write")
   @HttpCode(204)
   @Header("Cache-Control", "no-store")
   @ApiBearerAuth()
@@ -148,6 +153,7 @@ export class AuthController {
     return this.store.revokeOtherSessions(user.id, current, new Date());
   }
   @Delete("sessions/:id")
+  @RateLimited("write")
   @HttpCode(204)
   @Header("Cache-Control", "no-store")
   @ApiBearerAuth()

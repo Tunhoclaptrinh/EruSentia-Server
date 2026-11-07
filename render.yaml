@@ -49,3 +49,11 @@ services:
         value: "false"
       - key: CACHE_ENABLED
         value: "false"
+      - key: API_RATE_LIMITS_ENABLED
+        value: "true"
+      - key: TEMPLATE_QUOTA_COUNT
+        value: "100"
+      - key: TEMPLATE_QUOTA_CONTENT_BYTES
+        value: "20971520"
+      - key: TRUST_PROXY_HOPS
+        value: "0"

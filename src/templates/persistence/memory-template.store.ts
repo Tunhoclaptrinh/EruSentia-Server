@@ -16,6 +16,11 @@ import {
 } from "../template-revisions";
 import { MEMORY_CATEGORIES } from "../../categories/categories";
 import { randomUUID } from "node:crypto";
+import {
+  SERVICE_CONTROL_SETTINGS,
+  ServiceControlSettings,
+} from "../../service-controls/settings";
+import { assertTemplateQuota, contentBytes } from "../template-quota";
 import { QueryTemplatesDto, UpdateTemplateDto } from "../dto/template.dto";
 import {
   CreateTemplateInput,
@@ -34,7 +39,11 @@ import {
 export class MemoryTemplateStore implements TemplateStore {
   private readonly rows = new Map<string, TemplateRecord>();
   private readonly history = new Map<string, TemplateRevision[]>();
-  constructor(@Inject(AUTH_STORE) private readonly auth: AuthStore) {}
+  constructor(
+    @Inject(AUTH_STORE) private readonly auth: AuthStore,
+    @Inject(SERVICE_CONTROL_SETTINGS)
+    private readonly limits: ServiceControlSettings,
+  ) {}
   private readonly categories = new Map(
     MEMORY_CATEGORIES.map(({ id, name, slug }) => [id, { id, name, slug }]),
   );
@@ -88,6 +97,22 @@ export class MemoryTemplateStore implements TemplateStore {
       : null;
   }
 
+  private used(authorId: string) {
+    const rows = [...this.rows.values()].filter(
+      (row) => row.authorId === authorId && !row.deletedAt,
+    );
+    return {
+      templates: rows.length,
+      contentBytes: rows.reduce(
+        (total, row) => total + contentBytes(row.contentJson),
+        0,
+      ),
+    };
+  }
+  async usage(authorId: string) {
+    return this.used(authorId);
+  }
+
   private validate(
     input: { authorId: string; categoryId: string; slug: string },
     current?: string,
@@ -109,6 +134,12 @@ export class MemoryTemplateStore implements TemplateStore {
     if (!active(await this.auth.findById(input.authorId)))
       throw new BadRequestException("Author does not exist or is inactive");
     this.validate(input);
+    assertTemplateQuota(
+      this.limits,
+      this.used(input.authorId),
+      { templates: 0, contentBytes: 0 },
+      { templates: 1, contentBytes: contentBytes(input.contentJson) },
+    );
     const now = new Date();
     const row: TemplateRecord = {
       ...input,
@@ -176,6 +207,18 @@ export class MemoryTemplateStore implements TemplateStore {
       updatedAt: new Date(),
     };
     this.validate(row, id);
+    assertTemplateQuota(
+      this.limits,
+      this.used(row.authorId),
+      {
+        templates: current.deletedAt ? 0 : 1,
+        contentBytes: current.deletedAt ? 0 : contentBytes(current.contentJson),
+      },
+      {
+        templates: row.deletedAt ? 0 : 1,
+        contentBytes: row.deletedAt ? 0 : contentBytes(row.contentJson),
+      },
+    );
     row.category = this.categories.get(row.categoryId)!;
     this.rows.set(id, structuredClone(row));
     this.record(row, operation, actor.id);

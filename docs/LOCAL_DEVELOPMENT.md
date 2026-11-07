@@ -113,6 +113,10 @@ Launcher còn bật **xác minh email và quên/đặt lại mật khẩu local*
 gửi trực tiếp vào Mailpit; luồng này tách khỏi welcome worker. Tài khoản demo
 không tự xác minh khi seed. [Cách thử từng bước, cấu hình và migration email](ACCOUNT_EMAIL.md).
 
+API có giới hạn auth/ghi request và quota mẫu đang hoạt động trên server.
+[Cấu hình C4-B và cách quan sát usage](SERVICE_CONTROLS.md); dữ liệu ghi chú trên
+máy không thuộc quota. Migration mới không dùng reset và không tự xóa dữ liệu.
+
 ## Tài khoản có sẵn
 
 **Mật khẩu ban đầu chung: `EruSentiaDemo!2026`**

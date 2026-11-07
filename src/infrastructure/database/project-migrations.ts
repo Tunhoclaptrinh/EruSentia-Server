@@ -11,6 +11,7 @@ const migrationFiles = [
   "06_message_queue.sql",
   "07_template_cache_revision.sql",
   "08_template_revisions.sql",
+  "10_service_controls.sql",
 ];
 const optionalMigration = "09_account_email.sql";
 const lockName = "erusentia-project-migrations-v1";

@@ -12,6 +12,7 @@ import { CategoriesModule } from "./categories/categories";
 import { AuthModule } from "./auth/auth.module";
 import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
 import { HealthController } from "./common/health.controller";
+import { ServiceControlsModule } from "./service-controls/service-controls.module";
 
 @Module({})
 class AppModule {
@@ -35,6 +36,7 @@ class AppModule {
               }),
             ]
           : []),
+        ServiceControlsModule.register(settings),
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
         TemplatesModule.register(settings),
@@ -59,11 +61,13 @@ export async function createApplication(
       done(null, !origin || settings.corsOrigins.includes(origin)),
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type", "If-Match"],
-    exposedHeaders: ["X-Cache", "WWW-Authenticate", "ETag"],
+    exposedHeaders: ["X-Cache", "WWW-Authenticate", "ETag", "Retry-After"],
     credentials: false,
     maxAge: 600,
   });
   app.useBodyParser("json", { limit: "2mb" });
+  if (settings.serviceControls.trustProxyHops)
+    app.set("trust proxy", settings.serviceControls.trustProxyHops);
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

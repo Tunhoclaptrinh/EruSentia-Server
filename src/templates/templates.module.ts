@@ -7,6 +7,7 @@ import { PostgresTemplateStore } from "./persistence/postgres-template.store";
 import { TEMPLATE_STORE } from "./template-store";
 import { TemplatesController } from "./templates.controller";
 import { TemplateCache, CACHE_SETTINGS } from "../cache/template-cache";
+import { TemplateUsageController } from "./template-usage.controller";
 import { TemplatesService } from "./templates.service";
 
 @Module({})
@@ -16,7 +17,7 @@ export class TemplatesModule {
     return {
       module: TemplatesModule,
       imports: store === "postgres" ? [TypeOrmModule.forFeature(entities)] : [],
-      controllers: [TemplatesController],
+      controllers: [TemplatesController, TemplateUsageController],
       providers: [
         TemplatesService,
         TemplateCache,

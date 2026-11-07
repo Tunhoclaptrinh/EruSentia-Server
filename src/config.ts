@@ -1,4 +1,8 @@
 import { accountEmailConfig } from "./auth/account-email.config";
+import {
+  serviceControlSettings,
+  ServiceControlSettings,
+} from "./service-controls/settings";
 import { randomBytes } from "node:crypto";
 import { readDatabaseSettings } from "./infrastructure/database/settings";
 
@@ -24,6 +28,7 @@ export interface AppConfig {
     ttlSeconds: number;
   };
   accountEmail: { enabled: boolean; appUrl: string };
+  serviceControls: ServiceControlSettings;
   database: ReturnType<typeof readDatabaseSettings>;
 }
 
@@ -154,6 +159,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
       ttlSeconds: integer(env.CACHE_TTL_SECONDS, 60, "CACHE_TTL_SECONDS"),
     },
     accountEmail: accountEmailConfig(env),
+    serviceControls: serviceControlSettings(env),
     database: readDatabaseSettings(env),
   };
 }

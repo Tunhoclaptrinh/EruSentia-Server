@@ -10,6 +10,7 @@ Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiế
 
 Tài khoản C4: [quản lý phiên đăng nhập](docs/ACCOUNT_SESSIONS.md).
 Email C4-A2: [xác minh và đặt lại mật khẩu bằng Mailpit local](docs/ACCOUNT_EMAIL.md).
+Kiểm soát C4-B: [rate limit, quota và usage của tài khoản](docs/SERVICE_CONTROLS.md).
 
 ## Stack project: chạy bằng một lệnh
 

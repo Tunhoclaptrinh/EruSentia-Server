@@ -19,6 +19,7 @@ import { Passwords } from "./passwords";
 import { MemoryAuthStore } from "./persistence/memory-auth.store";
 import { PostgresAuthStore } from "./persistence/postgres-auth.store";
 import { RefreshSessionEntity } from "./persistence/refresh-session.entity";
+import { ServiceRateGuard } from "../service-controls/service-controls";
 
 @Global()
 @Module({})
@@ -70,6 +71,7 @@ export class AuthModule {
         AuthService,
         { provide: APP_GUARD, useClass: AccessTokenGuard },
         { provide: APP_GUARD, useClass: RolesGuard },
+        { provide: APP_GUARD, useClass: ServiceRateGuard },
       ],
       exports: [AUTH_STORE, AuthService, Passwords],
     };

@@ -4,6 +4,7 @@ import {
   UpdateTemplateDto,
 } from "./dto/template.dto";
 import type { UserIdentity } from "../auth/auth-store";
+import type { TemplateUsage } from "./template-quota";
 import type {
   TemplateRevision,
   RevisionPage,
@@ -68,6 +69,7 @@ export function summarizeTemplate(row: TemplateRecord): TemplateSummary {
 // Catalog projection for HTTP. The week-1 ITemplateRepository remains an entity-oriented
 // domain port; this port includes pagination and related author/category projections.
 export interface TemplateStore {
+  usage(authorId: string): Promise<TemplateUsage>;
   list(query: QueryTemplatesDto, viewer: UserIdentity): Promise<TemplatePage>;
   find(id: string, includeDeleted?: boolean): Promise<TemplateRecord | null>;
   create(input: CreateTemplateInput): Promise<TemplateRecord>;
