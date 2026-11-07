@@ -33,8 +33,44 @@ liveness, không query DB định kỳ để giữ Neon thức. Thống kê bỏ
 4. Một lỗi request có `X-Request-Id` tương ứng `requestId` trong JSON. ID do client
    gửi vào sẽ không được sử dụng. Không tự tạo lỗi phá dữ liệu trên production.
 
-## Trạng thái tiếp theo
+## Phạm vi C4-D
 
-Budget dữ liệu/lịch sử lưu giữ, dry-run retention và luồng quyền riêng tư đang
-được triển khai riêng trong C4-D. Tài liệu này chưa xác nhận hoàn tất nghiệm thu
-pilot. Email hosted vẫn chờ provider/domain; Mailpit chỉ dùng local.
+Đã có budget mẫu/lịch sử, purge một mẫu có xác nhận và retention kỹ thuật với
+dry-run. Các phần này được kiểm thử riêng; chưa xác nhận hoàn tất nghiệm thu
+pilot. Export/xóa toàn bộ tài khoản và chính sách audit/backup còn lại; email
+hosted vẫn chờ provider/domain, Mailpit chỉ dùng local.
+
+## Retention kỹ thuật có dry-run
+
+Lệnh dưới chỉ xử lý tối đa 5.000 row mỗi bảng/lần: counter rate limit hết hạn hơn
+1 ngày; refresh session hết hạn hơn 30 ngày; email action hết hạn hơn 7 ngày (nếu
+module email tồn tại). Family refresh giữ expiry tuyệt đối khi rotation; lệnh
+không xóa family còn hiệu lực. Không xóa user, profile, template, history, report,
+audit, queue/outbox hoặc file backup.
+
+Dùng kết nối `DB_*` đúng như lệnh `project:migrate`, vào database có prefix project.
+Không đưa DSN/mật khẩu vào câu lệnh hoặc log. Với cấu hình environment đã có:
+
+```bash
+pnpm data:retention --help
+pnpm data:retention
+```
+
+Kết quả dry-run chỉ có database, thời điểm `asOf`, cutoff, số row và `digest`.
+Không có ID người dùng, token/hash, email hoặc nội dung. Kiểm tra đúng database,
+thời gian và số lượng trước khi thực hiện. Chỉ sau khi operator đã duyệt kết quả,
+dùng đúng hai giá trị vừa nhận (thay phần trong dấu `< >`):
+
+```bash
+pnpm data:retention --apply --as-of '<asOf từ dry-run>' --confirm '<digest từ dry-run>'
+```
+
+Apply khóa các candidate kỹ thuật trong transaction và đối chiếu đúng fingerprint;
+khác kết quả đã duyệt thì rollback `RETENTION_PLAN_CHANGED`, cần dry-run mới.
+Không dùng timestamp tương lai. Chạy lại dry-run để xem batch tiếp theo. Script
+không tự lập lịch hoặc tự apply trên Neon. Backup/restore rehearsal vẫn là bước
+riêng; không tự xóa các dump đang bảo vệ trong `.local/backups`.
+
+Budget mẫu/lịch sử và xóa vĩnh viễn của tác giả ở [RETAINED_DATA](RETAINED_DATA.md).
+Đường export/xóa toàn bộ tài khoản, retention business/audit/backup và provider
+email hosted còn phải hoàn tất trước khi coi pilot/public launch đã nghiệm thu.
