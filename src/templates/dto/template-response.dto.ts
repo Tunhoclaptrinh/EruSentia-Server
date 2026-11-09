@@ -83,6 +83,7 @@ export class TemplateSummaryPageDto
 }
 
 export class ApiErrorDto {
+  @ApiProperty({ format: "uuid" }) requestId!: string;
   @ApiProperty({ example: 400 }) statusCode!: number;
   @ApiProperty({ example: "BAD_REQUEST" }) code!: string;
   @ApiProperty({ example: "Request validation failed" }) message!: string;

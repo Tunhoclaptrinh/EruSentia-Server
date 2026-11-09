@@ -18,6 +18,7 @@ import {
   QueryTemplatesDto,
   UpdateTemplateDto,
 } from "./dto/template.dto";
+import { PurgeTemplateDto } from "./dto/template-purge.dto";
 import { TemplatesService } from "./templates.service";
 import {
   ApiBadRequestResponse,
@@ -205,6 +206,26 @@ export class TemplatesController {
   ) {
     const row = await this.service.remove(id, user, match);
     response.setHeader("ETag", templateEtag(row));
+  }
+  @Post(":id/purge")
+  @HttpCode(204)
+  @RateLimited("sensitive")
+  @ApiOperation({
+    summary:
+      "Permanently delete an owned soft-deleted template and its history after explicit password and slug confirmation",
+  })
+  @ApiHeader(matchHeader)
+  @ApiNoContentResponse({
+    description:
+      "Permanently removed. Existing local copies and protected backups are separate.",
+  })
+  async purge(
+    @Param("id", UuidPipe) id: string,
+    @Body() body: PurgeTemplateDto,
+    @CurrentUser() user: UserIdentity,
+    @Headers("if-match") match: string | undefined,
+  ) {
+    await this.service.purge(id, user, body.password, body.confirmSlug, match);
   }
   @Get(":id/revisions")
   @ApiOkResponse({ type: RevisionsPageDto })

@@ -65,6 +65,8 @@ export interface AuthStore {
   }): Promise<UserAccount>;
   findByEmail(email: string): Promise<UserAccount | null>;
   findById(id: string): Promise<UserAccount | null>;
+  /** Internal reauthentication only; never project the credential record to HTTP. */
+  findCredentialsById(id: string): Promise<UserAccount | null>;
   listUsers(
     page: number,
     size: number,

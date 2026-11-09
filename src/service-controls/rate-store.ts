@@ -53,6 +53,9 @@ export class PostgresRateStore implements RateStore {
       "SELECT key_hash,hits,expires_at FROM service_rate_limits LIMIT 0",
     );
     await this.db.query("SELECT content_bytes FROM templates LIMIT 0");
+    await this.db.query(
+      "SELECT snapshot_bytes FROM template_revisions LIMIT 0",
+    );
   }
   async consume(buckets: RateBucket[], now: Date) {
     try {

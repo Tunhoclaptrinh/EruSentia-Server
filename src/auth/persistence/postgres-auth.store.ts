@@ -71,6 +71,14 @@ export class PostgresAuthStore implements AuthStore {
   findById(id: string) {
     return this.users.findOne({ where: { id }, withDeleted: true });
   }
+  findCredentialsById(id: string) {
+    return this.users
+      .createQueryBuilder("u")
+      .withDeleted()
+      .addSelect("u.passwordHash")
+      .where("u.id=:id", { id })
+      .getOne();
+  }
   async listUsers(page: number, size: number) {
     const [users, total] = await this.users.findAndCount({
       order: { createdAt: "ASC", id: "ASC" },
