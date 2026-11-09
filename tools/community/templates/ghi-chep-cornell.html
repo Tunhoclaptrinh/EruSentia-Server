@@ -10,11 +10,10 @@
 .cornell-meta-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .cornell-meta-val{font-size:13.5px;font-weight:600;color:var(--ink);border:none;background:transparent;outline:none}
 .cornell-meta-val:focus{background:#fff;border-radius:4px;box-shadow:0 0 0 2px var(--focus)}
-.cornell-layout{display:grid;grid-template-columns:30% 70%;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:18px 0;background:#fff}
-.cornell-col-header{padding:10px 14px;background:var(--soft);font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--line)}
-.cornell-col-left{border-right:1px solid var(--line);background:#fafcff}
-.cornell-col-right{background:#fff}
-.cornell-row{display:grid;grid-template-columns:30% 70%;border-bottom:1px solid var(--line);position:relative}
+.cornell-layout{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:18px 0;background:#fff}
+.cornell-header-row{display:grid;grid-template-columns:32% 68%;background:var(--soft);border-bottom:1px solid var(--line)}
+.cornell-col-header{padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.cornell-row{display:grid;grid-template-columns:32% 68%;border-bottom:1px solid var(--line);position:relative}
 .cornell-row:last-child{border-bottom:none}
 .cornell-cue-cell{padding:12px 14px;border-right:1px solid var(--line);background:#fafcff;font-weight:600;font-size:13px;color:var(--accent)}
 .cornell-note-cell{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--ink)}
@@ -28,7 +27,7 @@
 .cornell-summary-text{width:100%;min-height:80px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink)}
 .recall-mode-active .cornell-note-cell{filter:blur(5px);user-select:none;transition:filter .2s}
 .recall-mode-active .cornell-note-cell:hover{filter:none}
-@media(max-width:640px){.cornell-layout,.cornell-row{grid-template-columns:1fr}.cornell-col-left,.cornell-cue-cell{border-right:none;border-bottom:1px solid var(--line)}}
+@media(max-width:640px){.cornell-header-row,.cornell-row{grid-template-columns:1fr}.cornell-cue-cell{border-right:none;border-bottom:1px solid var(--line)}}
 </style>
 <main data-catalog-version="2">
 <div class="document-topline">
@@ -59,9 +58,12 @@
 <button type="button" id="toggleRecallBtn" title="Làm mờ cột ghi chú để tự kiểm tra bằng cột câu hỏi gợi nhớ">Bật chế độ Tự ôn tập (Active Recall)</button>
 <span class="muted" style="margin-left:auto;font-size:11.5px">Nhấp đúp vào ô để soạn thảo trực tiếp</span>
 </div>
-<div class="cornell-layout" id="cornellTable">
-<div class="cornell-col-header" style="border-right:1px solid var(--line)">Câu hỏi &amp; Từ khóa gợi nhớ (Cues - 30%)</div>
-<div class="cornell-col-header">Ý chính bài giảng &amp; Chi tiết (Notes - 70%)</div>
+<div class="cornell-layout">
+<div class="cornell-header-row">
+<div class="cornell-col-header" style="border-right:1px solid var(--line)">Câu hỏi &amp; Từ khóa gợi nhớ (Cues - 32%)</div>
+<div class="cornell-col-header">Ý chính bài giảng &amp; Chi tiết (Notes - 68%)</div>
+</div>
+<div id="cornellRowsContainer">
 <div class="cornell-row">
 <div class="cornell-cue-cell" contenteditable="true">Bản chất của Client-Side Rendering (CSR) là gì?</div>
 <div class="cornell-note-cell" contenteditable="true">Trình duyệt tải về tệp HTML khung rỗng kèm bó tệp JavaScript (bundle). Trình duyệt thực thi JS để dựng cây DOM động và nạp dữ liệu từ API. Trải nghiệm chuyển trang mượt mà như ứng dụng Desktop (SPA).</div>
@@ -78,6 +80,7 @@
 <button type="button" class="cornell-row-del" title="Xóa dòng này">Xóa</button>
 </div>
 </div>
+</div>
 <div class="cornell-summary-box">
 <h3 class="cornell-summary-title">Tóm tắt cốt lõi bài học (Summary - 3 đến 5 câu)</h3>
 <textarea class="cornell-summary-text" aria-label="Tóm tắt cốt lõi">Client-Side Rendering là kiến trúc nền tảng của các ứng dụng SPA hiện đại. Điểm mấu chốt để thành công với CSR là tối ưu hóa dung lượng bundle tải ban đầu thông qua code-splitting và caching hiệu quả. Khi kết hợp với nguyên lý Local-First, ứng dụng có thể hoạt động ngoại tuyến mượt mà.</textarea>
@@ -92,12 +95,13 @@
 </footer>
 </main>
 <script>
-const table=document.querySelector('#cornellTable');
+const rowsContainer=document.querySelector('#cornellRowsContainer');
+const table=document.querySelector('.cornell-layout');
 document.querySelector('#addRowBtn').onclick=()=>{
 const row=document.createElement('div');
 row.className='cornell-row';
 row.innerHTML='<div class="cornell-cue-cell" contenteditable="true">Câu hỏi gợi nhớ mới...</div><div class="cornell-note-cell" contenteditable="true">Nội dung ghi chú chi tiết...</div><button type="button" class="cornell-row-del" title="Xóa dòng này">Xóa</button>';
-table.appendChild(row);
+rowsContainer.appendChild(row);
 row.querySelector('.cornell-row-del').onclick=()=>row.remove();
 row.querySelector('.cornell-cue-cell').focus();
 };
