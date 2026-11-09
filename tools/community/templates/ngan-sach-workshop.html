@@ -2,110 +2,172 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ngân sách workshop</title>
-<style>/* @community-theme */</style>
+<title>Ngân sách &amp; Dự toán chi phí sự kiện</title>
+<style>
+/* @community-theme */
+.budget-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0}
+.budget-kpi-card{padding:14px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;gap:4px}
+.budget-kpi-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.budget-kpi-val{font-size:22px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.budget-category-tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600;background:var(--soft);color:var(--muted)}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">eru<span>sentia</span></span>
+<span class="document-label">TÀI CHÍNH &amp; DỰ TOÁN</span>
 </div>
 <header>
-<span class="kicker">DỮ LIỆU & DỰ TOÁN</span>
-<h1 contenteditable="true">Ngân sách workshop</h1>
-<p class="intro">Một ngân sách rõ ràng cho cả nhóm.</p>
+<span class="kicker">KẾ HOẠCH TÀI CHÍNH (BUDGET PLANNER)</span>
+<h1 contenteditable="true">Bảng Dự Toán Chi Phí Workshop &amp; Hội Thảo</h1>
+<p class="intro">Dự trù minh bạch các hạng mục chi phí và so sánh trực tiếp với ngân sách được phê duyệt.</p>
 </header>
-<p>Ví dụ buổi chia sẻ 24 người. Đơn vị: VND.</p>
-<table>
+<div class="budget-kpi-grid">
+<div class="budget-kpi-card">
+<span class="budget-kpi-label">Ngân sách được cấp</span>
+<input type="number" min="0" step="100000" value="8000000" id="allocatedBudget" style="font-size:18px;font-weight:750" aria-label="Ngân sách cấp">
+</div>
+<div class="budget-kpi-card">
+<span class="budget-kpi-label">Tổng chi phí dự toán</span>
+<span class="budget-kpi-val" id="totalEstimateVal" style="color:var(--accent)">0 ₫</span>
+</div>
+<div class="budget-kpi-card">
+<span class="budget-kpi-label">Chênh lệch ngân sách</span>
+<span class="budget-kpi-val" id="varianceVal" style="color:#047857">0 ₫</span>
+</div>
+</div>
+<table id="budgetTable">
 <thead>
 <tr>
-<th>Hạng mục</th>
-<th>Số lượng</th>
-<th>Đơn giá</th>
-<th>Thành tiền</th>
+<th style="width:30%">Hạng mục chi phí</th>
+<th style="width:20%">Phân loại</th>
+<th style="width:14%">Số lượng</th>
+<th style="width:16%">Đơn giá (₫)</th>
+<th style="width:14%">Thành tiền (₫)</th>
+<th style="width:6%"></th>
 </tr>
 </thead>
-<tbody>
+<tbody id="budgetRows">
 <tr>
-<td><span contenteditable="true">Tài liệu</span><button type="button" class="remove-row" data-remove aria-label="Xóa khoản Tài liệu">Xóa</button></td>
+<td><input value="Thuê phòng hội thảo kèm máy chiếu" class="b-name"></td>
 <td>
-<input aria-label="Số lượng Tài liệu" type="number" min="0" max="9999" value="24" data-qty>
+<select class="b-cat">
+<option value="Địa điểm" selected>Địa điểm</option>
+<option value="Hậu cần">Hậu cần</option>
+<option value="Tài liệu">Tài liệu</option>
+<option value="Diễn giả">Diễn giả</option>
+</select>
 </td>
-<td>
-<input aria-label="Đơn giá Tài liệu" type="number" min="0" max="99999999" value="12000" data-price>
-</td>
-<td data-subtotal>
-</td>
+<td><input type="number" min="1" value="1" class="b-qty"></td>
+<td><input type="number" min="0" step="10000" value="3500000" class="b-price"></td>
+<td class="b-subtotal" style="font-weight:700;text-align:right">3.500.000 ₫</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 <tr>
-<td><span contenteditable="true">Nước uống</span><button type="button" class="remove-row" data-remove aria-label="Xóa khoản Nước uống">Xóa</button></td>
+<td><input value="Tiệc trà &amp; cà phê giải lao (Tea-break)" class="b-name"></td>
 <td>
-<input aria-label="Số lượng Nước uống" type="number" min="0" max="9999" value="24" data-qty>
+<select class="b-cat">
+<option value="Địa điểm">Địa điểm</option>
+<option value="Hậu cần" selected>Hậu cần</option>
+<option value="Tài liệu">Tài liệu</option>
+<option value="Diễn giả">Diễn giả</option>
+</select>
 </td>
-<td>
-<input aria-label="Đơn giá Nước uống" type="number" min="0" max="99999999" value="20000" data-price>
-</td>
-<td data-subtotal>
-</td>
+<td><input type="number" min="1" value="30" class="b-qty"></td>
+<td><input type="number" min="0" step="1000" value="55000" class="b-price"></td>
+<td class="b-subtotal" style="font-weight:700;text-align:right">1.650.000 ₫</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 <tr>
-<td><span contenteditable="true">Phòng học</span><button type="button" class="remove-row" data-remove aria-label="Xóa khoản Phòng học">Xóa</button></td>
+<td><input value="In giáo trình bài giảng &amp; sổ ghi chép" class="b-name"></td>
 <td>
-<input aria-label="Số lượng Phòng học" type="number" min="0" max="9999" value="1" data-qty>
+<select class="b-cat">
+<option value="Địa điểm">Địa điểm</option>
+<option value="Hậu cần">Hậu cần</option>
+<option value="Tài liệu" selected>Tài liệu</option>
+<option value="Diễn giả">Diễn giả</option>
+</select>
 </td>
-<td>
-<input aria-label="Đơn giá Phòng học" type="number" min="0" max="99999999" value="800000" data-price>
-</td>
-<td data-subtotal>
-</td>
+<td><input type="number" min="1" value="30" class="b-qty"></td>
+<td><input type="number" min="0" step="1000" value="35000" class="b-price"></td>
+<td class="b-subtotal" style="font-weight:700;text-align:right">1.050.000 ₫</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 <tr>
-<td><span contenteditable="true">Bộ thẻ nhóm</span><button type="button" class="remove-row" data-remove aria-label="Xóa khoản Bộ thẻ nhóm">Xóa</button></td>
+<td><input value="Bồi dưỡng &amp; Quà lưu niệm diễn giả" class="b-name"></td>
 <td>
-<input aria-label="Số lượng Bộ thẻ nhóm" type="number" min="0" max="9999" value="6" data-qty>
+<select class="b-cat">
+<option value="Địa điểm">Địa điểm</option>
+<option value="Hậu cần">Hậu cần</option>
+<option value="Tài liệu">Tài liệu</option>
+<option value="Diễn giả" selected>Diễn giả</option>
+</select>
 </td>
-<td>
-<input aria-label="Đơn giá Bộ thẻ nhóm" type="number" min="0" max="99999999" value="15000" data-price>
-</td>
-<td data-subtotal>
-</td>
+<td><input type="number" min="1" value="1" class="b-qty"></td>
+<td><input type="number" min="0" step="50000" value="1200000" class="b-price"></td>
+<td class="b-subtotal" style="font-weight:700;text-align:right">1.200.000 ₫</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 </tbody>
+<tfoot>
+<tr style="background:var(--soft);font-weight:800">
+<td colspan="4">TỔNG CỘNG CHI PHÍ DỰ TOÁN</td>
+<td id="footerTotalCell" style="text-align:right;color:var(--accent);font-size:15px">0 ₫</td>
+<td></td>
+</tr>
+</tfoot>
 </table>
-<button type="button" id="add-expense">Thêm khoản chi</button>
-<output id="total" class="result" aria-live="polite">
-</output>
-<p class="muted">Thay số lượng tài liệu từ 24 thành 30 để xem tổng cập nhật.</p>
+<div style="margin:10px 0 20px">
+<button type="button" id="addBudgetBtn">+ Thêm khoản chi</button>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Ghi chú thanh toán &amp; Hóa đơn chứng từ</h2>
+<textarea aria-label="Ghi chú hóa đơn" placeholder="Danh sách các hóa đơn VAT cần thu thập và đầu mối thanh toán tài chính…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Bảng dự toán ngân sách</span>
+<span>Tính toán tự động thời gian thực · 100% Ngoại tuyến</span>
 </footer>
-</main><script>
-const money = n => new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
-const body = document.querySelector('tbody');
-function recalc() {
-  let total = 0, valid = true;
-  for (const row of body.rows) {
-    const inputs = [...row.querySelectorAll('input')];
-    if (inputs.some(input => !input.value || !input.checkValidity())) { row.querySelector('[data-subtotal]').textContent = 'Kiểm tra số'; valid = false; continue; }
-    const amount = Number(inputs[0].value) * Number(inputs[1].value);
-    row.querySelector('[data-subtotal]').textContent = money(amount); total += amount;
-  }
-  document.querySelector('#total').textContent = valid ? 'Tổng dự toán: ' + money(total) : 'Nhập số không âm hợp lệ cho từng khoản chi.';
-  document.querySelector('#add-expense').disabled = body.rows.length >= 50;
+</main>
+<script>
+const fmt=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+' ₫';
+function updateBudget(){
+const rows=document.querySelectorAll('#budgetRows tr');
+let total=0;
+rows.forEach(r=>{
+const qty=Math.max(0,Number(r.querySelector('.b-qty').value)||0);
+const price=Math.max(0,Number(r.querySelector('.b-price').value)||0);
+const sub=qty*price;
+total+=sub;
+r.querySelector('.b-subtotal').textContent=fmt(sub);
+});
+document.querySelector('#totalEstimateVal').textContent=fmt(total);
+document.querySelector('#footerTotalCell').textContent=fmt(total);
+const allocated=Number(document.querySelector('#allocatedBudget').value)||0;
+const diff=allocated-total;
+const varEl=document.querySelector('#varianceVal');
+if(diff>=0){
+varEl.textContent='+'+fmt(diff)+' (Thặng dư)';
+varEl.style.color='#047857';
+}else{
+varEl.textContent='-'+fmt(Math.abs(diff))+' (Vượt ngân sách)';
+varEl.style.color='#b91c1c';
 }
-body.addEventListener('input', recalc);
-body.addEventListener('click', event => { if (event.target.closest('[data-remove]')) { event.target.closest('tr').remove(); recalc(); } });
-document.querySelector('#add-expense').onclick = () => {
-  if (body.rows.length >= 50) return;
-  const row = body.insertRow();
-  row.innerHTML = '<td><span contenteditable="true">Khoản mới</span><button type="button" class="remove-row" data-remove aria-label="Xóa khoản mới">Xóa</button></td><td><input type="number" aria-label="Số lượng khoản mới" min="0" max="9999" value="1" data-qty></td><td><input type="number" aria-label="Đơn giá khoản mới" min="0" max="99999999" value="0" data-price></td><td data-subtotal></td>';
-  recalc(); row.querySelector('input').focus();
+}
+document.querySelector('#addBudgetBtn').onclick=()=>{
+const tbody=document.querySelector('#budgetRows');
+const tr=document.createElement('tr');
+tr.innerHTML='<td><input value="Khoản chi mới" class="b-name"></td><td><select class="b-cat"><option value="Hậu cần">Hậu cần</option><option value="Địa điểm">Địa điểm</option><option value="Tài liệu">Tài liệu</option><option value="Diễn giả">Diễn giả</option></select></td><td><input type="number" min="1" value="1" class="b-qty"></td><td><input type="number" min="0" step="10000" value="200000" class="b-price"></td><td class="b-subtotal" style="font-weight:700;text-align:right">200.000 ₫</td><td><button type="button" class="remove-row">Xóa</button></td>';
+tbody.appendChild(tr);
+updateBudget();
 };
-recalc();
-</script></html>
+document.querySelector('#budgetTable').addEventListener('click',e=>{
+if(e.target.classList.contains('remove-row')){
+e.target.closest('tr')?.remove();
+updateBudget();
+}
+});
+document.querySelector('#budgetTable').addEventListener('input',updateBudget);
+document.querySelector('#allocatedBudget').addEventListener('input',updateBudget);
+updateBudget();
+</script>
+</html>

@@ -3,36 +3,218 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tự kiểm tra kiến thức Web</title>
-<style>/* @community-theme */</style>
+<style>
+/* @community-theme */
+.quiz-nav-strip{display:flex;align-items:center;gap:8px;margin:16px 0 20px;flex-wrap:wrap}
+.quiz-pill{width:32px;height:32px;border-radius:6px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s}
+.quiz-pill:hover{border-color:var(--accent);color:var(--accent)}
+.quiz-pill.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.quiz-pill.correct{background:#10b981;border-color:#10b981;color:#fff}
+.quiz-pill.incorrect{background:#ef4444;border-color:#ef4444;color:#fff}
+.quiz-card{padding:22px 24px;border:1px solid var(--line);border-radius:8px;background:#fff;margin:16px 0}
+.quiz-question-badge{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.quiz-question-title{font-size:16px;font-weight:700;color:var(--ink);margin:0 0 16px;line-height:1.45}
+.quiz-options{display:flex;flex-direction:column;gap:10px}
+.quiz-opt-btn{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:6px;background:var(--soft);color:var(--ink);text-align:left;font-size:13px;line-height:1.5;cursor:pointer;transition:all .15s}
+.quiz-opt-btn:hover:not(:disabled){border-color:var(--accent);background:#fff}
+.quiz-opt-letter{width:20px;height:20px;border-radius:4px;background:#fff;border:1px solid var(--line);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted)}
+.quiz-opt-btn.is-correct{border-color:#10b981;background:rgba(16,185,129,0.08);color:#065f46}
+.quiz-opt-btn.is-correct .quiz-opt-letter{background:#10b981;color:#fff;border-color:#10b981}
+.quiz-opt-btn.is-wrong{border-color:#ef4444;background:rgba(239,68,68,0.08);color:#991b1b}
+.quiz-opt-btn.is-wrong .quiz-opt-letter{background:#ef4444;color:#fff;border-color:#ef4444}
+.quiz-feedback{margin-top:16px;padding:12px 14px;border-radius:6px;font-size:13px;line-height:1.6;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#065f46}
+.quiz-feedback.wrong{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#991b1b}
+.quiz-controls{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.quiz-summary-card{display:none;padding:28px 24px;border:1px solid var(--line);border-radius:8px;background:var(--soft);text-align:center;margin:20px 0}
+.quiz-summary-card.show{display:block}
+.quiz-score-num{font-size:42px;font-weight:800;letter-spacing:-.04em;color:var(--accent);margin:10px 0}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">eru<span>sentia</span></span>
+<span class="document-label">ÔN TẬP &amp; ĐÁNH GIÁ</span>
 </div>
 <header>
-<span class="kicker">TỰ ĐÁNH GIÁ</span>
-<h1 contenteditable="true">Tự kiểm tra kiến thức Web</h1>
-<p class="intro">Hiểu nguyên lý, không chỉ nhớ đáp án.</p>
+<span class="kicker">BÀI KIỂM TRA TRẮC NGHIỆM</span>
+<h1 contenteditable="true">Tự kiểm tra kiến thức Web &amp; JavaScript Hiện đại</h1>
+<p class="intro">Đánh giá mức độ thấu hiểu các nguyên lý cốt lõi của lập trình Web Client-side.</p>
 </header>
-<fieldset>
-<legend>Để thay đổi màu và bố cục của một trang HTML, bạn dùng gì?</legend>
-<label class="task">
-<input type="radio" name="answer" value="html">HTML</label>
-<label class="task">
-<input type="radio" name="answer" value="css">CSS</label>
-<label class="task">
-<input type="radio" name="answer" value="js">JavaScript</label>
-</fieldset>
-<button id="check">Kiểm tra đáp án</button>
-<output id="feedback" class="result" aria-live="polite">Chọn một đáp án để bắt đầu.</output>
+<div class="quiz-nav-strip" id="quizNavStrip"></div>
+<div class="quiz-card" id="quizCard">
+<div class="quiz-question-badge" id="quizBadge">CÂU HỎI 1 / 5</div>
+<h2 class="quiz-question-title" id="quizTitle">...</h2>
+<div class="quiz-options" id="quizOptions"></div>
+<div class="quiz-feedback" id="quizFeedback"></div>
+<div class="quiz-controls">
+<button type="button" id="prevBtn" disabled>← Câu trước</button>
+<button type="button" id="nextBtn">Câu tiếp theo →</button>
+</div>
+</div>
+<div class="quiz-summary-card" id="quizSummary">
+<h3>🎉 Hoàn thành bài kiểm tra!</h3>
+<div class="quiz-score-num" id="scoreDisplay">5 / 5</div>
+<p id="scoreMessage" style="font-size:14px;color:var(--muted);margin:12px 0 20px"></p>
+<button type="button" id="restartBtn">Làm lại bài kiểm tra</button>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Ghi chú &amp; Điều cần tra cứu thêm</h2>
+<textarea aria-label="Ghi chú kiến thức" placeholder="Ghi lại các khái niệm bạn cần đào sâu thêm sau bài kiểm tra này…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Bài trắc nghiệm kiến thức Web</span>
+<span>Độc lập ngoại tuyến · Không gửi dữ liệu ra mạng</span>
 </footer>
-</main><script>document.querySelector('#check').onclick=()=>{const a=document.querySelector('input:checked');document.querySelector('#feedback').textContent=!a?'Bạn cần chọn một đáp án.':a.value==='css'?'Đúng. CSS quy định cách trình bày nội dung.':'Thử lại nhé. HTML là cấu trúc; JavaScript thường xử lý hành vi.'};</script></html>
+</main>
+<script>
+const questions=[
+{
+q:"Trong chuẩn HTML5, thẻ semantic nào đại diện cho một khối nội dung độc lập, có thể tái sử dụng hoặc phân phối độc lập (ví dụ: bài viết blog, bình luận)?",
+options:[
+{text:"<div> với class='article'",correct:false},
+{text:"<section>",correct:false},
+{text:"<article>",correct:true},
+{text:"<aside>",correct:false}
+],
+explanation:"Thẻ <article> dùng cho nội dung hoàn chỉnh có thể tồn tại độc lập mà vẫn có nghĩa đầy đủ. <section> dành cho các phân đoạn theo chủ đề."
+},
+{
+q:"Thuộc tính CSS 'box-sizing: border-box' có tác dụng cốt lõi gì đối với việc tính toán kích thước phần tử?",
+options:[
+{text:"Tự động cộng thêm padding và border vào kích thước width/height đã đặt",correct:false},
+{text:"Bao gồm cả padding và border vào bên trong giá trị width/height đã khai báo",correct:true},
+{text:"Bỏ qua hoàn toàn thuộc tính margin khi tính layout",correct:false},
+{text:"Chỉ áp dụng cho các thẻ có display là inline-block",correct:false}
+],
+explanation:"Với border-box, width bao trọn cả content, padding và border, giúp việc thiết kế giao diện responsive không bị nhảy kích thước ngoài dự tính."
+},
+{
+q:"Khái niệm 'Closure' trong JavaScript được định nghĩa chính xác nhất như thế nào?",
+options:[
+{text:"Là cơ chế đóng ứng dụng an toàn khi gặp biệt lệ không xử lý được",correct:false},
+{text:"Là sự kết hợp giữa một hàm và phạm vi từ vựng (lexical environment) mà hàm đó được khai báo",correct:true},
+{text:"Là phương thức đóng kết nối WebSocket hoặc EventSource",correct:false},
+{text:"Là một từ khóa mới trong ES2024 để tạo biến bất biến",correct:false}
+],
+explanation:"Closure cho phép một hàm truy cập các biến trong scope bên ngoài của nó ngay cả sau khi hàm cha đã hoàn tất thực thi."
+},
+{
+q:"Trong cơ chế Event Loop của trình duyệt, các tác vụ từ 'Promise.then()' được xếp vào hàng đợi nào?",
+options:[
+{text:"Macrotask Queue (Task Queue)",correct:false},
+{text:"Microtask Queue (được ưu tiên xử lý trước Macrotask tiếp theo)",correct:true},
+{text:"Render Frame Queue",correct:false},
+{text:"Worker Background Thread",correct:false}
+],
+explanation:"Callback của Promise đi vào Microtask Queue, được thực thi ngay khi Call Stack trống và trước chu kỳ Macrotask kế tiếp (setTimeout, setInterval)."
+},
+{
+q:"Nguyên lý kiến trúc phần mềm 'Local-First' ưu tiên điều kiện nào lên hàng đầu?",
+options:[
+{text:"Dữ liệu phải lưu trên đám mây trước rồi đồng bộ xuống máy",correct:false},
+{text:"Người dùng sở hữu trực tiếp dữ liệu trên máy cục bộ, đọc/ghi 0ms ngay cả khi mất mạng",correct:true},
+{text:"Ứng dụng chỉ được chạy trên mạng nội bộ công ty",correct:false},
+{text:"Không cho phép tính năng cộng tác thời gian thực",correct:false}
+],
+explanation:"Local-First trao toàn quyền sở hữu tệp cho người dùng, lưu trữ trực tiếp trên thiết bị để đảm bảo tính riêng tư và phản hồi tức thì."
+}
+];
+let currentIdx=0;
+const userAnswers=new Array(questions.length).fill(null);
+const navStrip=document.querySelector('#quizNavStrip');
+const card=document.querySelector('#quizCard');
+const summary=document.querySelector('#quizSummary');
+const badge=document.querySelector('#quizBadge');
+const title=document.querySelector('#quizTitle');
+const optionsEl=document.querySelector('#quizOptions');
+const feedback=document.querySelector('#quizFeedback');
+const prevBtn=document.querySelector('#prevBtn');
+const nextBtn=document.querySelector('#nextBtn');
+function renderNav(){
+navStrip.innerHTML='';
+questions.forEach((_,i)=>{
+const pill=document.createElement('div');
+pill.className='quiz-pill'+(i===currentIdx?' active':'');
+if(userAnswers[i]!==null){
+pill.classList.add(userAnswers[i]===true?'correct':'incorrect');
+}
+pill.textContent=i+1;
+pill.onclick=()=>{currentIdx=i;renderQuestion()};
+navStrip.appendChild(pill);
+});
+}
+function renderQuestion(){
+card.style.display='block';
+summary.classList.remove('show');
+badge.textContent='CÂU HỎI '+(currentIdx+1)+' / '+questions.length;
+const q=questions[currentIdx];
+title.textContent=q.q;
+optionsEl.innerHTML='';
+feedback.className='quiz-feedback';
+const answered=userAnswers[currentIdx]!==null;
+const letters=['A','B','C','D'];
+q.options.forEach((opt,idx)=>{
+const btn=document.createElement('button');
+btn.type='button';
+btn.className='quiz-opt-btn';
+btn.innerHTML='<span class="quiz-opt-letter">'+letters[idx]+'</span><span>'+opt.text+'</span>';
+if(answered){
+btn.disabled=true;
+if(opt.correct) btn.classList.add('is-correct');
+}
+btn.onclick=()=>{
+if(userAnswers[currentIdx]!==null) return;
+userAnswers[currentIdx]=opt.correct;
+if(opt.correct){
+btn.classList.add('is-correct');
+feedback.className='quiz-feedback correct show';
+feedback.innerHTML='<strong>Chính xác!</strong> '+q.explanation;
+}else{
+btn.classList.add('is-wrong');
+feedback.className='quiz-feedback wrong show';
+feedback.innerHTML='<strong>Chưa đúng!</strong> '+q.explanation;
+optionsEl.querySelectorAll('.quiz-opt-btn').forEach((b,i)=>{
+if(q.options[i].correct) b.classList.add('is-correct');
+});
+}
+optionsEl.querySelectorAll('.quiz-opt-btn').forEach(b=>b.disabled=true);
+renderNav();
+};
+optionsEl.appendChild(btn);
+});
+if(answered){
+const isCorrect=userAnswers[currentIdx];
+feedback.className='quiz-feedback '+(isCorrect?'correct':'wrong')+' show';
+feedback.innerHTML=(isCorrect?'<strong>Chính xác!</strong> ':'<strong>Chưa đúng!</strong> ')+q.explanation;
+}
+prevBtn.disabled=currentIdx===0;
+nextBtn.textContent=currentIdx===questions.length-1?'Xem tổng kết':'Câu tiếp theo →';
+renderNav();
+}
+prevBtn.onclick=()=>{if(currentIdx>0){currentIdx--;renderQuestion()}};
+nextBtn.onclick=()=>{
+if(currentIdx<questions.length-1){
+currentIdx++;renderQuestion();
+}else{
+showSummary();
+}
+};
+function showSummary(){
+card.style.display='none';
+summary.classList.add('show');
+const correctCount=userAnswers.filter(a=>a===true).length;
+document.querySelector('#scoreDisplay').textContent=correctCount+' / '+questions.length;
+const pct=Math.round((correctCount/questions.length)*100);
+let msg='Rất ấn tượng! Bạn nắm cực kỳ vững kiến thức Web hiện đại.';
+if(pct<60) msg='Hãy ôn lại các khái niệm còn bỡ ngỡ để làm chủ kiến thức nhé!';
+else if(pct<100) msg='Kết quả tốt! Chỉ cần rà soát thêm một chút là hoàn hảo.';
+document.querySelector('#scoreMessage').textContent=msg+' (Đạt '+pct+'%)';
+}
+document.querySelector('#restartBtn').onclick=()=>{
+for(let i=0;i<userAnswers.length;i++) userAnswers[i]=null;
+currentIdx=0;renderQuestion();
+};
+renderQuestion();
+</script>
+</html>

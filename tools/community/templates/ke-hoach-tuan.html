@@ -2,48 +2,155 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Một tuần có chủ đích</title>
-<style>/* @community-theme */</style>
+<title>Kế hoạch tuần có chủ đích</title>
+<style>
+/* @community-theme */
+.planner-top-priorities{margin:18px 0;padding:16px 18px;border:1px solid var(--line);border-radius:6px;background:var(--soft)}
+.planner-top-priorities h3{font-size:13px;font-weight:700;color:var(--ink);margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em}
+.priority-inputs{display:flex;flex-direction:column;gap:8px}
+.priority-item{display:flex;align-items:center;gap:10px}
+.priority-num{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.priority-input{flex:1;font-size:13px}
+.days-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:20px 0}
+.day-card{border:1px solid var(--line);border-radius:6px;background:#fff;padding:12px 14px;display:flex;flex-direction:column}
+.day-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+.day-title{font-size:13px;font-weight:700;color:var(--ink)}
+.day-count{font-size:11px;color:var(--muted);font-weight:600}
+.day-tasks{display:flex;flex-direction:column;gap:6px;flex:1}
+.task-row{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12.5px;position:relative}
+.task-row input[type=checkbox]{margin-top:3px}
+.task-text{flex:1;outline:none;line-height:1.4}
+.task-row:has(input:checked) .task-text{text-decoration:line-through;color:var(--muted)}
+.task-del{opacity:0;background:transparent;border:none;color:#ef4444;cursor:pointer;padding:0 4px;font-size:11px}
+.task-row:hover .task-del{opacity:.7}
+.task-del:hover{opacity:1}
+.add-task-btn{margin-top:10px;background:none;border:1px dashed var(--line);border-radius:4px;padding:5px 8px;font-size:11.5px;color:var(--muted);cursor:pointer;width:100%;text-align:center}
+.add-task-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--soft)}
+.planner-stats-bar{margin:18px 0;padding:12px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;gap:14px}
+.planner-stats-label{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">eru<span>sentia</span></span>
+<span class="document-label">KẾ HOẠCH NĂNG SUẤT</span>
 </div>
 <header>
-<span class="kicker">KẾ HOẠCH CÁ NHÂN</span>
-<h1 contenteditable="true">Một tuần có chủ đích</h1>
-<p class="intro">Chọn ít việc hơn. Hoàn thành điều quan trọng.</p>
+<span class="kicker">QUẢN LÝ THỜI GIAN &amp; MỤC TIÊU</span>
+<h1 contenteditable="true">Kế hoạch Tuần có Chủ đích</h1>
+<p class="intro">Tập trung vào 3 mục tiêu đòn bẩy và phân bổ công việc theo ngày để không bị quá tải.</p>
 </header>
-<p>Một mục tiêu cụ thể giúp bạn quyết định việc nào cần làm trước.</p>
-<label for="focus">Trọng tâm tuần này</label>
-<input id="focus" value="Hoàn thành đề cương workshop" style="width:100%">
-<output id="done" class="result">0 / 4 việc</output>
-<progress value="0" max="4" aria-label="Tiến độ kế hoạch">
-</progress>
-<label class="task">
-<input type="checkbox">
-<span>Gom tài liệu và ghi nguồn</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Viết đề cương buổi chia sẻ</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Mời một người đọc và góp ý</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Tổng kết điều đã học</span>
-</label>
+<div class="planner-top-priorities">
+<h3>🎯 Top 3 Ưu tiên đòn bẩy trong tuần</h3>
+<div class="priority-inputs">
+<div class="priority-item">
+<span class="priority-num">1</span>
+<input class="priority-input" value="Hoàn thiện cấu trúc bài giảng chuyên đề Kiến trúc Phần mềm" aria-label="Ưu tiên 1">
+</div>
+<div class="priority-item">
+<span class="priority-num">2</span>
+<input class="priority-input" value="Tối ưu hiệu năng bộ vẽ đồ thị 2D và bảng vẽ tablet" aria-label="Ưu tiên 2">
+</div>
+<div class="priority-item">
+<span class="priority-num">3</span>
+<input class="priority-input" value="Tập thể dục 4 buổi và đọc trọn vẹn 1 chương sách chuyên ngành" aria-label="Ưu tiên 3">
+</div>
+</div>
+</div>
+<div class="planner-stats-bar">
+<span class="planner-stats-label">Tiến độ tuần: <strong id="progressLabel">0 / 0 việc (0%)</strong></span>
+<progress id="weekProgress" value="0" max="100" style="flex:1;height:8px"></progress>
+</div>
+<div class="days-grid" id="daysGrid">
+<div class="day-card" data-day="T2">
+<div class="day-header"><span class="day-title">Thứ Hai · Khởi động</span><span class="day-count">0/2</span></div>
+<div class="day-tasks">
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Họp đầu tuần rà soát mục tiêu</span><button type="button" class="task-del">×</button></div>
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Soạn khung slide bài giảng</span><button type="button" class="task-del">×</button></div>
+</div>
+<button type="button" class="add-task-btn">+ Thêm việc</button>
+</div>
+<div class="day-card" data-day="T3">
+<div class="day-header"><span class="day-title">Thứ Ba · Tập trung sâu</span><span class="day-count">0/2</span></div>
+<div class="day-tasks">
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Viết mã mẫu và bài tập thực hành</span><button type="button" class="task-del">×</button></div>
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Chạy kiểm thử hiệu năng Canvas</span><button type="button" class="task-del">×</button></div>
+</div>
+<button type="button" class="add-task-btn">+ Thêm việc</button>
+</div>
+<div class="day-card" data-day="T4">
+<div class="day-header"><span class="day-title">Thứ Tư · Hoàn thiện</span><span class="day-count">0/2</span></div>
+<div class="day-tasks">
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Review mã nguồn cùng đồng nghiệp</span><button type="button" class="task-del">×</button></div>
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Ghi chú phản hồi cải tiến</span><button type="button" class="task-del">×</button></div>
+</div>
+<button type="button" class="add-task-btn">+ Thêm việc</button>
+</div>
+<div class="day-card" data-day="T5">
+<div class="day-header"><span class="day-title">Thứ Năm · Mở rộng</span><span class="day-count">0/2</span></div>
+<div class="day-tasks">
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Kiểm thử trên tablet &amp; bút stylus</span><button type="button" class="task-del">×</button></div>
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Cập nhật tài liệu hướng dẫn</span><button type="button" class="task-del">×</button></div>
+</div>
+<button type="button" class="add-task-btn">+ Thêm việc</button>
+</div>
+<div class="day-card" data-day="T6">
+<div class="day-header"><span class="day-title">Thứ Sáu · Tổng kết</span><span class="day-count">0/2</span></div>
+<div class="day-tasks">
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Kiểm tra lại toàn bộ bài giảng</span><button type="button" class="task-del">×</button></div>
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Dọn dẹp hòm thư và đóng các issue</span><button type="button" class="task-del">×</button></div>
+</div>
+<button type="button" class="add-task-btn">+ Thêm việc</button>
+</div>
+<div class="day-card" data-day="T7-CN" style="background:#fcfdfe">
+<div class="day-header"><span class="day-title">Cuối tuần · Phục hồi</span><span class="day-count">0/2</span></div>
+<div class="day-tasks">
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Đi dạo ngoài trời &amp; thể thao</span><button type="button" class="task-del">×</button></div>
+<div class="task-row"><input type="checkbox"><span class="task-text" contenteditable="true">Nhìn lại tiến độ và lên lịch tuần tới</span><button type="button" class="task-del">×</button></div>
+</div>
+<button type="button" class="add-task-btn">+ Thêm việc</button>
+</div>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Nhìn lại cuối tuần (Weekly Review &amp; Retro)</h2>
+<textarea aria-label="Nhìn lại cuối tuần" placeholder="Điều gì đã làm tốt nhất tuần này? Điều gì cần điều chỉnh cho tuần kế tiếp?"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Mẫu Kế hoạch tuần</span>
+<span>Lưu trữ cục bộ · Không gửi dữ liệu ra ngoài</span>
 </footer>
-</main><script>const boxes=[...document.querySelectorAll('[type=checkbox]')];boxes.forEach(b=>b.addEventListener('change',()=>{const n=boxes.filter(x=>x.checked).length;document.querySelector('#done').textContent=n+' / 4 việc';document.querySelector('progress').value=n}));</script></html>
+</main>
+<script>
+function updateProgress(){
+const cards=document.querySelectorAll('.day-card');
+let totalAll=0,doneAll=0;
+cards.forEach(card=>{
+const boxes=card.querySelectorAll('input[type=checkbox]');
+const done=[...boxes].filter(b=>b.checked).length;
+const total=boxes.length;
+card.querySelector('.day-count').textContent=done+'/'+total;
+totalAll+=total;doneAll+=done;
+});
+const pct=totalAll>0?Math.round((doneAll/totalAll)*100):0;
+document.querySelector('#progressLabel').textContent=doneAll+' / '+totalAll+' việc ('+pct+'%)';
+document.querySelector('#weekProgress').value=pct;
+}
+document.querySelector('#daysGrid').addEventListener('change',e=>{
+if(e.target.matches('input[type=checkbox]')) updateProgress();
+});
+document.querySelector('#daysGrid').addEventListener('click',e=>{
+if(e.target.matches('.task-del')){
+e.target.closest('.task-row')?.remove();
+updateProgress();
+}else if(e.target.matches('.add-task-btn')){
+const list=e.target.previousElementSibling;
+const row=document.createElement('div');
+row.className='task-row';
+row.innerHTML='<input type="checkbox"><span class="task-text" contenteditable="true">Công việc mới...</span><button type="button" class="task-del">×</button>';
+list.appendChild(row);
+row.querySelector('.task-text').focus();
+updateProgress();
+}
+});
+updateProgress();
+</script>
+</html>

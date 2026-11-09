@@ -2,51 +2,101 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bàn giao tài liệu rõ ràng</title>
-<style>/* @community-theme */</style>
+<title>Checklist bàn giao dự án &amp; sản phẩm</title>
+<style>
+/* @community-theme */
+.handover-progress-box{margin:18px 0;padding:14px 18px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;gap:14px}
+.handover-progress-label{font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap}
+.handover-group{margin:20px 0;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+.handover-group-header{padding:10px 16px;background:var(--soft);font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.handover-list{display:flex;flex-direction:column}
+.handover-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.handover-item:last-child{border-bottom:none}
+.handover-item input[type=checkbox]{margin:0}
+.handover-item-text{flex:1;outline:none}
+.handover-item:has(input:checked) .handover-item-text{text-decoration:line-through;color:var(--muted)}
+.handover-del{opacity:0;background:transparent;border:none;color:#ef4444;cursor:pointer;padding:2px 6px;font-size:12px}
+.handover-item:hover .handover-del{opacity:.7}
+.handover-del:hover{opacity:1}
+.add-handover-btn{padding:8px 16px;background:none;border:none;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;text-align:left}
+.add-handover-btn:hover{background:var(--soft)}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">eru<span>sentia</span></span>
+<span class="document-label">BÀN GIAO &amp; NGHIỆM THU</span>
 </div>
 <header>
-<span class="kicker">CHIA SẺ TÀI LIỆU</span>
-<h1 contenteditable="true">Bàn giao tài liệu rõ ràng</h1>
-<p class="intro">Bàn giao với sự an tâm.</p>
+<span class="kicker">DANH MỤC KIỂM TRA BÀN GIAO (HANDOVER CHECKLIST)</span>
+<h1 contenteditable="true">Danh Mục Kiểm Tra Bàn Giao Dự Án &amp; Hệ Thống</h1>
+<p class="intro">Đảm bảo không bỏ sót bất kỳ tài liệu, thông tin truy cập hoặc quy trình vận hành then chốt nào trước khi chuyển giao.</p>
 </header>
-<output id="done" class="result">0 / 6 mục đã kiểm tra</output>
-<label class="task">
-<input type="checkbox">
-<span>Tiêu đề và mục tiêu rõ ràng</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Nguồn tham khảo có thể truy cập</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Tài liệu mở được trên trình duyệt</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Tương tác trong HTML hoạt động</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Ảnh và font cần thiết đã được đóng gói</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Không còn nội dung cá nhân cần giữ riêng</span>
-</label>
+<div class="handover-progress-box">
+<span class="handover-progress-label">Tiến độ bàn giao: <strong id="handoverProgressTxt">0 / 0 mục (0%)</strong></span>
+<progress id="handoverBar" value="0" max="100" style="flex:1;height:8px"></progress>
+</div>
+<div class="handover-group">
+<div class="handover-group-header"><span>1. Tài liệu Kiến trúc &amp; Hướng dẫn Vận hành</span></div>
+<div class="handover-list">
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Sơ đồ kiến trúc hệ thống (System Architecture Diagram) cập nhật phiên bản mới nhất</span><button type="button" class="handover-del">×</button></div>
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Tài liệu đặc tả API chuẩn OpenAPI / Swagger kèm tài khoản thử nghiệm</span><button type="button" class="handover-del">×</button></div>
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Sổ tay hướng dẫn triển khai môi trường (Deployment Runbook) từng bước</span><button type="button" class="handover-del">×</button></div>
+</div>
+<button type="button" class="add-handover-btn">+ Thêm mục tài liệu</button>
+</div>
+<div class="handover-group">
+<div class="handover-group-header"><span>2. Mã nguồn &amp; Cơ sở Hạ tầng (Infrastructure)</span></div>
+<div class="handover-list">
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Chuyển giao quyền sở hữu (Maintainer / Admin) kho mã nguồn Git và Docker Registry</span><button type="button" class="handover-del">×</button></div>
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Bàn giao tệp cấu hình môi trường (.env.production) và chứng chỉ SSL / Domain</span><button type="button" class="handover-del">×</button></div>
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Bản sao lưu CSDL mới nhất (Database Dump) kèm quy trình phục hồi khẩn cấp</span><button type="button" class="handover-del">×</button></div>
+</div>
+<button type="button" class="add-handover-btn">+ Thêm mục hạ tầng</button>
+</div>
+<div class="handover-group">
+<div class="handover-group-header"><span>3. Đào tạo Chuyển giao &amp; Nghiệm thu Kỹ thuật</span></div>
+<div class="handover-list">
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Buổi chuyển giao kiến thức (Knowledge Transfer Session) có ghi hình và biên bản</span><button type="button" class="handover-del">×</button></div>
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Nhóm tiếp nhận tự chạy thành công quy trình build và release trên staging</span><button type="button" class="handover-del">×</button></div>
+<div class="handover-item"><input type="checkbox"><span class="handover-item-text" contenteditable="true">Ký biên bản xác nhận nghiệm thu kỹ thuật giữa hai bên</span><button type="button" class="handover-del">×</button></div>
+</div>
+<button type="button" class="add-handover-btn">+ Thêm mục nghiệm thu</button>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Xác nhận hai bên &amp; Thời hạn hỗ trợ sau bàn giao</h2>
+<textarea aria-label="Xác nhận hỗ trợ" placeholder="Thời gian hỗ trợ kỹ thuật bảo hành (Hypercare period: ví dụ 30 ngày) và kênh liên hệ khẩn cấp…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Danh mục kiểm tra bàn giao</span>
+<span>Quy trình chuẩn hóa · 100% Ngoại tuyến</span>
 </footer>
-</main><script>const inputs=[...document.querySelectorAll('input')];inputs.forEach(i=>i.onchange=()=>document.querySelector('#done').textContent=inputs.filter(x=>x.checked).length+' / 6 mục đã kiểm tra');</script></html>
+</main>
+<script>
+function updateHandoverProgress(){
+const boxes=document.querySelectorAll('.handover-item input[type=checkbox]');
+const done=[...boxes].filter(b=>b.checked).length;
+const total=boxes.length;
+const pct=total>0?Math.round((done/total)*100):0;
+document.querySelector('#handoverProgressTxt').textContent=done+' / '+total+' mục ('+pct+'%)';
+document.querySelector('#handoverBar').value=pct;
+}
+document.querySelector('main').addEventListener('change',e=>{
+if(e.target.matches('input[type=checkbox]')) updateHandoverProgress();
+});
+document.querySelector('main').addEventListener('click',e=>{
+if(e.target.matches('.handover-del')){
+e.target.closest('.handover-item')?.remove();
+updateHandoverProgress();
+}else if(e.target.matches('.add-handover-btn')){
+const list=e.target.previousElementSibling;
+const item=document.createElement('div');
+item.className='handover-item';
+item.innerHTML='<input type="checkbox"><span class="handover-item-text" contenteditable="true">Mục bàn giao mới...</span><button type="button" class="handover-del">×</button>';
+list.appendChild(item);
+item.querySelector('.handover-item-text').focus();
+updateHandoverProgress();
+}
+});
+updateHandoverProgress();
+</script>
+</html>

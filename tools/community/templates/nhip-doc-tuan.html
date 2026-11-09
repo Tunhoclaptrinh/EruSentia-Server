@@ -2,39 +2,112 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nhìn lại nhịp đọc trong tuần</title>
-<style>/* @community-theme */</style>
+<title>Nhật ký đọc sách &amp; Tích lũy kiến thức tuần</title>
+<style>
+/* @community-theme */
+.reading-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0;padding:14px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px}
+.reading-stat-box{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--soft);border:1px solid var(--line);border-radius:6px;margin:18px 0}
+.reading-stat-num{font-size:22px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.chart-container{margin:24px 0;padding:18px 16px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.chart-bars{height:160px;display:flex;align-items:flex-end;gap:12px;padding:0 8px;border-bottom:1px solid var(--line)}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
+.chart-bar-fill{width:100%;max-width:36px;background:var(--accent);border-radius:4px 4px 0 0;min-height:4px;transition:height .25s ease;display:flex;align-items:flex-start;justify-content:center;padding-top:4px}
+.chart-bar-val{font-size:10px;font-weight:700;color:#fff;display:none}
+.chart-bar-fill:hover .chart-bar-val{display:block}
+.chart-labels{display:flex;gap:12px;padding:8px 8px 0}
+.chart-label-day{flex:1;text-align:center;font-size:11.5px;font-weight:600;color:var(--muted)}
+.daily-slider-row{display:grid;grid-template-columns:50px 1fr 60px;align-items:center;gap:12px;margin:8px 0}
+.daily-slider-row label{font-size:12.5px;font-weight:600;color:var(--ink)}
+.daily-slider-val{font-size:12.5px;font-weight:700;color:var(--accent);text-align:right}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">eru<span>sentia</span></span>
+<span class="document-label">HỌC TẬP SUỐT ĐỜI</span>
 </div>
 <header>
-<span class="kicker">DỮ LIỆU TRỰC QUAN</span>
-<h1 contenteditable="true">Nhìn lại nhịp đọc trong tuần</h1>
-<p class="intro">Nhìn thấy thời gian dành cho việc đọc.</p>
+<span class="kicker">NHẬT KÝ ĐỌC SÁCH TUẦN</span>
+<h1 contenteditable="true">Nhật Ký Đọc Sách &amp; Tích Lũy Tri Thức Tuần</h1>
+<p class="intro">Biến việc đọc thành phản xạ hàng ngày, ghi nhận thời lượng thực tế và trích dẫn tâm đắc.</p>
 </header>
-<div class="bars" role="img" aria-label="Giờ đọc minh họa từ thứ Hai đến thứ Sáu">
-<div class="bar" style="height:40%">T2 · 2h</div>
-<div class="bar" style="height:60%">T3 · 3h</div>
-<div class="bar" style="height:20%">T4 · 1h</div>
-<div class="bar" style="height:80%">T5 · 4h</div>
-<div class="bar" id="friday-bar" style="height:40%">T6 · 2h</div>
+<div class="reading-meta-grid">
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase">Cuốn sách đang đọc</span>
+<input value="Designing Data-Intensive Applications (Martin Kleppmann)" style="font-size:13px;font-weight:600" aria-label="Tên sách">
 </div>
-<div class="row">
-<label for="friday">Số giờ thứ Sáu</label>
-<input id="friday" type="range" min="0" max="5" step="0.5" value="2">
-<output id="hours">2 giờ</output>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase">Mục tiêu trang / tuần</span>
+<input type="number" value="70" style="font-size:13px;font-weight:600" aria-label="Mục tiêu trang">
 </div>
-<output id="total" class="result">Tổng: 12 giờ</output>
+<div style="display:flex;flex-direction:column;gap:4px">
+<span style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase">Trang hiện tại</span>
+<input type="number" value="142" style="font-size:13px;font-weight:600" aria-label="Trang hiện tại">
+</div>
+</div>
+<div class="reading-stat-box">
+<div>
+<div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase">Tổng thời lượng đọc tuần này</div>
+<span class="muted" style="font-size:12px">Mục tiêu: Duy trì đều đặn tối thiểu 30 phút mỗi ngày</span>
+</div>
+<div class="reading-stat-num" id="totalReadTimeDisplay">0 giờ 0 phút</div>
+</div>
+<div class="chart-container">
+<h3 style="font-size:12.5px;font-weight:700;color:var(--muted);margin:0 0 14px;text-transform:uppercase">Biểu đồ phân bổ thời gian đọc (phút)</h3>
+<div class="chart-bars" id="chartBars">
+<div class="chart-col"><div class="chart-bar-fill" style="height:30%"><span class="chart-bar-val">30</span></div></div>
+<div class="chart-col"><div class="chart-bar-fill" style="height:45%"><span class="chart-bar-val">45</span></div></div>
+<div class="chart-col"><div class="chart-bar-fill" style="height:20%"><span class="chart-bar-val">20</span></div></div>
+<div class="chart-col"><div class="chart-bar-fill" style="height:60%"><span class="chart-bar-val">60</span></div></div>
+<div class="chart-col"><div class="chart-bar-fill" style="height:40%"><span class="chart-bar-val">40</span></div></div>
+<div class="chart-col"><div class="chart-bar-fill" style="height:75%"><span class="chart-bar-val">75</span></div></div>
+<div class="chart-col"><div class="chart-bar-fill" style="height:90%"><span class="chart-bar-val">90</span></div></div>
+</div>
+<div class="chart-labels">
+<div class="chart-label-day">T2</div>
+<div class="chart-label-day">T3</div>
+<div class="chart-label-day">T4</div>
+<div class="chart-label-day">T5</div>
+<div class="chart-label-day">T6</div>
+<div class="chart-label-day">T7</div>
+<div class="chart-label-day">CN</div>
+</div>
+</div>
+<h3 style="font-size:13px;font-weight:700;color:var(--ink);margin:20px 0 10px">Điều chỉnh thời lượng đọc mỗi ngày</h3>
+<div id="slidersList">
+<div class="daily-slider-row"><label for="slT2">T2</label><input type="range" id="slT2" min="0" max="120" step="5" value="30" class="read-slider"><span class="daily-slider-val">30p</span></div>
+<div class="daily-slider-row"><label for="slT3">T3</label><input type="range" id="slT3" min="0" max="120" step="5" value="45" class="read-slider"><span class="daily-slider-val">45p</span></div>
+<div class="daily-slider-row"><label for="slT4">T4</label><input type="range" id="slT4" min="0" max="120" step="5" value="20" class="read-slider"><span class="daily-slider-val">20p</span></div>
+<div class="daily-slider-row"><label for="slT5">T5</label><input type="range" id="slT5" min="0" max="120" step="5" value="60" class="read-slider"><span class="daily-slider-val">60p</span></div>
+<div class="daily-slider-row"><label for="slT6">T6</label><input type="range" id="slT6" min="0" max="120" step="5" value="40" class="read-slider"><span class="daily-slider-val">40p</span></div>
+<div class="daily-slider-row"><label for="slT7">T7</label><input type="range" id="slT7" min="0" max="120" step="5" value="75" class="read-slider"><span class="daily-slider-val">75p</span></div>
+<div class="daily-slider-row"><label for="slCN">CN</label><input type="range" id="slCN" min="0" max="120" step="5" value="90" class="read-slider"><span class="daily-slider-val">90p</span></div>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Trích dẫn đắt giá &amp; Ý tưởng ứng dụng tuần này</h2>
+<textarea aria-label="Trích dẫn tâm đắc" placeholder="Ghi lại các đoạn văn hoặc công thức khai sáng bạn muốn nhớ lâu…">"Dữ liệu là trung tâm của mọi hệ thống phần mềm. Mã nguồn thay đổi liên tục, nhưng định dạng và tính toàn vẹn của dữ liệu sẽ tồn tại cùng doanh nghiệp qua nhiều thế hệ công nghệ."</textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Nhật ký đọc sách tuần</span>
+<span>Biểu đồ tương tác thời gian thực · 100% Ngoại tuyến</span>
 </footer>
-</main><script>document.querySelector('#friday').oninput=e=>{const n=Number(e.target.value);document.querySelector('#friday-bar').style.height=n*20+'%';document.querySelector('#friday-bar').textContent='T6 · '+n+'h';document.querySelector('#hours').textContent=n+' giờ';document.querySelector('#total').textContent='Tổng: '+(10+n)+' giờ'};</script></html>
+</main>
+<script>
+function syncReadingChart(){
+const sliders=document.querySelectorAll('.read-slider');
+const bars=document.querySelectorAll('.chart-bar-fill');
+let totalMins=0;
+sliders.forEach((sl,i)=>{
+const mins=Number(sl.value)||0;
+totalMins+=mins;
+sl.nextElementSibling.textContent=mins+'p';
+const heightPct=Math.min(100,Math.max(4,Math.round((mins/120)*100)));
+bars[i].style.height=heightPct+'%';
+bars[i].querySelector('.chart-bar-val').textContent=mins;
+});
+const h=Math.floor(totalMins/60),m=totalMins%60;
+document.querySelector('#totalReadTimeDisplay').textContent=h+' giờ '+m+' phút ('+totalMins+' phút)';
+}
+document.querySelector('#slidersList').addEventListener('input',syncReadingChart);
+syncReadingChart();
+</script>
+</html>
