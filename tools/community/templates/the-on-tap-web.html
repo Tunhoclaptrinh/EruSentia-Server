@@ -3,34 +3,167 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Thẻ ôn tập HTML · CSS · JavaScript</title>
-<style>/* @community-theme */</style>
+<style>
+/* @community-theme */
+.fc-mastery-bar{margin:18px 0;padding:12px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;gap:12px}
+.fc-mastery-label{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap}
+.fc-card-scene{perspective:1000px;margin:22px 0;min-height:240px;cursor:pointer}
+.fc-card-inner{position:relative;width:100%;min-height:240px;text-align:center;transition:transform .45s cubic-bezier(0.4,0,0.2,1);transform-style:preserve-3d}
+.fc-card-inner.is-flipped{transform:rotateY(180deg)}
+.fc-card-face{position:absolute;top:0;left:0;width:100%;height:100%;min-height:240px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--line);border-radius:8px;padding:26px 28px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.fc-card-front{background:#fff;box-shadow:0 2px 8px rgba(15,23,42,0.04)}
+.fc-card-back{background:var(--soft);transform:rotateY(180deg);border-color:#cbd5e1}
+.fc-side-badge{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.fc-term-title{font-size:18px;font-weight:700;color:var(--ink);line-height:1.4;margin:0 0 10px}
+.fc-term-desc{font-size:14px;line-height:1.65;color:var(--ink);max-width:560px}
+.fc-hint-box{margin:12px 0 0;font-size:12.5px;color:var(--accent);font-style:italic}
+.fc-flip-tip{font-size:11.5px;color:var(--muted);margin-top:14px}
+.fc-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0}
+.fc-eval-group{display:flex;gap:8px}
+.fc-btn-eval{padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent}
+.fc-btn-eval.not-yet{background:rgba(239,68,68,0.1);color:#b91c1c;border-color:rgba(239,68,68,0.3)}
+.fc-btn-eval.not-yet:hover{background:#ef4444;color:#fff}
+.fc-btn-eval.mastered{background:rgba(16,185,129,0.1);color:#047857;border-color:rgba(16,185,129,0.3)}
+.fc-btn-eval.mastered:hover{background:#10b981;color:#fff}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">ÔN TẬP CHỦ ĐỘNG (SPACED REPETITION)</span>
 </div>
 <header>
-<span class="kicker">ÔN TẬP CHỦ ĐỘNG</span>
-<h1 contenteditable="true">Thẻ ôn tập HTML · CSS · JavaScript</h1>
-<p class="intro">Nhớ kiến thức bằng cách tự trả lời.</p>
+<span class="kicker">FLASHCARD ÔN TẬP THUẬT NGỮ</span>
+<h1 contenteditable="true">Thẻ Ôn tập: Kiến trúc Web &amp; Khoa học Máy tính</h1>
+<p class="intro">Nhấp vào thẻ để lật mặt sau. Tự đánh giá mức độ ghi nhớ để củng cố các vùng kiến thức còn yếu.</p>
 </header>
-<p>Thử trả lời trước khi mở đáp án.</p>
-<div class="card">
-<small id="position">Thẻ 1 / 3</small>
-<p id="card-text" role="status">HTML đảm nhiệm vai trò gì?</p>
+<div class="fc-mastery-bar">
+<span class="fc-mastery-label">Mức độ thuộc bài: <strong id="masteryText">0 / 6 thẻ (0%)</strong></span>
+<progress id="masteryProgress" value="0" max="100" style="flex:1;height:8px"></progress>
+<button type="button" id="shuffleBtn" style="padding:4px 10px;font-size:11.5px">🔀 Trộn thẻ</button>
 </div>
-<div class="row">
-<button id="flip">Lật thẻ</button>
-<button id="next">Thẻ tiếp theo</button>
+<div class="fc-card-scene" id="cardScene" title="Nhấp để lật thẻ">
+<div class="fc-card-inner" id="cardInner">
+<div class="fc-card-face fc-card-front">
+<div class="fc-side-badge" id="cardFrontBadge">THẺ 1 / 6 · MẶT TRƯỚC</div>
+<h2 class="fc-term-title" id="cardFrontTitle">...</h2>
+<div class="fc-hint-box" id="cardHint"></div>
+<div class="fc-flip-tip">👆 Nhấp để lật xem đáp án &amp; giải thích</div>
+</div>
+<div class="fc-card-face fc-card-back">
+<div class="fc-side-badge">MẶT SAU · GIẢI THÍCH CHI TIẾT</div>
+<div class="fc-term-desc" id="cardBackText">...</div>
+<div class="fc-flip-tip">👆 Nhấp để quay lại câu hỏi</div>
+</div>
+</div>
+</div>
+<div class="fc-toolbar">
+<div style="display:flex;gap:8px">
+<button type="button" id="fcPrev">← Thẻ trước</button>
+<button type="button" id="fcNext">Thẻ tiếp theo →</button>
+</div>
+<div class="fc-eval-group">
+<button type="button" class="fc-btn-eval not-yet" id="btnNotYet">🔴 Chưa thuộc</button>
+<button type="button" class="fc-btn-eval mastered" id="btnMastered">🟢 Đã nhớ vững</button>
+</div>
 </div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Ghi chú ứng dụng &amp; Liên hệ thực tế</h2>
+<textarea aria-label="Ghi chú phản tư" placeholder="Ghi lại cách áp dụng các thuật ngữ này vào dự án của bạn…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Flashcard Ôn tập Web</span>
+<span>Hiệu ứng CSS 3D · 100% Ngoại tuyến</span>
 </footer>
-</main><script>const cards=[['HTML đảm nhiệm vai trò gì?','Mô tả cấu trúc và ý nghĩa của nội dung.'],['CSS đảm nhiệm vai trò gì?','Quy định cách trình bày: màu, font, bố cục và trạng thái hiển thị.'],['JavaScript đảm nhiệm vai trò gì?','Xử lý hành vi và cập nhật nội dung theo tương tác.']];const root=document.querySelector('main');let index=Math.max(0,Math.min(cards.length-1,Number(root.dataset.cardIndex)||0)),back=root.dataset.cardBack==='true';function show(){root.dataset.cardIndex=String(index);root.dataset.cardBack=String(back);document.querySelector('#position').textContent='Thẻ '+(index+1)+' / 3';document.querySelector('#card-text').textContent=cards[index][back?1:0];document.querySelector('#flip').textContent=back?'Xem câu hỏi':'Lật thẻ'}document.querySelector('#flip').onclick=()=>{back=!back;show()};document.querySelector('#next').onclick=()=>{index=(index+1)%cards.length;back=false;show()};show();</script></html>
+</main>
+<script>
+const cards=[
+{
+q:"Cơ chế Virtual DOM trong React hoạt động như thế nào và đem lại lợi ích gì?",
+a:"Virtual DOM là một bản sao biểu diễn cây DOM thật dưới dạng các JavaScript Object nhẹ trong bộ nhớ. Khi state thay đổi, React so sánh cây cũ và mới (Reconciliation / Diffing) và chỉ áp dụng những thay đổi tối thiểu lên Real DOM, tránh tính toán layout lại quá nhiều lần.",
+hint:"Gợi ý: Hãy nghĩ về sự chênh lệch hiệu năng giữa thao tác trên JS Object và tính toán lại Reflow của cây DOM thật.",
+mastered:false
+},
+{
+q:"Khái niệm 'Idempotent' trong thiết kế REST API có nghĩa là gì?",
+a:"Một phương thức HTTP được gọi là Idempotent nếu việc gọi nó 1 lần hay n lần liên tiếp với cùng dữ liệu đều tạo ra cùng một trạng thái kết quả trên hệ thống. Ví dụ: GET, PUT, DELETE là idempotent; trong khi POST thường không phải idempotent vì mỗi lần gọi sẽ tạo một bản ghi mới.",
+hint:"Gợi ý: Hãy xem xét việc gửi lại yêu cầu thanh toán hay cập nhật hồ sơ khi mạng chập chờn.",
+mastered:false
+},
+{
+q:"Cơ chế CORS (Cross-Origin Resource Sharing) bảo vệ điều gì?",
+a:"CORS là cơ chế bảo mật do trình duyệt áp đặt nhằm ngăn chặn một trang web từ nguồn này (Origin A) đọc tài nguyên nhạy cảm từ nguồn khác (Origin B) nếu không được phép thông qua các Header HTTP hợp lệ như Access-Control-Allow-Origin.",
+hint:"Gợi ý: Phân biệt giữa cùng nguồn (Same-Origin: cùng Protocol, Domain, Port) và khác nguồn.",
+mastered:false
+},
+{
+q:"Sự khác biệt cốt lõi giữa Cookie, Bộ nhớ Client (Web Storage) và CSDL nhúng trình duyệt?",
+a:"• Cookie: Dung lượng ~4KB, tự động gửi kèm mọi HTTP Request lên server.<br>• Bộ nhớ Client (Session / Key-Value): Dung lượng ~5-10MB, lưu dạng Key-Value đồng bộ.<br>• CSDL nhúng trình duyệt: Hệ CSDL NoSQL hướng đối tượng, bất đồng bộ, lưu trữ dữ liệu lớn (hàng trăm MB/GB), hỗ trợ transaction và chỉ mục index.",
+hint:"Gợi ý: Cân nhắc về dung lượng và tính đồng bộ / bất đồng bộ khi đọc ghi.",
+mastered:false
+},
+{
+q:"Nguyên tắc cốt lõi của Progressive Web App (PWA) là gì?",
+a:"PWA là ứng dụng web được nâng cấp để mang trải nghiệm như ứng dụng gốc (Native App): cài đặt trực tiếp lên màn hình chính, khởi động nhanh, hoạt động ngoại tuyến nhờ Service Worker lưu trữ bộ đệm (cache), và có thể nhận thông báo đẩy (Push Notifications).",
+hint:"Gợi ý: Vai trò then chốt của Service Worker làm cầu nối trung gian giữa mạng và trình duyệt.",
+mastered:false
+},
+{
+q:"Sự khác biệt khi nào nên dùng CSS Flexbox vs CSS Grid?",
+a:"• CSS Flexbox: Định hướng bố cục 1 chiều (1-Dimensional: theo hàng HOẶC theo cột), tối ưu cho việc căn lề các thành phần con linh hoạt bên trong component.<br>• CSS Grid: Định hướng bố cục 2 chiều (2-Dimensional: kết hợp cả hàng VÀ cột), tối ưu cho việc phân chia layout tổng thể của trang.",
+hint:"Gợi ý: 1 chiều (Row/Column) vs 2 chiều đồng thời (Grid tracks).",
+mastered:false
+}
+];
+let idx=0,isFlipped=false;
+const scene=document.querySelector('#cardScene');
+const inner=document.querySelector('#cardInner');
+const fBadge=document.querySelector('#cardFrontBadge');
+const fTitle=document.querySelector('#cardFrontTitle');
+const fHint=document.querySelector('#cardHint');
+const bText=document.querySelector('#cardBackText');
+const masteryText=document.querySelector('#masteryText');
+const masteryProgress=document.querySelector('#masteryProgress');
+function updateMastery(){
+const masteredCount=cards.filter(c=>c.mastered).length;
+const pct=Math.round((masteredCount/cards.length)*100);
+masteryText.textContent=masteredCount+' / '+cards.length+' thẻ ('+pct+'%)';
+masteryProgress.value=pct;
+}
+function renderCard(){
+isFlipped=false;
+inner.classList.remove('is-flipped');
+const c=cards[idx];
+fBadge.textContent='THẺ '+(idx+1)+' / '+cards.length+(c.mastered?' · 🟢 ĐÃ THUỘC':' · 🔴 CHƯA THUỘC');
+fTitle.textContent=c.q;
+fHint.textContent=c.hint;
+bText.innerHTML=c.a;
+updateMastery();
+}
+scene.onclick=()=>{
+isFlipped=!isFlipped;
+inner.classList.toggle('is-flipped',isFlipped);
+};
+document.querySelector('#fcPrev').onclick=()=>{if(idx>0){idx--;renderCard()}};
+document.querySelector('#fcNext').onclick=()=>{idx=(idx+1)%cards.length;renderCard()};
+document.querySelector('#btnNotYet').onclick=()=>{
+cards[idx].mastered=false;
+renderCard();
+idx=(idx+1)%cards.length;
+renderCard();
+};
+document.querySelector('#btnMastered').onclick=()=>{
+cards[idx].mastered=true;
+renderCard();
+idx=(idx+1)%cards.length;
+renderCard();
+};
+document.querySelector('#shuffleBtn').onclick=()=>{
+for(let i=cards.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[cards[i],cards[j]]=[cards[j],cards[i]];
+}
+idx=0;renderCard();
+};
+renderCard();
+</script>
+</html>

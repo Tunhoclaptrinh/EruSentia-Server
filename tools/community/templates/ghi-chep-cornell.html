@@ -2,36 +2,120 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Đọc sâu và ghi nhớ</title>
-<style>/* @community-theme */</style>
+<title>Phương pháp Ghi chép Cornell</title>
+<style>
+/* @community-theme */
+.cornell-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0 20px;padding:12px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px}
+.cornell-meta-item{display:flex;flex-direction:column;gap:4px}
+.cornell-meta-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.cornell-meta-val{font-size:13.5px;font-weight:600;color:var(--ink);border:none;background:transparent;outline:none}
+.cornell-meta-val:focus{background:#fff;border-radius:4px;box-shadow:0 0 0 2px var(--focus)}
+.cornell-layout{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:18px 0;background:#fff}
+.cornell-header-row{display:grid;grid-template-columns:32% 68%;background:var(--soft);border-bottom:1px solid var(--line)}
+.cornell-col-header{padding:10px 14px;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.cornell-row{display:grid;grid-template-columns:32% 68%;border-bottom:1px solid var(--line);position:relative}
+.cornell-row:last-child{border-bottom:none}
+.cornell-cue-cell{padding:12px 14px;border-right:1px solid var(--line);background:#fffbfc;font-weight:600;font-size:13px;color:var(--accent)}
+.cornell-note-cell{padding:12px 14px;font-size:13px;line-height:1.65;color:var(--ink)}
+.cornell-cue-cell:focus,.cornell-note-cell:focus{outline:2px solid var(--accent);outline-offset:-2px;background:#fff}
+.cornell-row-del{position:absolute;right:6px;top:6px;opacity:0;background:transparent;border:none;color:#ef4444;cursor:pointer;padding:2px 6px;font-size:11px;border-radius:4px;transition:opacity .15s}
+.cornell-row:hover .cornell-row-del{opacity:.7}
+.cornell-row-del:hover{opacity:1;background:rgba(239,68,68,0.08)}
+.cornell-actions{display:flex;gap:10px;margin:12px 0 20px;align-items:center}
+.cornell-summary-box{margin-top:20px;padding:16px 18px;border:1px solid var(--line);border-radius:6px;background:var(--soft)}
+.cornell-summary-title{font-size:13px;font-weight:700;color:var(--ink);margin:0 0 8px;display:flex;align-items:center;gap:6px}
+.cornell-summary-text{width:100%;min-height:80px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:inherit;font-size:13px;line-height:1.6;color:var(--ink)}
+.recall-mode-active .cornell-note-cell{filter:blur(5px);user-select:none;transition:filter .2s}
+.recall-mode-active .cornell-note-cell:hover{filter:none}
+@media(max-width:640px){.cornell-header-row,.cornell-row{grid-template-columns:1fr}.cornell-cue-cell{border-right:none;border-bottom:1px solid var(--line)}}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">KHÔNG GIAN HỌC TẬP</span>
 </div>
 <header>
-<span class="kicker">KHÔNG GIAN HỌC TẬP</span>
-<h1 contenteditable="true">Đọc sâu và ghi nhớ</h1>
-<p class="intro">Đọc để hiểu, ghi để nhớ.</p>
+<span class="kicker">PHƯƠNG PHÁP GHI CHÉP CORNELL</span>
+<h1 contenteditable="true">Ghi chép Cornell: Kiến trúc Client-Side Rendering</h1>
+<p class="intro">Bố cục 2 cột khoa học giúp tối đa hóa khả năng tiếp thu bài giảng và chủ động truy hồi kiến thức (Active Recall).</p>
 </header>
-<p>Ví dụ đọc: vì sao cần đặt câu hỏi trước khi tìm câu trả lời?</p>
-<label for="question">Câu hỏi của tôi</label>
-<textarea id="question">Làm sao biết mình đã hiểu một khái niệm?</textarea>
-<label for="summary">Tóm tắt bằng lời của mình</label>
-<textarea id="summary">Thử giải thích lại, đưa một ví dụ và chỉ ra giới hạn của ví dụ đó.</textarea>
-<details>
-<summary>Mở câu hỏi tự kiểm tra</summary>
-<p>Nếu bỏ tài liệu sang một bên, bạn có thể giải thích lại cho người mới học không?</p>
-</details>
+<div class="cornell-meta-grid">
+<div class="cornell-meta-item">
+<span class="cornell-meta-label">Môn học / Chủ đề</span>
+<input class="cornell-meta-val" value="Công nghệ Web Hiện đại" aria-label="Môn học">
+</div>
+<div class="cornell-meta-item">
+<span class="cornell-meta-label">Giảng viên / Tài liệu</span>
+<input class="cornell-meta-val" value="TS. Nguyễn Văn A · KHTN" aria-label="Giảng viên">
+</div>
+<div class="cornell-meta-item">
+<span class="cornell-meta-label">Ngày ghi chép</span>
+<input class="cornell-meta-val" type="date" value="2026-11-09" aria-label="Ngày ghi chép">
+</div>
+</div>
+<div class="cornell-actions">
+<button type="button" id="addRowBtn">+ Thêm điểm ghi chép</button>
+<button type="button" id="toggleRecallBtn" title="Làm mờ cột ghi chú để tự kiểm tra bằng cột câu hỏi gợi nhớ">Bật chế độ Tự ôn tập (Active Recall)</button>
+<span class="muted" style="margin-left:auto;font-size:11.5px">Nhấp đúp vào ô để soạn thảo trực tiếp</span>
+</div>
+<div class="cornell-layout">
+<div class="cornell-header-row">
+<div class="cornell-col-header" style="border-right:1px solid var(--line)">Câu hỏi &amp; Từ khóa gợi nhớ (Cues - 32%)</div>
+<div class="cornell-col-header">Ý chính bài giảng &amp; Chi tiết (Notes - 68%)</div>
+</div>
+<div id="cornellRowsContainer">
+<div class="cornell-row">
+<div class="cornell-cue-cell" contenteditable="true">Bản chất của Client-Side Rendering (CSR) là gì?</div>
+<div class="cornell-note-cell" contenteditable="true">Trình duyệt tải về tệp HTML khung rỗng kèm bó tệp JavaScript (bundle). Trình duyệt thực thi JS để dựng cây DOM động và nạp dữ liệu từ API. Trải nghiệm chuyển trang mượt mà như ứng dụng Desktop (SPA).</div>
+<button type="button" class="cornell-row-del" title="Xóa dòng này">Xóa</button>
+</div>
+<div class="cornell-row">
+<div class="cornell-cue-cell" contenteditable="true">Ưu điểm &amp; Nhược điểm cốt lõi?</div>
+<div class="cornell-note-cell" contenteditable="true">• Ưu điểm: Phản hồi tương tác 0ms sau khi tải xong, giảm tải băng thông xử lý cho Server.<br>• Nhược điểm: Thời gian hiển thị nội dung đầu tiên (FCP / LCP) lâu hơn SSR nếu bundle lớn; SEO ban đầu cần xử lý thêm.</div>
+<button type="button" class="cornell-row-del" title="Xóa dòng này">Xóa</button>
+</div>
+<div class="cornell-row">
+<div class="cornell-cue-cell" contenteditable="true">Giải pháp tối ưu Bundle Size?</div>
+<div class="cornell-note-cell" contenteditable="true">1. Phân mảnh mã nguồn theo tuyến đường (Route-based Code Splitting) với dynamic import().<br>2. Tree-shaking loại bỏ mã không dùng.<br>3. Nén tệp tĩnh với Brotli / Gzip.</div>
+<button type="button" class="cornell-row-del" title="Xóa dòng này">Xóa</button>
+</div>
+</div>
+</div>
+<div class="cornell-summary-box">
+<h3 class="cornell-summary-title">Tóm tắt cốt lõi bài học (Summary - 3 đến 5 câu)</h3>
+<textarea class="cornell-summary-text" aria-label="Tóm tắt cốt lõi">Client-Side Rendering là kiến trúc nền tảng của các ứng dụng SPA hiện đại. Điểm mấu chốt để thành công với CSR là tối ưu hóa dung lượng bundle tải ban đầu thông qua code-splitting và caching hiệu quả. Khi kết hợp với nguyên lý Local-First, ứng dụng có thể hoạt động ngoại tuyến mượt mà.</textarea>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Kế hoạch áp dụng vào thực tế</h2>
+<textarea aria-label="Kế hoạch áp dụng" placeholder="Điều bạn sẽ thực hành ngay trong dự án hoặc bài tập tiếp theo…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Mẫu ghi chép phương pháp Cornell</span>
+<span>Tương tác trực tiếp · Lưu trữ ngoại tuyến 100%</span>
 </footer>
 </main>
+<script>
+const rowsContainer=document.querySelector('#cornellRowsContainer');
+const table=document.querySelector('.cornell-layout');
+document.querySelector('#addRowBtn').onclick=()=>{
+const row=document.createElement('div');
+row.className='cornell-row';
+row.innerHTML='<div class="cornell-cue-cell" contenteditable="true">Câu hỏi gợi nhớ mới...</div><div class="cornell-note-cell" contenteditable="true">Nội dung ghi chú chi tiết...</div><button type="button" class="cornell-row-del" title="Xóa dòng này">Xóa</button>';
+rowsContainer.appendChild(row);
+row.querySelector('.cornell-row-del').onclick=()=>row.remove();
+row.querySelector('.cornell-cue-cell').focus();
+};
+table.addEventListener('click',e=>{
+if(e.target.classList.contains('cornell-row-del')) e.target.closest('.cornell-row')?.remove();
+});
+let recall=false;
+const recallBtn=document.querySelector('#toggleRecallBtn');
+recallBtn.onclick=()=>{
+recall=!recall;
+table.classList.toggle('recall-mode-active',recall);
+recallBtn.textContent=recall?'Tắt chế độ Tự ôn tập (Hiện ghi chú)':'Bật chế độ Tự ôn tập (Active Recall)';
+recallBtn.style.background=recall?'var(--accent)':'';
+recallBtn.style.color=recall?'#fff':'';
+};
+</script>
 </html>

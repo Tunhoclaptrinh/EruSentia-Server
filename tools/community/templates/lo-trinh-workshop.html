@@ -2,41 +2,119 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lộ trình một buổi workshop</title>
-<style>/* @community-theme */</style>
+<title>Lộ trình tổ chức sự kiện &amp; Workshop</title>
+<style>
+/* @community-theme */
+.stage-tabs{display:flex;gap:8px;margin:18px 0;overflow-x:auto;padding-bottom:4px}
+.stage-tab-btn{padding:8px 16px;border-radius:6px;border:1px solid var(--line);background:#fff;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .15s}
+.stage-tab-btn:hover{border-color:var(--accent);color:var(--accent)}
+.stage-tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.stage-pane{display:none;padding:18px 20px;border:1px solid var(--line);border-radius:8px;background:#fff;margin:14px 0}
+.stage-pane.active{display:block}
+.stage-pane-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.stage-pane-title{font-size:14px;font-weight:700;color:var(--ink);margin:0}
+.stage-pane-timeline{font-size:12px;font-weight:600;color:var(--accent)}
+.stage-tasks{display:flex;flex-direction:column;gap:8px}
+.stage-task-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.stage-task-row:last-child{border-bottom:none}
+.stage-task-row input[type=checkbox]{margin-top:3px}
+.stage-task-text{flex:1;outline:none;line-height:1.5}
+.stage-task-row:has(input:checked) .stage-task-text{text-decoration:line-through;color:var(--muted)}
+.stage-progress-bar{margin:18px 0;padding:14px 18px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;gap:14px}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">TỔ CHỨC HOẠT ĐỘNG &amp; SỰ KIỆN</span>
 </div>
 <header>
-<span class="kicker">TỔ CHỨC HOẠT ĐỘNG</span>
-<h1 contenteditable="true">Lộ trình một buổi workshop</h1>
-<p class="intro">Biến một ý tưởng thành buổi chia sẻ.</p>
+<span class="kicker">LỘ TRÌNH TỔ CHỨC (EVENT ROADMAP)</span>
+<h1 contenteditable="true">Lộ Trình &amp; Kế Hoạch Tổ Chức Workshop Chuyên Đề</h1>
+<p class="intro">Phân bổ 4 giai đoạn chuẩn bị từ khâu xác định mục tiêu đến hậu kỳ sự kiện.</p>
 </header>
-<label for="stage">Mốc đang thực hiện</label>
-<select id="stage">
-<option value="0">Xác định đầu ra</option>
-<option value="1">Chuẩn bị nội dung</option>
-<option value="2">Thử buổi chia sẻ</option>
-<option value="3">Tổ chức</option>
-<option value="4">Tổng kết</option>
-</select>
-<ol class="steps">
-<li>Xác định điều người tham gia mang về</li>
-<li>Chuẩn bị ghi chú và ví dụ</li>
-<li>Chạy thử với một nhóm nhỏ</li>
-<li>Tổ chức và thu nhận câu hỏi</li>
-<li>Tổng hợp phản hồi và tài liệu</li>
-</ol>
+<div class="stage-progress-bar">
+<span style="font-size:13px;font-weight:700;color:var(--ink);white-space:nowrap">Tiến độ chuẩn bị: <strong id="roadmapPct">0%</strong></span>
+<progress id="roadmapBar" value="0" max="100" style="flex:1;height:8px"></progress>
+</div>
+<div class="stage-tabs" id="stageTabs">
+<button type="button" class="stage-tab-btn active" data-stage="1">1. Chuẩn bị đầu vào</button>
+<button type="button" class="stage-tab-btn" data-stage="2">2. Truyền thông &amp; Đăng ký</button>
+<button type="button" class="stage-tab-btn" data-stage="3">3. Phiên diễn ra chính thức</button>
+<button type="button" class="stage-tab-btn" data-stage="4">4. Hậu kỳ &amp; Khảo sát</button>
+</div>
+<div class="stage-pane active" id="pane1">
+<div class="stage-pane-header">
+<h3 class="stage-pane-title">Giai đoạn 1: Chuẩn bị nội dung &amp; Xác định giá trị đầu ra</h3>
+<span class="stage-pane-timeline">Tuần -3 đến Tuần -2</span>
+</div>
+<div class="stage-tasks">
+<div class="stage-task-row"><input type="checkbox" checked><span class="stage-task-text" contenteditable="true">Xác định thông điệp cốt lõi và 3 bài học người tham gia sẽ mang về</span></div>
+<div class="stage-task-row"><input type="checkbox" checked><span class="stage-task-text" contenteditable="true">Thống nhất với diễn giả về đề cương chi tiết và tài liệu thực hành</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Khảo sát và đặt địa điểm phòng học / đường truyền trực tuyến</span></div>
+</div>
+</div>
+<div class="stage-pane" id="pane2">
+<div class="stage-pane-header">
+<h3 class="stage-pane-title">Giai đoạn 2: Truyền thông, mở cổng đăng ký &amp; gửi tài liệu đọc trước</h3>
+<span class="stage-pane-timeline">Tuần -2 đến Ngày -1</span>
+</div>
+<div class="stage-tasks">
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Đăng tải thông tin sự kiện và form đăng ký tham gia</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Gửi email xác nhận kèm tài liệu đọc trước và yêu cầu cài đặt môi trường</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Chạy thử kỹ thuật (Dry-run) âm thanh, máy chiếu và chia sẻ màn hình</span></div>
+</div>
+</div>
+<div class="stage-pane" id="pane3">
+<div class="stage-pane-header">
+<h3 class="stage-pane-title">Giai đoạn 3: Tổ chức phiên chính thức &amp; Tương tác trực tiếp</h3>
+<span class="stage-pane-timeline">Ngày diễn ra (D-Day)</span>
+</div>
+<div class="stage-tasks">
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Đón tiếp người tham gia, phát bảng tên và tài liệu in</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Phiên trình bày chính và phần thực hành nhóm có hướng dẫn</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Phiên hỏi đáp Q&amp;A mở rộng và tổng kết đúc kết</span></div>
+</div>
+</div>
+<div class="stage-pane" id="pane4">
+<div class="stage-pane-header">
+<h3 class="stage-pane-title">Giai đoạn 4: Hậu kỳ, thu nhận phản hồi &amp; Chia sẻ tài nguyên</h3>
+<span class="stage-pane-timeline">Ngày +1 đến Tuần +1</span>
+</div>
+<div class="stage-tasks">
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Gửi email cảm ơn kèm slide bài giảng và link video ghi hình</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Tổng hợp kết quả khảo sát mức độ hài lòng (CSAT / NPS)</span></div>
+<div class="stage-task-row"><input type="checkbox"><span class="stage-task-text" contenteditable="true">Họp rút kinh nghiệm nội bộ (Retrospective) cho sự kiện kế tiếp</span></div>
+</div>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Ghi chú &amp; Phản hồi từ người tham dự</h2>
+<textarea aria-label="Ghi chú phản hồi" placeholder="Những câu hỏi hay hoặc phản hồi ấn tượng nhất trong buổi workshop…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Lộ trình tổ chức sự kiện</span>
+<span>Quản lý tiến độ từng chặng · 100% Ngoại tuyến</span>
 </footer>
-</main><script>const stage=document.querySelector('#stage');function mark(){document.querySelectorAll('.steps li').forEach((e,i)=>e.classList.toggle('active',i===Number(stage.value)))}stage.onchange=mark;mark();</script></html>
+</main>
+<script>
+function syncRoadmap(){
+const boxes=document.querySelectorAll('.stage-task-row input[type=checkbox]');
+const done=[...boxes].filter(b=>b.checked).length;
+const total=boxes.length;
+const pct=total>0?Math.round((done/total)*100):0;
+document.querySelector('#roadmapPct').textContent=done+' / '+total+' việc ('+pct+'%)';
+document.querySelector('#roadmapBar').value=pct;
+}
+document.querySelector('#stageTabs').addEventListener('click',e=>{
+if(e.target.classList.contains('stage-tab-btn')){
+document.querySelectorAll('.stage-tab-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.stage-pane').forEach(p=>p.classList.remove('active'));
+e.target.classList.add('active');
+document.querySelector('#pane'+e.target.dataset.stage)?.classList.add('active');
+}
+});
+document.querySelector('main').addEventListener('change',e=>{
+if(e.target.matches('input[type=checkbox]')) syncRoadmap();
+});
+syncRoadmap();
+</script>
+</html>
