@@ -132,6 +132,13 @@
 const fmt=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+' ₫';
 function updateBudget(){
 const rows=document.querySelectorAll('#budgetRows tr');
+if([...rows].some(r=>[...r.querySelectorAll('input[type=number]')].some(input=>!input.value||!input.checkValidity()))){
+const warning='Nhập số lượng dương và đơn giá không âm hợp lệ.';
+document.querySelector('#totalEstimateVal').textContent=warning;
+document.querySelector('#footerTotalCell').textContent=warning;
+document.querySelector('#varianceVal').textContent='—';
+return;
+}
 let total=0;
 rows.forEach(r=>{
 const qty=Math.max(0,Number(r.querySelector('.b-qty').value)||0);
