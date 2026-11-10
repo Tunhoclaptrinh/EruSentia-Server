@@ -2,48 +2,185 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Một phiên tập trung</title>
-<style>/* @community-theme */</style>
+<title>Một phiên tập trung sâu</title>
+<style>
+/* @community-theme */
+.pomo-studio{display:flex;flex-direction:column;align-items:center;padding:24px 20px;border:1px solid var(--line);border-radius:12px;background:#fff;margin:18px 0;box-shadow:0 2px 10px rgba(15,23,42,0.03)}
+.pomo-modes{display:flex;gap:8px;margin-bottom:20px;background:var(--soft);padding:4px;border-radius:8px;border:1px solid var(--line)}
+.pomo-mode-btn{padding:6px 14px;border:none;background:transparent;color:var(--muted);font-size:12.5px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .15s}
+.pomo-mode-btn.active{background:#fff;color:var(--accent);box-shadow:0 1px 3px rgba(15,23,42,0.08)}
+.pomo-timer-circle{position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center;margin:10px 0}
+.pomo-svg-ring{position:absolute;top:0;left:0;width:100%;height:100%;transform:rotate(-90deg)}
+.pomo-svg-bg{stroke:#f1f5f9;stroke-width:8;fill:none}
+.pomo-svg-fill{stroke:var(--accent);stroke-width:8;stroke-linecap:round;fill:none;transition:stroke-dashoffset .3s ease;stroke-dasharray:565.48;stroke-dashoffset:0}
+.pomo-timer-display{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.pomo-digits{font-size:48px;font-weight:800;letter-spacing:-.04em;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.pomo-label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+.pomo-cycles{display:flex;gap:6px;align-items:center;margin:16px 0 20px}
+.pomo-dot{width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all .2s}
+.pomo-dot.done{background:var(--accent);box-shadow:0 0 6px rgba(242,39,76,0.4)}
+.pomo-controls{display:flex;gap:10px;align-items:center}
+.pomo-btn-main{padding:10px 24px;font-size:14px;font-weight:700;border-radius:8px;background:var(--accent);color:#fff;border:none;cursor:pointer;transition:background .15s}
+.pomo-btn-main:hover{background:var(--accent-hover)}
+.pomo-btn-sub{padding:10px 18px;font-size:13px;font-weight:600;border-radius:8px;background:var(--soft);color:var(--ink);border:1px solid var(--line);cursor:pointer}
+.pomo-btn-sub:hover{background:#f1f5f9}
+.pomo-goal-field{width:100%;max-width:500px;margin-bottom:20px;display:flex;flex-direction:column;gap:5px}
+.pomo-goal-field label{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase}
+.pomo-goal-input{width:100%;font-size:13.5px}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">NĂNG SUẤT &amp; TẬP TRUNG SÂU</span>
 </div>
 <header>
-<span class="kicker">KHÔNG GIAN TẬP TRUNG</span>
-<h1 contenteditable="true">Một phiên tập trung</h1>
-<p class="intro">Chỉ một việc, trong một phiên.</p>
+<span class="kicker">PHƯƠNG PHÁP POMODORO</span>
+<h1 contenteditable="true">Một Phiên Tập Trung Sâu (Deep Work Session)</h1>
+<p class="intro">Duy trì sự tập trung tuyệt đối vào một việc duy nhất trong từng khối thời gian xác định.</p>
 </header>
-<label for="goal">Một việc cần làm</label>
-<input id="goal" style="width:100%" value="Đọc và tóm tắt một phần tài liệu">
-<div class="row"><label for="duration">Thời lượng (phút)</label><input id="duration" type="number" min="1" max="180" value="25"></div>
-<div class="card">
-<strong id="clock" role="timer">25:00</strong>
-<p class="muted">Lưu ghi chú để giữ thời gian còn lại. Khi mở lại, bấm Tiếp tục để chạy.</p>
+<div class="pomo-studio">
+<div class="pomo-goal-field">
+<label for="pomoGoal">Mục tiêu của phiên này</label>
+<input id="pomoGoal" class="pomo-goal-input" value="Đọc và tóm tắt kiến thức thiết kế hệ thống phân tán" aria-label="Mục tiêu phiên">
 </div>
-<div class="row">
-<button id="start">Bắt đầu</button>
-<button id="reset">Làm lại</button>
+<div class="pomo-modes">
+<button type="button" class="pomo-mode-btn active" data-mode="focus" data-duration="25">Tập trung (25p)</button>
+<button type="button" class="pomo-mode-btn" data-mode="shortBreak" data-duration="5">Nghỉ ngắn (5p)</button>
+<button type="button" class="pomo-mode-btn" data-mode="longBreak" data-duration="15">Nghỉ dài (15p)</button>
+</div>
+<div class="pomo-timer-circle">
+<svg class="pomo-svg-ring" viewBox="0 0 200 200">
+<circle class="pomo-svg-bg" cx="100" cy="100" r="90"></circle>
+<circle class="pomo-svg-fill" id="svgFill" cx="100" cy="100" r="90"></circle>
+</svg>
+<div class="pomo-timer-display">
+<span class="pomo-digits" id="timeDigits">25:00</span>
+<span class="pomo-label" id="statusLabel">TẬP TRUNG</span>
+</div>
+</div>
+<div class="pomo-cycles">
+<span class="muted" style="font-size:11.5px;margin-right:4px">Chu kỳ Pomodoro:</span>
+<span class="pomo-dot" id="dot1"></span>
+<span class="pomo-dot" id="dot2"></span>
+<span class="pomo-dot" id="dot3"></span>
+<span class="pomo-dot" id="dot4"></span>
+</div>
+<div class="pomo-controls">
+<button type="button" class="pomo-btn-main" id="btnToggle">Bắt đầu tập trung</button>
+<button type="button" class="pomo-btn-sub" id="btnReset">Đặt lại</button>
+</div>
 </div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Ghi chú &amp; Thành quả đạt được sau phiên</h2>
+<textarea aria-label="Ghi chú thành quả" placeholder="Ghi lại những việc cụ thể bạn đã hoàn tất trong phiên này…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Pomodoro Focus Studio</span>
+<span>Âm thanh tổng hợp Web Audio API · 100% Ngoại tuyến</span>
 </footer>
-</main><script>
-const root=document.querySelector('main'),clock=document.querySelector('#clock'),start=document.querySelector('#start'),duration=document.querySelector('#duration');
-let seconds=Number(root.dataset.remaining ?? 1500),timer=null;duration.disabled=false;
-if(!Number.isFinite(seconds)||seconds<0||seconds>10800)seconds=1500;
-function render(){root.dataset.remaining=String(seconds);clock.textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}
-function stop(){clearInterval(timer);timer=null;duration.disabled=false}
-start.textContent=seconds===0?'Đã hoàn thành':seconds===Number(duration.value)*60?'Bắt đầu':'Tiếp tục';
-start.onclick=()=>{if(timer){stop();start.textContent='Tiếp tục';return}if(!duration.value||!duration.checkValidity()){duration.reportValidity();return}if(seconds===0)return;duration.disabled=true;start.textContent='Tạm dừng';timer=setInterval(()=>{seconds=Math.max(0,seconds-1);render();if(seconds===0){stop();start.textContent='Đã hoàn thành'}},1000)};
-duration.oninput=()=>{if(duration.value&&duration.checkValidity()&&!timer){seconds=Number(duration.value)*60;start.textContent='Bắt đầu';render()}};
-document.querySelector('#reset').onclick=()=>{stop();seconds=duration.value&&duration.checkValidity()?Number(duration.value)*60:1500;start.textContent='Bắt đầu';render()};
-window.addEventListener('pagehide',stop);render();
-</script></html>
+</main>
+<script>
+const root=document.querySelector('main');
+const validSeconds=value=>Number.isInteger(value)&&value>=0&&value<=25*60;
+const savedTotal=Number(root.dataset.totalSeconds),savedRemaining=Number(root.dataset.remaining);
+let totalSec=[300,900,1500].includes(savedTotal)?savedTotal:1500;
+let remainSec=validSeconds(savedRemaining)&&savedRemaining<=totalSec?savedRemaining:totalSec;
+let timer=null,currentMode=['focus','shortBreak','longBreak'].includes(root.dataset.mode)?root.dataset.mode:'focus';
+let streak=Number(root.dataset.streak)||0;
+const circumference=2*Math.PI*90;
+const digits=document.querySelector('#timeDigits');
+const statusLabel=document.querySelector('#statusLabel');
+const svgFill=document.querySelector('#svgFill');
+const btnToggle=document.querySelector('#btnToggle');
+const btnReset=document.querySelector('#btnReset');
+const dots=[document.querySelector('#dot1'),document.querySelector('#dot2'),document.querySelector('#dot3'),document.querySelector('#dot4')];
+function playChime(){
+try{
+const ctx=new (window.AudioContext||window.webkitAudioContext)();
+const osc=ctx.createOscillator();
+const gain=ctx.createGain();
+osc.type='sine';
+osc.frequency.setValueAtTime(587.33,ctx.currentTime);
+osc.frequency.exponentialRampToValueAtTime(880,ctx.currentTime+0.1);
+gain.gain.setValueAtTime(0.3,ctx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);
+osc.connect(gain);gain.connect(ctx.destination);
+osc.start();osc.stop(ctx.currentTime+1.2);
+}catch(e){}
+}
+function updateDisplay(){
+root.dataset.totalSeconds=String(totalSec);
+root.dataset.remaining=String(remainSec);
+root.dataset.mode=currentMode;
+root.dataset.streak=String(streak);
+const m=Math.floor(remainSec/60),s=remainSec%60;
+digits.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+const offset=circumference*(1-(remainSec/totalSec));
+svgFill.style.strokeDashoffset=offset;
+dots.forEach((dot,i)=>dot.classList.toggle('done',i<streak));
+}
+function stopTimer(){
+clearInterval(timer);timer=null;
+btnToggle.textContent='Tiếp tục';
+btnToggle.style.background='var(--accent)';
+}
+function completeSession(){
+stopTimer();
+playChime();
+if(currentMode==='focus'){
+streak=(streak+1)%4;
+if(streak===0) switchMode('longBreak',15);
+else switchMode('shortBreak',5);
+btnToggle.textContent='Bắt đầu nghỉ';
+}else{
+switchMode('focus',25);
+btnToggle.textContent='Bắt đầu tập trung';
+}
+updateDisplay();
+}
+function switchMode(mode,mins){
+currentMode=mode;
+totalSec=mins*60;remainSec=totalSec;
+document.querySelectorAll('.pomo-mode-btn').forEach(b=>{
+b.classList.toggle('active',b.dataset.mode===mode);
+});
+statusLabel.textContent=mode==='focus'?'TẬP TRUNG':(mode==='shortBreak'?'NGHỈ NGẮN':'NGHỈ DÀI');
+svgFill.style.stroke=mode==='focus'?'var(--accent)':'#10b981';
+updateDisplay();
+}
+document.querySelectorAll('.pomo-mode-btn').forEach(btn=>{
+btn.onclick=()=>{
+if(timer) stopTimer();
+switchMode(btn.dataset.mode,Number(btn.dataset.duration));
+btnToggle.textContent='Bắt đầu';
+};
+});
+btnToggle.onclick=()=>{
+if(timer){
+stopTimer();
+}else{
+btnToggle.textContent='Tạm dừng';
+btnToggle.style.background='#f59e0b';
+timer=setInterval(()=>{
+if(remainSec>0){
+remainSec--;updateDisplay();
+}else{
+completeSession();
+}
+},1000);
+}
+};
+btnReset.onclick=()=>{
+if(timer) stopTimer();
+remainSec=totalSec;
+btnToggle.textContent='Bắt đầu';
+btnToggle.style.background='var(--accent)';
+updateDisplay();
+};
+document.querySelectorAll('.pomo-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===currentMode));
+statusLabel.textContent=currentMode==='focus'?'TẬP TRUNG':(currentMode==='shortBreak'?'NGHỈ NGẮN':'NGHỈ DÀI');
+btnToggle.textContent=remainSec<totalSec?'Tiếp tục':'Bắt đầu';
+window.addEventListener('pagehide',()=>clearInterval(timer));
+updateDisplay();
+</script>
+</html>

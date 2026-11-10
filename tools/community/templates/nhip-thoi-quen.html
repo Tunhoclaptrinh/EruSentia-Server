@@ -2,37 +2,148 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mỗi ngày một bước nhỏ</title>
-<style>/* @community-theme */</style>
+<title>Theo dõi thói quen 7 ngày</title>
+<style>
+/* @community-theme */
+.habit-score-banner{margin:18px 0;padding:14px 18px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.habit-score-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.habit-score-num{font-size:24px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.habit-table-scroll{overflow-x:auto;margin:16px 0}
+.habit-day-th{width:42px;text-align:center;font-size:11px}
+.habit-check-cell{text-align:center;padding:8px 4px}
+.habit-toggle-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--line);background:#fff;color:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .15s}
+.habit-toggle-btn.checked{background:#10b981;border-color:#10b981;color:#fff}
+.habit-rate-cell{font-size:12px;font-weight:700;color:var(--ink);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">KỶ LUẬT &amp; PHÁT TRIỂN BẢN THÂN</span>
 </div>
 <header>
-<span class="kicker">THÓI QUEN NHỎ</span>
-<h1 contenteditable="true">Mỗi ngày một bước nhỏ</h1>
-<p class="intro">Tiến bộ được tạo nên từng ngày.</p>
+<span class="kicker">BẢNG THEO DÕI THÓI QUEN (HABIT TRACKER)</span>
+<h1 contenteditable="true">Bảng Theo Dõi Thói Quen 7 Ngày Trong Tuần</h1>
+<p class="intro">Tiến bộ vượt bậc bắt nguồn từ những hành động nhỏ được lặp đi lặp lại bền bỉ mỗi ngày.</p>
 </header>
-<p>Ví dụ: dành 15 phút đọc hoặc ghi lại một điều mới mỗi ngày.</p>
-<div class="days">
-<button aria-pressed="false">T2</button>
-<button aria-pressed="false">T3</button>
-<button aria-pressed="false">T4</button>
-<button aria-pressed="false">T5</button>
-<button aria-pressed="false">T6</button>
-<button aria-pressed="false">T7</button>
-<button aria-pressed="false">CN</button>
+<div class="habit-score-banner">
+<div>
+<div class="habit-score-title">Tỷ lệ kỷ luật tổng thể tuần</div>
+<span class="muted" style="font-size:12px">Mục tiêu: Đạt trên 75% mỗi tuần</span>
 </div>
-<output id="days" class="result">0 / 7 ngày</output>
+<div class="habit-score-num" id="overallHabitScore">0%</div>
+</div>
+<div class="habit-table-scroll">
+<table id="habitTable">
+<thead>
+<tr>
+<th style="width:34%">Thói quen mục tiêu</th>
+<th class="habit-day-th">T2</th>
+<th class="habit-day-th">T3</th>
+<th class="habit-day-th">T4</th>
+<th class="habit-day-th">T5</th>
+<th class="habit-day-th">T6</th>
+<th class="habit-day-th">T7</th>
+<th class="habit-day-th">CN</th>
+<th style="width:16%;text-align:right">Tỷ lệ</th>
+<th style="width:6%"></th>
+</tr>
+</thead>
+<tbody id="habitRows">
+<tr>
+<td><input value="Đọc sách chuyên ngành 25 phút" class="habit-name"></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-rate-cell">3 / 7 (43%)</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="Vận động thể thao / Chạy bộ 30 phút" class="habit-name"></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-rate-cell">3 / 7 (43%)</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="Học từ vựng &amp; Viết phản tư cuối ngày" class="habit-name"></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-rate-cell">4 / 7 (57%)</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="Uống đủ 2 lít nước mỗi ngày" class="habit-name"></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn checked">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>
+<td class="habit-rate-cell">5 / 7 (71%)</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div style="margin:8px 0 20px">
+<button type="button" id="addHabitBtn">+ Thêm thói quen mới</button>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Chiêm nghiệm &amp; Yếu tố cản trở tuần này</h2>
+<textarea aria-label="Chiêm nghiệm thói quen" placeholder="Những khung giờ nào bạn dễ bỏ thói quen nhất? Có cách nào chuẩn bị sẵn môi trường để thực hiện dễ dàng hơn?"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Bảng theo dõi thói quen</span>
+<span>Kỷ luật tạo nên tự do · 100% Ngoại tuyến</span>
 </footer>
-</main><script>const days=[...document.querySelectorAll('.days button')];days.forEach(d=>d.onclick=()=>{d.setAttribute('aria-pressed',d.getAttribute('aria-pressed')!=='true');document.querySelector('#days').textContent=days.filter(x=>x.getAttribute('aria-pressed')==='true').length+' / 7 ngày'});</script></html>
+</main>
+<script>
+function calculateHabits(){
+const rows=document.querySelectorAll('#habitRows tr');
+let totalChecks=0,checkedCount=0;
+rows.forEach(r=>{
+const btns=r.querySelectorAll('.habit-toggle-btn');
+const done=[...btns].filter(b=>b.classList.contains('checked')).length;
+totalChecks+=7;checkedCount+=done;
+const pct=Math.round((done/7)*100);
+r.querySelector('.habit-rate-cell').textContent=done+' / 7 ('+pct+'%)';
+});
+const overall=totalChecks>0?Math.round((checkedCount/totalChecks)*100):0;
+document.querySelector('#overallHabitScore').textContent=overall+'%';
+}
+document.querySelector('#habitTable').addEventListener('click',e=>{
+if(e.target.classList.contains('habit-toggle-btn')){
+e.target.classList.toggle('checked');
+calculateHabits();
+}else if(e.target.classList.contains('remove-row')){
+e.target.closest('tr')?.remove();
+calculateHabits();
+}
+});
+document.querySelector('#addHabitBtn').onclick=()=>{
+const tbody=document.querySelector('#habitRows');
+const tr=document.createElement('tr');
+let daysHtml='';
+for(let i=0;i<7;i++) daysHtml+='<td class="habit-check-cell"><button type="button" class="habit-toggle-btn">✓</button></td>';
+tr.innerHTML='<td><input value="Thói quen mới..." class="habit-name"></td>'+daysHtml+'<td class="habit-rate-cell">0 / 7 (0%)</td><td><button type="button" class="remove-row">Xóa</button></td>';
+tbody.appendChild(tr);
+calculateHabits();
+};
+calculateHabits();
+</script>
+</html>

@@ -12,6 +12,11 @@ const env = {
   DB_PASSWORD: "unused",
   DB_DATABASE: "cli_test",
   TEMPLATE_STORE: "postgres",
+  NODE_ENV: "test",
+  DB_SSL: "false",
+  QUEUE_ENABLED: "false",
+  CACHE_ENABLED: "false",
+  ACCOUNT_EMAIL_MODE: "disabled",
   ADMIN_EMAIL: "",
   ADMIN_PASSWORD: "",
 };
@@ -19,7 +24,7 @@ const env = {
 function run(script, args = [], extraEnv = {}) {
   const result = spawnSync(
     process.execPath,
-    ["--import", "tsx", script, ...args],
+    [...(script.endsWith(".ts") ? ["--import", "tsx"] : []), script, ...args],
     {
       cwd: root,
       env: { ...env, ...extraEnv },

@@ -2,43 +2,137 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cuộc họp có bước tiếp theo</title>
-<style>/* @community-theme */</style>
+<title>Biên bản họp định hướng hành động</title>
+<style>
+/* @community-theme */
+.meeting-meta-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0;padding:14px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px}
+.meeting-meta-col{display:flex;flex-direction:column;gap:4px}
+.meeting-meta-lbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.meeting-meta-inp{font-size:13px;font-weight:600;color:var(--ink);border:none;background:transparent;outline:none}
+.meeting-meta-inp:focus{background:#fff;border-radius:4px;box-shadow:0 0 0 2px var(--focus)}
+.meeting-section-header{display:flex;justify-content:space-between;align-items:center;margin:22px 0 10px}
+.meeting-section-header h2{margin:0}
+.action-status-select{padding:4px 8px;font-size:11.5px;font-weight:600;border-radius:4px;border:1px solid var(--line);background:#fff}
+.action-status-select[data-val="done"]{background:rgba(16,185,129,0.1);color:#047857;border-color:rgba(16,185,129,0.3)}
+.action-status-select[data-val="doing"]{background:rgba(245,158,11,0.1);color:#b45309;border-color:rgba(245,158,11,0.3)}
+.action-status-select[data-val="todo"]{background:var(--soft);color:var(--muted)}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">HỢP TÁC &amp; VẬN HÀNH</span>
 </div>
 <header>
-<span class="kicker">LÀM VIỆC CÙNG NHAU</span>
-<h1 contenteditable="true">Cuộc họp có bước tiếp theo</h1>
-<p class="intro">Một cuộc họp nên kết thúc bằng bước tiếp theo.</p>
+<span class="kicker">BIÊN BẢN HỌP ĐỊNH HƯỚNG HÀNH ĐỘNG</span>
+<h1 contenteditable="true">Biên Bản Họp Rà Soát &amp; Kế Hoạch Triển Khai</h1>
+<p class="intro">Tập trung vào các quyết định đã thông qua và danh mục hành động cụ thể kèm người chịu trách nhiệm.</p>
 </header>
-<p class="muted">Cuộc họp minh họa · Nhóm workshop · 30 phút</p>
-<h2>Quyết định đã thống nhất</h2>
-<textarea aria-label="Quyết định">Tổ chức buổi chia sẻ vào sáng thứ Bảy. Nội dung chính: ghi chép và trình bày kiến thức bằng ví dụ.</textarea>
-<h2>Việc tiếp theo</h2>
-<label class="task">
-<input type="checkbox">
-<span>Xác nhận phòng học · Nhóm hậu cần</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Gửi tài liệu đọc trước · Nhóm nội dung</span>
-</label>
-<label class="task">
-<input type="checkbox">
-<span>Tổng hợp phản hồi · Điều phối viên</span>
-</label>
+<div class="meeting-meta-box">
+<div class="meeting-meta-col">
+<span class="meeting-meta-lbl">Thời gian</span>
+<input class="meeting-meta-inp" value="Thứ Tư, 09:00 - 10:15" aria-label="Thời gian họp">
+</div>
+<div class="meeting-meta-col">
+<span class="meeting-meta-lbl">Địa điểm / Hình thức</span>
+<input class="meeting-meta-inp" value="Phòng Họp 02 · Google Meet" aria-label="Địa điểm">
+</div>
+<div class="meeting-meta-col">
+<span class="meeting-meta-lbl">Chủ trì &amp; Thư ký</span>
+<input class="meeting-meta-inp" value="Tuấn (Lead) · Linh (Note)" aria-label="Chủ trì">
+</div>
+<div class="meeting-meta-col">
+<span class="meeting-meta-lbl">Thành phần tham dự</span>
+<input class="meeting-meta-inp" value="Tuấn, Linh, Hoàng, Minh, Lan" aria-label="Người tham dự">
+</div>
+</div>
+<h2>📌 Quyết định cốt lõi đã thông qua</h2>
+<textarea aria-label="Quyết định đã thống nhất" style="min-height:90px">1. Thống nhất chuyển đổi toàn bộ 14 mẫu cộng đồng sang tiêu chuẩn tự trị ngoại tuyến và thiết kế giao diện Slate hiện đại.
+2. Hoàn tất kiểm thử Playwright trên môi trường tablet stylus trước ngày 15/11.
+3. Không sử dụng thư viện bên ngoài để bảo toàn tính độc lập Local-First 0ms.</textarea>
+<div class="meeting-section-header">
+<h2>🚀 Danh mục hành động (Action Items)</h2>
+<button type="button" id="addActionBtn" style="padding:5px 12px;font-size:12px">+ Thêm việc</button>
+</div>
+<table id="actionTable">
+<thead>
+<tr>
+<th style="width:42%">Nội dung công việc</th>
+<th style="width:20%">Người phụ trách (PIC)</th>
+<th style="width:18%">Hạn chót</th>
+<th style="width:14%">Trạng thái</th>
+<th style="width:6%"></th>
+</tr>
+</thead>
+<tbody id="actionRows">
+<tr>
+<td><input value="Hoàn thiện mã nguồn 14 mẫu cộng đồng" class="action-task"></td>
+<td><input value="Tuấn (Dev)" class="action-pic"></td>
+<td><input type="date" value="2026-11-10" class="action-due"></td>
+<td>
+<select class="action-status-select" data-val="doing">
+<option value="todo">Chờ làm</option>
+<option value="doing" selected>Đang làm</option>
+<option value="done">Đã xong</option>
+</select>
+</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="Kiểm thử tải ảnh chụp màn hình vào thư mục artifact" class="action-task"></td>
+<td><input value="Linh (QA)" class="action-pic"></td>
+<td><input type="date" value="2026-11-11" class="action-due"></td>
+<td>
+<select class="action-status-select" data-val="todo">
+<option value="todo" selected>Chờ làm</option>
+<option value="doing">Đang làm</option>
+<option value="done">Đã xong</option>
+</select>
+</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="Soạn tài liệu tóm tắt và hướng dẫn sử dụng" class="action-task"></td>
+<td><input value="Hoàng (Content)" class="action-pic"></td>
+<td><input type="date" value="2026-11-12" class="action-due"></td>
+<td>
+<select class="action-status-select" data-val="todo">
+<option value="todo" selected>Chờ làm</option>
+<option value="doing">Đang làm</option>
+<option value="done">Đã xong</option>
+</select>
+</td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+</tbody>
+</table>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Thời gian &amp; Mục tiêu cuộc họp kế tiếp</h2>
+<textarea aria-label="Kế hoạch họp kế tiếp" placeholder="Thời gian, địa điểm và nội dung trọng tâm của buổi họp tiếp theo…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Mẫu Biên bản họp có hành động</span>
+<span>Cam kết tiến độ minh bạch · 100% Ngoại tuyến</span>
 </footer>
 </main>
+<script>
+function syncSelectColor(sel){
+sel.dataset.val=sel.value;
+}
+document.querySelector('#actionTable').addEventListener('change',e=>{
+if(e.target.classList.contains('action-status-select')) syncSelectColor(e.target);
+});
+document.querySelectorAll('.action-status-select').forEach(syncSelectColor);
+document.querySelector('#addActionBtn').onclick=()=>{
+const tbody=document.querySelector('#actionRows');
+const tr=document.createElement('tr');
+tr.innerHTML='<td><input value="Nhiệm vụ mới" class="action-task"></td><td><input value="Người phụ trách" class="action-pic"></td><td><input type="date" value="2026-11-15" class="action-due"></td><td><select class="action-status-select" data-val="todo"><option value="todo" selected>Chờ làm</option><option value="doing">Đang làm</option><option value="done">Đã xong</option></select></td><td><button type="button" class="remove-row">Xóa</button></td>';
+tbody.appendChild(tr);
+syncSelectColor(tr.querySelector('.action-status-select'));
+};
+document.querySelector('#actionTable').addEventListener('click',e=>{
+if(e.target.classList.contains('remove-row')){
+e.target.closest('tr')?.remove();
+}
+});
+</script>
 </html>

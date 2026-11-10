@@ -2,37 +2,171 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chia chi phí buổi sinh hoạt</title>
-<style>/* @community-theme */</style>
+<title>Chia chi phí nhóm &amp; Bù trừ công bằng</title>
+<style>
+/* @community-theme */
+.split-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0}
+.split-stat-card{padding:14px 16px;background:var(--soft);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;gap:4px}
+.split-stat-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.split-stat-val{font-size:20px;font-weight:750;color:var(--ink);font-variant-numeric:tabular-nums}
+.split-members-box{margin:18px 0;padding:12px 16px;border:1px solid var(--line);border-radius:6px;background:#fff}
+.split-members-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.split-members-input{width:100%;font-size:13px;color:var(--ink)}
+.settle-card{margin:22px 0;padding:18px 20px;border:1px solid rgba(242,39,76,0.25);background:rgba(242,39,76,0.03);border-radius:8px}
+.settle-title{font-size:14px;font-weight:700;color:var(--accent);margin:0 0 12px;display:flex;align-items:center;gap:6px}
+.settle-list{display:flex;flex-direction:column;gap:8px}
+.settle-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#fff;border:1px solid var(--line);border-radius:6px;font-size:13px}
+.settle-who{font-weight:600;color:var(--ink)}
+.settle-arrow{color:var(--muted);margin:0 6px}
+.settle-amount{font-weight:700;color:#047857;font-variant-numeric:tabular-nums}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">TÀI CHÍNH NHÓM &amp; DỰ TOÁN</span>
 </div>
 <header>
-<span class="kicker">CÔNG CỤ NHÓM</span>
-<h1 contenteditable="true">Chia chi phí buổi sinh hoạt</h1>
-<p class="intro">Minh bạch chi phí, nhẹ nhàng phối hợp.</p>
+<span class="kicker">CÔNG CỤ BÙ TRỪ MINH BẠCH</span>
+<h1 contenteditable="true">Chia Chi Phí Nhóm &amp; Bù Trừ Công Bằng</h1>
+<p class="intro">Nhập các khoản chi và người đã ứng trước, hệ thống tự động tính toán phương án chuyển tiền tối ưu nhất.</p>
 </header>
-<div class="row">
-<label for="amount">Tổng chi phí (VND)</label>
-<input id="amount" type="number" min="0" max="1000000000" value="480000">
+<div class="split-members-box">
+<div class="split-members-label">Danh sách thành viên tham gia (cách nhau bằng dấu phẩy)</div>
+<input class="split-members-input" id="membersInput" value="An, Bình, Cường, Dũng, Hoa" aria-label="Thành viên">
 </div>
-<div class="row">
-<label for="people">Số người</label>
-<input id="people" type="number" min="1" max="10000" value="24">
+<div class="split-stats-grid">
+<div class="split-stat-card">
+<span class="split-stat-label">Tổng chi phí toàn buổi</span>
+<span class="split-stat-val" id="totalExpenseVal">0 ₫</span>
 </div>
-<output id="share" class="result" aria-live="polite">
-</output>
-<p class="muted">Làm tròn lên đến đồng. Đây là ví dụ tính toán, không thực hiện thanh toán.</p>
+<div class="split-stat-card">
+<span class="split-stat-label">Bình quân mỗi người</span>
+<span class="split-stat-val" id="perPersonVal" style="color:var(--accent)">0 ₫</span>
+</div>
+<div class="split-stat-card">
+<span class="split-stat-label">Số thành viên</span>
+<span class="split-stat-val" id="memberCountVal">5 người</span>
+</div>
+</div>
+<table id="expenseTable">
+<thead>
+<tr>
+<th style="width:38%">Khoản chi</th>
+<th style="width:28%">Người đã trả trước</th>
+<th style="width:24%">Số tiền (VND)</th>
+<th style="width:10%"></th>
+</tr>
+</thead>
+<tbody id="expenseRows">
+<tr>
+<td><input value="Tiền ăn trưa &amp; đồ uống" class="item-name"></td>
+<td><input value="An" class="item-payer"></td>
+<td><input type="number" min="0" step="1000" value="750000" class="item-cost"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="Thuê không gian thảo luận" class="item-name"></td>
+<td><input value="Bình" class="item-payer"></td>
+<td><input type="number" min="0" step="1000" value="450000" class="item-cost"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+<tr>
+<td><input value="In tài liệu &amp; văn phòng phẩm" class="item-name"></td>
+<td><input value="Cường" class="item-payer"></td>
+<td><input type="number" min="0" step="1000" value="180000" class="item-cost"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
+</tr>
+</tbody>
+</table>
+<div style="margin:10px 0 20px">
+<button type="button" id="addExpenseBtn">+ Thêm khoản chi</button>
+</div>
+<div class="settle-card">
+<h3 class="settle-title">💸 Phương án chuyển khoản bù trừ hòa vốn</h3>
+<div class="settle-list" id="settleList"></div>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Ghi chú &amp; Số tài khoản ngân hàng</h2>
+<textarea aria-label="Ghi chú thanh toán" placeholder="Dán số tài khoản ngân hàng hoặc mã QR nhận tiền tại đây…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Công cụ chia tiền nhóm</span>
+<span>Tự động tính toán bù trừ · Hoạt động ngoại tuyến 100%</span>
 </footer>
-</main><script>function split(){const a=document.querySelector('#amount'),p=document.querySelector('#people');if(!a.checkValidity()||!p.checkValidity()||!a.value||!p.value){document.querySelector('#share').textContent='Nhập tổng tiền hợp lệ và ít nhất 1 người.';return}document.querySelector('#share').textContent='Mỗi người dự kiến: '+new Intl.NumberFormat('vi-VN').format(Math.ceil(Number(a.value)/Number(p.value)))+' ₫'}document.querySelectorAll('input').forEach(e=>e.oninput=split);split();</script></html>
+</main>
+<script>
+const formatMoney=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+' ₫';
+function calculateSplit(){
+const rawMembers=document.querySelector('#membersInput').value.split(',').map(s=>s.trim()).filter(Boolean);
+const uniqueMembers=[...new Set(rawMembers)];
+const members=uniqueMembers.length?uniqueMembers:['Thành viên 1'];
+document.querySelector('#memberCountVal').textContent=members.length+' người';
+const rows=document.querySelectorAll('#expenseRows tr');
+let total=0;
+const paidMap=Object.create(null);
+members.forEach(m=>paidMap[m]=0);
+rows.forEach(r=>{
+const payer=r.querySelector('.item-payer').value.trim()||members[0];
+const cost=Number(r.querySelector('.item-cost').value)||0;
+total+=cost;
+paidMap[payer]=(paidMap[payer]||0)+cost;
+});
+document.querySelector('#totalExpenseVal').textContent=formatMoney(total);
+const perPerson=members.length?total/members.length:0;
+document.querySelector('#perPersonVal').textContent=formatMoney(perPerson);
+const balanceMap=Object.create(null);
+members.forEach(m=>{
+balanceMap[m]=(paidMap[m]||0)-perPerson;
+});
+const debtors=[],creditors=[];
+Object.entries(balanceMap).forEach(([name,bal])=>{
+if(bal<-0.5) debtors.push({name,owes:-bal});
+else if(bal>0.5) creditors.push({name,gets:bal});
+});
+debtors.sort((a,b)=>b.owes-a.owes);
+creditors.sort((a,b)=>b.gets-a.gets);
+const transfers=[];
+let d=0,c=0;
+while(d<debtors.length&&c<creditors.length){
+const debt=debtors[d],cred=creditors[c];
+const settled=Math.min(debt.owes,cred.gets);
+if(settled>1){
+transfers.push({from:debt.name,to:cred.name,amount:settled});
+}
+debt.owes-=settled;
+cred.gets-=settled;
+if(debt.owes<0.5) d++;
+if(cred.gets<0.5) c++;
+}
+const list=document.querySelector('#settleList');
+if(transfers.length===0){
+list.innerHTML='<div class="settle-item" style="color:var(--muted)">Tất cả đã đóng góp cân bằng, không cần chuyển khoản thêm!</div>';
+}else{
+list.replaceChildren();
+for(const transfer of transfers){
+const item=document.createElement('div');item.className='settle-item';
+for(const [className,text] of [['settle-who',transfer.from],['settle-arrow','chuyển cho'],['settle-who',transfer.to],['settle-amount',formatMoney(transfer.amount)]]){
+const span=document.createElement('span');span.className=className;span.textContent=text;item.appendChild(span);
+}
+list.appendChild(item);
+}
+}
+}
+document.querySelector('#addExpenseBtn').onclick=()=>{
+const tbody=document.querySelector('#expenseRows');
+const tr=document.createElement('tr');
+tr.innerHTML='<td><input value="Khoản chi mới" class="item-name"></td><td><input value="An" class="item-payer"></td><td><input type="number" min="0" step="1000" value="100000" class="item-cost"></td><td><button type="button" class="remove-row">Xóa</button></td>';
+tbody.appendChild(tr);
+calculateSplit();
+};
+document.querySelector('#expenseTable').addEventListener('click',e=>{
+if(e.target.classList.contains('remove-row')){
+e.target.closest('tr')?.remove();
+calculateSplit();
+}
+});
+document.querySelector('#expenseTable').addEventListener('input',calculateSplit);
+document.querySelector('#membersInput').addEventListener('input',calculateSplit);
+calculateSplit();
+</script>
+</html>

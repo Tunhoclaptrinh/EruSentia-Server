@@ -2,60 +2,139 @@
 <html lang="vi">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chọn phương án có cơ sở</title>
-<style>/* @community-theme */</style>
+<title>Ma trận quyết định có trọng số</title>
+<style>
+/* @community-theme */
+.decision-winner-banner{margin:18px 0;padding:14px 18px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:6px;display:flex;align-items:center;justify-content:space-between}
+.decision-winner-title{font-size:12px;font-weight:700;color:#047857;text-transform:uppercase;letter-spacing:.05em}
+.decision-winner-name{font-size:18px;font-weight:800;color:#065f46}
+.winner-cell{background:rgba(16,185,129,0.08)!important;font-weight:750!important;color:#047857!important}
+.opt-header-input{font-weight:700;color:var(--ink);text-align:center}
+</style>
 <main data-catalog-version="2">
 <div class="document-topline">
-<span class="document-mark">eru<span>sentia</span>
-</span>
-<span class="document-label">KHÔNG GIAN CỦA BẠN</span>
+<span class="document-mark">Eru<span>Sentia</span></span>
+<span class="document-label">RA QUYẾT ĐỊNH &amp; CHIẾN LƯỢC</span>
 </div>
 <header>
-<span class="kicker">CÔNG CỤ SUY NGHĨ</span>
-<h1 contenteditable="true">Chọn phương án có cơ sở</h1>
-<p class="intro">So sánh lựa chọn bằng tiêu chí rõ ràng.</p>
+<span class="kicker">MA TRẬN QUYẾT ĐỊNH (WEIGHTED MATRIX)</span>
+<h1 contenteditable="true">Ma Trận Quyết Định Có Trọng Số (Pugh Matrix)</h1>
+<p class="intro">Định lượng các lựa chọn khó khăn bằng cách gán trọng số cho từng tiêu chí đánh giá cốt lõi.</p>
 </header>
-<p>Ví dụ chọn không gian tổ chức workshop. Điểm mỗi tiêu chí từ 1 đến 5.</p>
-<table>
+<div class="decision-winner-banner">
+<div>
+<div class="decision-winner-title">Phương án tối ưu có điểm cao nhất</div>
+<span class="muted" style="font-size:12px">Tính toán tự động theo tổng điểm có trọng số: Σ (Điểm × Trọng số)</span>
+</div>
+<div class="decision-winner-name" id="winnerBadge">Phương án A</div>
+</div>
+<table id="matrixTable">
+<thead>
 <tr>
-<th>Tiêu chí</th>
-<th>Trọng số</th>
-<th>Phòng A</th>
-<th>Phòng B</th>
+<th style="width:34%">Tiêu chí đánh giá</th>
+<th style="width:14%">Trọng số (1-5)</th>
+<th style="width:22%"><input value="Phương án A: Local-First" class="opt-header-input" id="optAHeader"></th>
+<th style="width:22%"><input value="Phương án B: Pure Cloud" class="opt-header-input" id="optBHeader"></th>
+<th style="width:8%"></th>
+</tr>
+</thead>
+<tbody id="matrixRows">
+<tr>
+<td><input value="Tốc độ phản hồi &amp; Trải nghiệm (UX)" class="crit-name"></td>
+<td><input type="number" min="1" max="5" value="5" class="crit-weight"></td>
+<td><input type="number" min="1" max="5" value="5" class="crit-score-a"></td>
+<td><input type="number" min="1" max="5" value="3" class="crit-score-b"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 <tr>
-<td>Chi phí</td>
-<td>
-<input id="weight" data-weight aria-label="Trọng số chi phí" type="number" min="1" max="5" value="3">
-</td>
-<td><input aria-label="Điểm phương án" type="number" min="1" max="5" value="5" data-score></td>
-<td><input aria-label="Điểm phương án" type="number" min="1" max="5" value="3" data-score></td>
+<td><input value="Khả năng hoạt động ngoại tuyến (Offline 0ms)" class="crit-name"></td>
+<td><input type="number" min="1" max="5" value="5" class="crit-weight"></td>
+<td><input type="number" min="1" max="5" value="5" class="crit-score-a"></td>
+<td><input type="number" min="1" max="5" value="1" class="crit-score-b"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 <tr>
-<td>Di chuyển</td>
-<td><input aria-label="Trọng số tiêu chí" type="number" min="1" max="5" value="2" data-weight></td>
-<td><input aria-label="Điểm phương án" type="number" min="1" max="5" value="3" data-score></td>
-<td><input aria-label="Điểm phương án" type="number" min="1" max="5" value="5" data-score></td>
+<td><input value="Chi phí máy chủ &amp; Hạ tầng Cloud" class="crit-name"></td>
+<td><input type="number" min="1" max="5" value="4" class="crit-weight"></td>
+<td><input type="number" min="1" max="5" value="5" class="crit-score-a"></td>
+<td><input type="number" min="1" max="5" value="2" class="crit-score-b"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
 <tr>
-<td>Thiết bị</td>
-<td><input aria-label="Trọng số tiêu chí" type="number" min="1" max="5" value="2" data-weight></td>
-<td><input aria-label="Điểm phương án" type="number" min="1" max="5" value="3" data-score></td>
-<td><input aria-label="Điểm phương án" type="number" min="1" max="5" value="4" data-score></td>
+<td><input value="Độ phức tạp khi đồng bộ đa thiết bị" class="crit-name"></td>
+<td><input type="number" min="1" max="5" value="3" class="crit-weight"></td>
+<td><input type="number" min="1" max="5" value="3" class="crit-score-a"></td>
+<td><input type="number" min="1" max="5" value="4" class="crit-score-b"></td>
+<td><button type="button" class="remove-row">Xóa</button></td>
 </tr>
+</tbody>
+<tfoot>
+<tr style="background:var(--soft);font-weight:700">
+<td>TỔNG ĐIỂM CÓ TRỌNG SỐ</td>
+<td id="totalWeightCell">17</td>
+<td id="totalScoreACell" style="font-size:16px;text-align:center">0</td>
+<td id="totalScoreBCell" style="font-size:16px;text-align:center">0</td>
+<td></td>
+</tr>
+</tfoot>
 </table>
-<output id="scores" class="result" aria-live="polite">
-</output>
-<p class="hint">Điểm chỉ hỗ trợ thảo luận; hãy kiểm tra dữ kiện trước khi ra quyết định.</p>
+<div style="margin:10px 0 20px">
+<button type="button" id="addCritBtn">+ Thêm tiêu chí đánh giá</button>
+</div>
 <section class="reflection">
-<h2>Ghi chú của bạn</h2>
-<textarea aria-label="Ghi chú của bạn" placeholder="Điều cần nhớ, cách áp dụng hoặc bước tiếp theo…">
-</textarea>
+<h2>Lý do lựa chọn &amp; Ràng buộc phi chức năng</h2>
+<textarea aria-label="Lý do lựa chọn" placeholder="Ghi lại các lý do định tính bổ sung cho bảng điểm số trên…"></textarea>
 </section>
 <footer>
-<span>EruSentia · Bộ mẫu thực hành</span>
-<span>Dữ liệu minh họa · Tương tác ngay trong tài liệu</span>
+<span>EruSentia · Ma trận quyết định có trọng số</span>
+<span>Lượng hóa quyết định · 100% Ngoại tuyến</span>
 </footer>
-</main><script>
-function calc(){let a=0,b=0;for(const row of document.querySelectorAll('tr')){const w=row.querySelector('[data-weight]');if(!w)continue;const inputs=[...row.querySelectorAll('input')];if(inputs.some(input=>!input.value||!input.checkValidity())){document.querySelector('#scores').textContent='Nhập trọng số và điểm từ 1 đến 5.';return}const scores=row.querySelectorAll('[data-score]');a+=Number(w.value)*Number(scores[0].value);b+=Number(w.value)*Number(scores[1].value)}document.querySelector('#scores').textContent='Phòng A: '+a+' điểm · Phòng B: '+b+' điểm'}document.querySelectorAll('input').forEach(input=>input.addEventListener('input',calc));calc();
-</script></html>
+</main>
+<script>
+function calculateMatrix(){
+const rows=document.querySelectorAll('#matrixRows tr');
+let totalW=0,scoreA=0,scoreB=0;
+rows.forEach(r=>{
+const w=Math.max(1,Math.min(5,Number(r.querySelector('.crit-weight').value)||1));
+const a=Math.max(1,Math.min(5,Number(r.querySelector('.crit-score-a').value)||1));
+const b=Math.max(1,Math.min(5,Number(r.querySelector('.crit-score-b').value)||1));
+totalW+=w;
+scoreA+=w*a;
+scoreB+=w*b;
+});
+document.querySelector('#totalWeightCell').textContent=totalW;
+const cellA=document.querySelector('#totalScoreACell');
+const cellB=document.querySelector('#totalScoreBCell');
+cellA.textContent=scoreA+' điểm';
+cellB.textContent=scoreB+' điểm';
+const nameA=document.querySelector('#optAHeader').value.trim()||'Phương án A';
+const nameB=document.querySelector('#optBHeader').value.trim()||'Phương án B';
+const badge=document.querySelector('#winnerBadge');
+if(scoreA>scoreB){
+badge.textContent='🏆 '+nameA+' ('+scoreA+' điểm)';
+cellA.className='winner-cell';cellB.className='';
+}else if(scoreB>scoreA){
+badge.textContent='🏆 '+nameB+' ('+scoreB+' điểm)';
+cellB.className='winner-cell';cellA.className='';
+}else{
+badge.textContent='⚖️ Hai phương án hòa điểm ('+scoreA+' điểm)';
+cellA.className='';cellB.className='';
+}
+}
+document.querySelector('#addCritBtn').onclick=()=>{
+const tbody=document.querySelector('#matrixRows');
+const tr=document.createElement('tr');
+tr.innerHTML='<td><input value="Tiêu chí mới" class="crit-name"></td><td><input type="number" min="1" max="5" value="3" class="crit-weight"></td><td><input type="number" min="1" max="5" value="3" class="crit-score-a"></td><td><input type="number" min="1" max="5" value="3" class="crit-score-b"></td><td><button type="button" class="remove-row">Xóa</button></td>';
+tbody.appendChild(tr);
+calculateMatrix();
+};
+document.querySelector('#matrixTable').addEventListener('click',e=>{
+if(e.target.classList.contains('remove-row')){
+e.target.closest('tr')?.remove();
+calculateMatrix();
+}
+});
+document.querySelector('#matrixTable').addEventListener('input',calculateMatrix);
+calculateMatrix();
+</script>
+</html>

@@ -72,7 +72,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/ke-hoach-tuan.html"
     },
@@ -100,7 +103,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/ghi-chep-cornell.html"
     },
@@ -125,10 +131,14 @@
         "allowHeightResize": false,
         "guide": "1. Điều chỉnh khoản chi, số lượng và đơn giá; thêm dòng và theo dõi tổng dự toán.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
         "sharing": {
-          "license": "MIT",
-          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
-          "permissionConfirmed": true
-        }
+          "license": "CC-BY-4.0",
+          "attribution": "Xưởng dữ liệu · EruSentia Pro Creator",
+          "permissionConfirmed": true,
+          "sourceUrl": "https://erusentia.dev/templates/ngan-sach"
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/ngan-sach-workshop.html"
     },
@@ -157,7 +167,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "semi",
+        "fitMode": "fit-template",
+        "defaultWidth": "680px"
       },
       "htmlFile": "templates/the-on-tap-web.html"
     },
@@ -185,7 +198,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/nhip-doc-tuan.html"
     },
@@ -210,10 +226,14 @@
         "allowHeightResize": false,
         "guide": "1. Điều chỉnh trọng số, đối chiếu điểm số và ghi lại lý do chọn phương án.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
         "sharing": {
-          "license": "MIT",
-          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
-          "permissionConfirmed": true
-        }
+          "license": "CC-BY-4.0",
+          "attribution": "Xưởng dữ liệu · Studio Quyết định Thông minh",
+          "permissionConfirmed": true,
+          "sourceUrl": "https://erusentia.dev/templates/matrix"
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/ma-tran-quyet-dinh.html"
     },
@@ -241,7 +261,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/bien-ban-hop.html"
     },
@@ -269,7 +292,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/checklist-ban-giao.html"
     },
@@ -297,7 +323,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "semi",
+        "fitMode": "fit-template",
+        "defaultWidth": "680px"
       },
       "htmlFile": "templates/nhip-thoi-quen.html"
     },
@@ -322,10 +351,14 @@
         "allowHeightResize": false,
         "guide": "1. Ghi mục tiêu, bắt đầu/tạm dừng đồng hồ và nhìn lại kết quả sau phiên tập trung.\n2. Lưu bản sao và chèn vào ghi chú để sử dụng dữ liệu của bạn.\n3. Lưu ghi chú trước khi đóng. HTML xuất từ App giữ tương tác; mẫu không gửi dữ liệu ra mạng.",
         "sharing": {
-          "license": "MIT",
-          "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
-          "permissionConfirmed": true
-        }
+          "license": "CC-BY-4.0",
+          "attribution": "Góc làm việc · Pomodoro Productivity Studio",
+          "permissionConfirmed": true,
+          "sourceUrl": "https://erusentia.dev/templates/focus"
+        },
+        "level": "semi",
+        "fitMode": "fit-template",
+        "defaultWidth": "680px"
       },
       "htmlFile": "templates/phien-tap-trung.html"
     },
@@ -353,7 +386,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "semi",
+        "fitMode": "fit-template",
+        "defaultWidth": "680px"
       },
       "htmlFile": "templates/tu-kiem-tra-web.html"
     },
@@ -381,7 +417,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/lo-trinh-workshop.html"
     },
@@ -409,7 +448,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "full",
+        "fitMode": "fit-page",
+        "defaultWidth": "100%"
       },
       "htmlFile": "templates/so-rui-ro.html"
     },
@@ -437,7 +479,10 @@
           "license": "MIT",
           "attribution": "EruSentia — bộ mẫu thực hành do nhóm biên soạn",
           "permissionConfirmed": true
-        }
+        },
+        "level": "semi",
+        "fitMode": "fit-template",
+        "defaultWidth": "680px"
       },
       "htmlFile": "templates/chia-chi-phi.html"
     }
