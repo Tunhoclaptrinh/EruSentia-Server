@@ -1,3 +1,4 @@
+import { resourceSettings, ResourceSettings } from './resources/resource-settings';
 import { accountEmailConfig } from "./auth/account-email.config";
 import {
   serviceControlSettings,
@@ -7,6 +8,7 @@ import { randomBytes } from "node:crypto";
 import { readDatabaseSettings } from "./infrastructure/database/settings";
 
 export interface AppConfig {
+  resources: ResourceSettings;
   host: string;
   port: number;
   store: "memory" | "postgres";
@@ -127,6 +129,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   if (!secret && env.NODE_ENV === "production")
     throw new Error("JWT_SECRET is required in production");
   return {
+    resources: resourceSettings(env),
     host: env.HOST ?? "127.0.0.1",
     port: integer(env.PORT, 3001, "PORT"),
     store,

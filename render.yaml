@@ -57,3 +57,12 @@ services:
         value: "20971520"
       - key: TRUST_PROXY_HOPS
         value: "0"
+
+      - key: RESOURCE_GATEWAY_ENABLED
+        value: "true"
+      - key: RESOURCE_TARGET_ORIGINS
+        value: https://erusentia-api.onrender.com
+      - key: RESOURCE_FREE_DAILY_LIMIT
+        value: "30"
+      - key: RESOURCE_PREMIUM_DAILY_LIMIT
+        value: "500"

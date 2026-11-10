@@ -423,22 +423,25 @@ export class WorkspacesService implements OnModuleInit, OnModuleDestroy {
 
     return this.db.transaction(async (manager) => {
       const invites = await manager.query<
-        { id: string; workspace_id: string; role: WorkspaceRole; expires_at: Date; accepted_at: Date | null }[]
+        { id: string; workspace_id: string; email: string; role: WorkspaceRole; expires_at: Date; accepted_at: Date | null }[]
       >(
-        "SELECT id, workspace_id, role, expires_at, accepted_at FROM workspace_invites WHERE token = $1 FOR UPDATE",
+        "SELECT i.id, i.workspace_id, i.email, i.role, i.expires_at, i.accepted_at FROM workspace_invites i INNER JOIN workspaces w ON w.id = i.workspace_id WHERE i.token = $1 AND w.deleted_at IS NULL FOR UPDATE OF i",
         [token],
       );
       if (!invites.length) throw new NotFoundException("Invalid or nonexistent invitation token");
 
       const invite = invites[0];
       if (invite.accepted_at) throw new ConflictException("Invitation has already been used");
+      if (invite.email.toLowerCase() !== user.email.toLowerCase()) {
+        throw new ForbiddenException("Invitation belongs to another email address");
+      }
       if (new Date() > invite.expires_at) throw new BadRequestException("Invitation token has expired");
 
-      // Insert or update member
+      // An invitation must never downgrade an existing member, especially the last owner.
       await manager.query(
         `INSERT INTO workspace_members (workspace_id, user_id, role)
          VALUES ($1, $2, $3)
-         ON CONFLICT (workspace_id, user_id) DO UPDATE SET role = EXCLUDED.role`,
+         ON CONFLICT (workspace_id, user_id) DO NOTHING`,
         [invite.workspace_id, user.id, invite.role],
       );
 

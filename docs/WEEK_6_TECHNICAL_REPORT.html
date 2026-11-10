@@ -1,18 +1,12 @@
 <!--
 ---
-title: "Báo Cáo Nghiệm Thu Kỹ Thuật TYP 2026 Tuần 6"
+title: "Tuần 6 · API, thông báo &amp; không gian làm việc"
 note-id: "typ-2026-week-6-report"
-updated: "2026-11-10T04:57:32.240Z"
+updated: "2026-11-10T08:40:23.442Z"
 theme: "light"
-tags: ["du-an", "typ-2026", "report", "outbox", "workspaces", "architecture", "status:completed", "priority:high"]
-status: "completed"
-priority: "high"
-_width: "standard"
-_margins: '{"leftMargin":76,"rightMargin":76,"topMargin":76,"bottomMargin":76,"firstLineIndent":0}'
+_width: "wide"
+_paper_mode: "off"
 _document_style: "native-v1"
-_paper_size: "A4"
-_paper_orientation: "portrait"
-_heading_styles: '{"preset":"custom","autoNumbering":false,"h1":{"fontSize":"30px","fontWeight":"700","color":"#312e81","lineHeight":"1.3","marginTop":"16px","marginBottom":"12px","borderBottom":"none","paddingBottom":"0px"},"h2":{"fontSize":"23px","fontWeight":"700","color":"#172033","lineHeight":"1.3","marginTop":"28px","marginBottom":"12px","borderBottom":"1px solid #e2e8f0","paddingBottom":"8px"},"h3":{"fontSize":"19px","fontWeight":"700","color":"#172033","lineHeight":"1.3","marginTop":"24px","marginBottom":"10px","borderBottom":"none","paddingBottom":"0px"},"h4":{"fontSize":"17px","fontWeight":"700","color":"#172033","lineHeight":"1.3","marginTop":"20px","marginBottom":"8px","borderBottom":"none","paddingBottom":"0px"}}'
 generator: "EruSentia Pro"
 app-version: "1.1.0-beta.2"
 engine: "EruSentia Flow Layout Engine"
@@ -21,7 +15,7 @@ engine-build: "flow-product-v3.3.1"
 ---
 -->
 <!DOCTYPE html>
-<html lang="vi" data-eru-document-style="native-v1" data-theme="light" data-paper-mode="separated" data-eru-version="1.1.0-beta.2" data-eru-engine="EruSentia Flow Layout Engine" data-eru-engine-version="3.3.1">
+<html lang="vi"  data-eru-document-style="native-v1" data-theme="light" data-paper-mode="off" data-eru-version="1.1.0-beta.2" data-eru-engine="EruSentia Flow Layout Engine" data-eru-engine-version="3.3.1">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,14 +26,14 @@ engine-build: "flow-product-v3.3.1"
   <meta name="eru-engine-version" content="3.3.1">
   <meta name="eru-engine-build" content="flow-product-v3.3.1">
   <meta name="eru-note-id" content="typ-2026-week-6-report">
-  <meta name="eru-updated-at" content="2026-11-10T04:57:32.240Z">
-  <meta name="brain-tags" content="du-an, typ-2026, report, outbox, workspaces, architecture">
-  <title>Báo Cáo Nghiệm Thu Kỹ Thuật Tuần 6</title>
+  <meta name="eru-updated-at" content="2026-11-10T08:40:23.442Z">
+  <meta name="brain-tags" content="">
+  <meta name="brain-links" content="">
+  <title>Tuần 6 · API, thông báo &amp; không gian làm việc</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style data-eru-runtime="styles">
-
+    <style data-eru-runtime="styles">
 @charset "UTF-8";
 .tiptap ul:not([data-type=taskList]), .eru-page-body ul:not([data-type=taskList]), #eru-source-content ul:not([data-type=taskList]), .eru-standalone-content ul:not([data-type=taskList]) {
   padding-left: 1.5em;
@@ -477,10 +471,10 @@ engine-build: "flow-product-v3.3.1"
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 14px;
-      --paper-margin-top: 76px;
-      --paper-margin-bottom: 76px;
-      --paper-margin-left: 76px;
-      --paper-margin-right: 76px;
+      --paper-margin-top: 96px;
+      --paper-margin-bottom: 96px;
+      --paper-margin-left: 96px;
+      --paper-margin-right: 96px;
       --paper-first-line-indent: 0px;
       --paper-page-width: 793.7007874015749px;
       --paper-page-height: 1122.5196850393702px;
@@ -507,10 +501,10 @@ engine-build: "flow-product-v3.3.1"
     }
     * { box-sizing: border-box; }
     body {
-      max-width: var(--paper-page-width, 794px);
+      max-width: none;
       width: 100%;
       margin: 0 auto;
-      padding: 48px 56px;
+      padding: 32px clamp(20px, 3vw, 48px) 96px;
       font-family: var(--font-main);
       color: var(--text-primary);
       background-color: var(--paper-bg, var(--bg-page));
@@ -1708,10 +1702,28 @@ engine-build: "flow-product-v3.3.1"
       }
     }
 
+    @media (max-width: 600px) {
+      .eru-standalone-fab-container {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        width: auto;
+        max-width: calc(100vw - 24px);
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2px;
+        border-radius: 14px;
+        padding: 6px;
+      }
+      .eru-standalone-fab-container .eru-fab-btn { padding: 8px; min-height: 34px; }
+      .eru-standalone-fab-container .eru-fab-btn > span { display: none; }
+      .eru-standalone-fab-container .eru-fab-divider { margin: 0 2px; flex-shrink: 0; }
+    }
+
     @page {
       size: 210mm 297mm;
       /* 96 CSS px = 1 inch. Preserve fractional millimetres for exact print geometry. */
-      margin: 20.108333mm 20.108333mm 20.108333mm 20.108333mm;
+      margin: 25.400000mm 25.400000mm 25.400000mm 25.400000mm;
     }
     @media print {
       /* @page owns the physical margins. Screen paper padding must not add a
@@ -1810,1242 +1822,1167 @@ engine-build: "flow-product-v3.3.1"
         font-size: 9.5pt !important;
       }
     }
-  
   </style>
-</head>
-<body class="eru-standalone-content eru-native-document">
+<style data-eru-runtime="native-document">.eru-native-document {
+  font-size: var(--eru-document-font-size, 16.8px);
+  font-family: var(--eru-document-font-family, Inter, system-ui, sans-serif);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0;
+  line-height: 1.75;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.eru-native-document h1:first-child,
+.eru-native-document h2:first-child,
+.eru-native-document h3:first-child,
+.eru-native-document h4:first-child,
+.eru-native-document h5:first-child,
+.eru-native-document h6:first-child {
+  margin-top: 0 !important;
+}
+.eru-native-document h1 {
+  font-size: var(--h1-font-size, 2rem) !important;
+  font-weight: var(--h1-font-weight, 700) !important;
+  color: var(--h1-color, var(--text-primary)) !important;
+  font-family: var(--h1-font-family, inherit) !important;
+  line-height: var(--h1-line-height, 1.25) !important;
+  margin-top: var(--h1-margin-top, 2em) !important;
+  margin-bottom: var(--h1-margin-bottom, 0.5em) !important;
+  border-bottom: var(--h1-border-bottom, none) !important;
+  padding-bottom: var(--h1-padding-bottom, 0px) !important;
+  text-transform: var(--h1-text-transform, none) !important;
+  letter-spacing: var(--h1-letter-spacing, -0.02em) !important;
+}
+.eru-native-document h2 {
+  font-size: var(--h2-font-size, 1.6rem) !important;
+  font-weight: var(--h2-font-weight, 700) !important;
+  color: var(--h2-color, var(--text-primary)) !important;
+  font-family: var(--h2-font-family, inherit) !important;
+  line-height: var(--h2-line-height, 1.25) !important;
+  margin-top: var(--h2-margin-top, 2em) !important;
+  margin-bottom: var(--h2-margin-bottom, 0.5em) !important;
+  border-bottom: var(--h2-border-bottom, none) !important;
+  padding-bottom: var(--h2-padding-bottom, 0px) !important;
+  text-transform: var(--h2-text-transform, none) !important;
+  letter-spacing: var(--h2-letter-spacing, -0.02em) !important;
+}
+.eru-native-document h3 {
+  font-size: var(--h3-font-size, 1.3rem) !important;
+  font-weight: var(--h3-font-weight, 600) !important;
+  color: var(--h3-color, var(--text-primary)) !important;
+  font-family: var(--h3-font-family, inherit) !important;
+  line-height: var(--h3-line-height, 1.25) !important;
+  margin-top: var(--h3-margin-top, 2em) !important;
+  margin-bottom: var(--h3-margin-bottom, 0.5em) !important;
+  border-bottom: var(--h3-border-bottom, none) !important;
+  padding-bottom: var(--h3-padding-bottom, 0px) !important;
+  text-transform: var(--h3-text-transform, none) !important;
+  letter-spacing: var(--h3-letter-spacing, -0.01em) !important;
+}
+.eru-native-document h4 {
+  font-size: var(--h4-font-size, 1.15rem) !important;
+  font-weight: var(--h4-font-weight, 600) !important;
+  color: var(--h4-color, var(--text-secondary)) !important;
+  font-family: var(--h4-font-family, inherit) !important;
+  line-height: var(--h4-line-height, 1.35) !important;
+  margin-top: var(--h4-margin-top, 1.4em) !important;
+  margin-bottom: var(--h4-margin-bottom, 0.4em) !important;
+  border-bottom: var(--h4-border-bottom, none) !important;
+  padding-bottom: var(--h4-padding-bottom, 0px) !important;
+  text-transform: var(--h4-text-transform, none) !important;
+  letter-spacing: var(--h4-letter-spacing, 0em) !important;
+}
+.eru-native-document h5 {
+  font-size: var(--h5-font-size, 1.05rem) !important;
+  font-weight: var(--h5-font-weight, 600) !important;
+  color: var(--h5-color, var(--text-secondary)) !important;
+  font-family: var(--h5-font-family, inherit) !important;
+  line-height: var(--h5-line-height, 1.4) !important;
+  margin-top: var(--h5-margin-top, 1.2em) !important;
+  margin-bottom: var(--h5-margin-bottom, 0.3em) !important;
+  border-bottom: var(--h5-border-bottom, none) !important;
+  padding-bottom: var(--h5-padding-bottom, 0px) !important;
+  text-transform: var(--h5-text-transform, none) !important;
+  letter-spacing: var(--h5-letter-spacing, 0em) !important;
+}
+.eru-native-document h6 {
+  font-size: var(--h6-font-size, 0.95rem) !important;
+  font-weight: var(--h6-font-weight, 600) !important;
+  color: var(--h6-color, var(--text-muted)) !important;
+  font-family: var(--h6-font-family, inherit) !important;
+  line-height: var(--h6-line-height, 1.4) !important;
+  margin-top: var(--h6-margin-top, 1.1em) !important;
+  margin-bottom: var(--h6-margin-bottom, 0.3em) !important;
+  border-bottom: var(--h6-border-bottom, none) !important;
+  padding-bottom: var(--h6-padding-bottom, 0px) !important;
+  text-transform: var(--h6-text-transform, uppercase) !important;
+  letter-spacing: var(--h6-letter-spacing, 0.04em) !important;
+}
+.eru-native-document p {
+  line-height: inherit;
+  margin: 1em 0;
+}
+.eru-native-document ul:not([data-type=taskList]) li p, .eru-native-document ol li p {
+  margin: 0;
+  line-height: 1.6;
+}
+.eru-native-document table:not(.eru-spreadsheet-block__table) {
+  font-size: inherit;
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 1.25em 0;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.12));
+  border-radius: var(--radius-md, 6px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+.eru-native-document table:not(.eru-spreadsheet-block__table) td,
+.eru-native-document table:not(.eru-spreadsheet-block__table) th {
+  min-width: 65px;
+  border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
+  padding: 7px 10px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.eru-native-document table:not(.eru-spreadsheet-block__table) td > p,
+.eru-native-document table:not(.eru-spreadsheet-block__table) th > p {
+  margin: 0 !important;
+  min-height: 1.3em;
+}
+.eru-native-document table:not(.eru-spreadsheet-block__table) td > *,
+.eru-native-document table:not(.eru-spreadsheet-block__table) th > * {
+  margin-bottom: 0 !important;
+}
+.eru-native-document table:not(.eru-spreadsheet-block__table) th {
+  font-weight: 600;
+  text-align: left;
+  background-color: var(--bg-secondary, rgba(0, 0, 0, 0.035));
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-subtle, rgba(0, 0, 0, 0.14));
+}
 
-<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjY0IDY0IDg5NiA4OTYiIHdpZHRoPSI0MHB4IiBoZWlnaHQ9IjQwcHgiIGZpbGw9IiM0ZjQ2ZTUiIHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7IGZsZXgtc2hyaW5rOiAwOyAiIGFyaWEtaGlkZGVuPSJ0cnVlIiBmb2N1c2FibGU9ImZhbHNlIj48cGF0aCBkPSJNOTI2LjggMzk3LjFsLTM5Ni0yODhhMzEuODEgMzEuODEgMCAwMC0zNy42IDBsLTM5NiAyODhhMzEuOTkgMzEuOTkgMCAwMC0xMS42IDM1LjhsMTUxLjMgNDY2YTMyIDMyIDAgMDAzMC40IDIyLjFoNDg5LjVjMTMuOSAwIDI2LjEtOC45IDMwLjQtMjIuMWwxNTEuMy00NjZjNC4yLTEzLjItLjUtMjcuNi0xMS43LTM1Ljh6TTgzOC42IDQxN2wtOTguNSAzMi0yMDAtMTQ0LjdWMTk5LjlMODM4LjYgNDE3ek00NjYgNTY3LjJsLTg5LjEgMTIyLjMtNTUuMi0xNjkuMkw0NjYgNTY3LjJ6bS0xMTYuMy05Ni44TDQ4NCAzNzMuM3YxNDAuOGwtMTM0LjMtNDMuN3pNNTEyIDU5OS4ybDkzLjkgMTI4LjlINDE4LjFMNTEyIDU5OS4yem0yOC4xLTIyNS45bDEzNC4yIDk3LjFMNTQwLjEgNTE0VjM3My4zek01NTggNTY3LjJsMTQ0LjMtNDYuOS01NS4yIDE2OS4yTDU1OCA1NjcuMnptLTc0LTM2Ny4zdjEwNC40TDI4My45IDQ0OWwtOTguNS0zMkw0ODQgMTk5Ljl6TTE2OS4zIDQ3MC44bDg2LjUgMjguMSA4MC40IDI0Ni40LTUzLjggNzMuOS0xMTMuMS0zNDguNHpNMzI3LjEgODUzbDUwLjMtNjloMjY5LjNsNTAuMyA2OUgzMjcuMXptNDE0LjUtMzMuOGwtNTMuOC03My45IDgwLjQtMjQ2LjQgODYuNS0yOC4xLTExMy4xIDM0OC40eiI+PC9wYXRoPjwvc3ZnPg==" alt="Biểu tượng mục" data-width="40px" data-align="left" style="width:40px;float:left;margin:6px 16px 12px 0">
-<p><strong><span style="color:#4f46e5">DỰ ÁN / TYP 2026 TUẦN 6</span></strong></p>
-<h1>Báo Cáo Nghiệm Thu Kỹ Thuật Tuần 6</h1>
-<p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
-  Nghiệm thu toàn diện 2 tính năng khó của hệ thống EruSentia: <strong>Hệ thống Thông báo Bất đồng bộ (Transactional Outbox & RabbitMQ Quorum Queue)</strong> và <strong>Không gian làm việc dùng chung (Workspaces & Fine-grained RBAC)</strong>. Toàn bộ mã nguồn đã được tách nhánh độc lập <code>feat/typ-week6-advanced-features</code>, vượt qua <strong>29/29 bài test</strong> với zero-regression.
-</p>
-
-<!-- TỔNG QUAN TIÊU CHUẨN TUẦN 6 -->
-<h2>1. Tổng quan Tiêu chuẩn Đánh giá TYP Tuần 6</h2>
-<p>Đề bài Tuần 6 yêu cầu tích hợp tối thiểu 1–2 chức năng chuyên sâu kết hợp đa công nghệ: <em>Database, Authentication, Message Queue, Redis Caching, và Pagination</em>. EruSentia giải quyết trọn vẹn cả 5 khía cạnh:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="width: 22%;">Thành phần Kỹ thuật</th>
-      <th style="width: 26%;">Yêu cầu Đề bài TYP</th>
-      <th style="width: 38%;">Giải pháp Triển khai trong EruSentia</th>
-      <th style="width: 14%; text-align: center;">Đánh giá</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Database & Migration</strong></td>
-      <td>Transaction, schema migration, composite unique, trigger versioning</td>
-      <td>PostgreSQL 16, Checksum Journal (Advisory Locks), Auto Revision Trigger, Composite Index</td>
-      <td style="text-align: center;"><span style="background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">100% ĐẠT</span></td>
-    </tr>
-    <tr>
-      <td><strong>Message Queue</strong></td>
-      <td>Outbox pattern, xử lý bất đồng bộ, retry, dead-letter queue</td>
-      <td>RabbitMQ Quorum Queues, DLQ Routing, Outbox Dispatcher với <code>FOR UPDATE SKIP LOCKED</code></td>
-      <td style="text-align: center;"><span style="background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">100% ĐẠT</span></td>
-    </tr>
-    <tr>
-      <td><strong>Redis Caching</strong></td>
-      <td>Tăng/giảm counter nguyên tử, invalidation, zero-staleness</td>
-      <td>Redis Unread Cache (<code>INCR</code> / <code>DECRBY</code>), Invalidation nhất quán khi đánh dấu đã đọc</td>
-      <td style="text-align: center;"><span style="background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">100% ĐẠT</span></td>
-    </tr>
-    <tr>
-      <td><strong>Pagination</strong></td>
-      <td>Cursor-based pagination, tie-breaking, không sót dữ liệu</td>
-      <td>Compound Cursor <code>(created_at, id)</code> mã hóa Base64URL, chỉ mục B-tree DESC tối ưu</td>
-      <td style="text-align: center;"><span style="background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">100% ĐẠT</span></td>
-    </tr>
-    <tr>
-      <td><strong>Authentication & RBAC</strong></td>
-      <td>Phân quyền đa cấp, phòng chống tấn công đồng thời, audit log</td>
-      <td>JWT AuthGuard, RBAC (Owner/Editor/Viewer), Pessimistic Lock chống <em>Last Owner Demotion</em></td>
-      <td style="text-align: center;"><span style="background: rgba(16,185,129,0.15); color: #10b981; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">100% ĐẠT</span></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- KIẾN TRÚC OUTBOX & RABBITMQ -->
-<h2>2. Kiến trúc Hệ thống Thông báo Bất đồng bộ (Outbox Pattern)</h2>
-
-<blockquote class="callout" data-callout="important" style="border-left: 4px solid #6366f1; background: var(--accent-subtle); padding: 14px 18px; margin: 18px 0; border-radius: 0 8px 8px 0;">
-  <p><strong>Bảo đảm Tính Nhất quán (Atomicity) với Transactional Outbox:</strong> Khi tác giả cập nhật template, dữ liệu phiên bản mới và sự kiện <code>template.version_published</code> được ghi vào bảng <code>message_outbox</code> trong <strong>CÙNG MỘT TRANSACTION POSTGRESQL</strong>. Nếu RabbitMQ bị sập hoặc nghẽn mạng, giao dịch của người dùng không bao giờ bị rollback hay lỗi chắp vá.</p>
-</blockquote>
-
-<!-- SVG Kiến trúc Outbox -->
-<div style="background: var(--bg-editor); border: 1px solid var(--border-normal); border-radius: 10px; padding: 20px; margin: 20px 0; text-align: center;">
-  <svg viewBox="0 0 860 260" style="max-width: 100%; height: auto; font-family: -apple-system, sans-serif;">
-    <defs>
-      <linearGradient id="gradPostgres" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.2"/>
-        <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0.1"/>
-      </linearGradient>
-      <linearGradient id="gradRabbit" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#f97316" stop-opacity="0.2"/>
-        <stop offset="100%" stop-color="#c2410c" stop-opacity="0.1"/>
-      </linearGradient>
-      <linearGradient id="gradRedis" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#ef4444" stop-opacity="0.2"/>
-        <stop offset="100%" stop-color="#b91c1c" stop-opacity="0.1"/>
-      </linearGradient>
-      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1"/>
-      </marker>
-    </defs>
-    <!-- Step 1: PostgreSQL Atomic Transaction -->
-    <rect x="20" y="30" width="230" height="200" rx="8" fill="url(#gradPostgres)" stroke="#3b82f6" stroke-width="2"/>
-    <text x="135" y="60" text-anchor="middle" font-weight="700" font-size="14" fill="#1e40af">1. POSTGRES TRANSACTION</text>
-    <rect x="35" y="80" width="200" height="40" rx="4" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
-    <text x="135" y="105" text-anchor="middle" font-size="12" fill="#1e3a8a">UPDATE templates (rev + 1)</text>
-    <rect x="35" y="135" width="200" height="40" rx="4" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
-    <text x="135" y="160" text-anchor="middle" font-size="12" fill="#1e3a8a">INSERT message_outbox</text>
-    <text x="135" y="205" text-anchor="middle" font-size="11" fill="#475569" font-style="italic">COMMIT Atomic Guarantee</text>
-
-    <!-- Arrow 1 to 2 -->
-    <path d="M 250 155 L 305 155" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
-    <text x="278" y="145" text-anchor="middle" font-size="10" fill="#6366f1" font-weight="600">SKIP LOCKED</text>
-
-    <!-- Step 2: RabbitMQ Quorum Queue -->
-    <rect x="315" y="30" width="230" height="200" rx="8" fill="url(#gradRabbit)" stroke="#f97316" stroke-width="2"/>
-    <text x="430" y="60" text-anchor="middle" font-weight="700" font-size="14" fill="#9a3412">2. RABBITMQ QUORUM</text>
-    <rect x="330" y="80" width="200" height="40" rx="4" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
-    <text x="430" y="105" text-anchor="middle" font-size="12" fill="#7c2d12">Exchange: notificationWork</text>
-    <rect x="330" y="135" width="200" height="40" rx="4" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
-    <text x="430" y="160" text-anchor="middle" font-size="12" fill="#7c2d12">Raft Quorum Queue (x-quorum)</text>
-    <text x="430" y="205" text-anchor="middle" font-size="11" fill="#475569" font-style="italic">DLQ: notificationDead</text>
-
-    <!-- Arrow 2 to 3 -->
-    <path d="M 545 155 L 600 155" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
-    <text x="572" y="145" text-anchor="middle" font-size="10" fill="#6366f1" font-weight="600">Fanout</text>
-
-    <!-- Step 3: Worker & Redis Cache -->
-    <rect x="610" y="30" width="230" height="200" rx="8" fill="url(#gradRedis)" stroke="#ef4444" stroke-width="2"/>
-    <text x="725" y="60" text-anchor="middle" font-weight="700" font-size="14" fill="#991b1b">3. CONSUMER & CACHE</text>
-    <rect x="625" y="80" width="200" height="40" rx="4" fill="#ffffff" stroke="#fca5a5" stroke-width="1"/>
-    <text x="725" y="105" text-anchor="middle" font-size="12" fill="#7f1d1d">INSERT notifications (ON CONFLICT)</text>
-    <rect x="625" y="135" width="200" height="40" rx="4" fill="#ffffff" stroke="#fca5a5" stroke-width="1"/>
-    <text x="725" y="160" text-anchor="middle" font-size="12" fill="#7f1d1d">Redis: INCR unread:{user}</text>
-    <text x="725" y="205" text-anchor="middle" font-size="11" fill="#475569" font-style="italic">Idempotent Consumer: 0 Dupes</text>
-  </svg>
-</div>
-
-<h3>2.1. Giải pháp Chống Trùng lặp (Idempotent Consumer Resilience)</h3>
-<p>
-  Trong các hệ thống phân tán, sự cố mạng hoặc khởi động lại Worker có thể dẫn đến việc RabbitMQ giao lại cùng một message (At-least-once Delivery). EruSentia giải quyết bài toán chống trùng bằng 3 tầng phòng vệ:
-</p>
-<ol>
-  <li><strong>Khóa Unique Ràng buộc Kép:</strong> Chỉ mục <code>uq_notifications_recipient_template_revision UNIQUE (recipient_id, template_id, template_revision)</code> ngăn chặn triệt để việc chèn 2 bản ghi thông báo cho cùng một phiên bản mẫu.</li>
-  <li><strong>Thực thi Chèn Bỏ qua Xung đột:</strong> Lệnh <code>INSERT INTO notifications ... ON CONFLICT (recipient_id, template_id, template_revision) DO NOTHING</code>. Khi redelivery xảy ra, số dòng chèn mới luôn trả về chính xác <code>0</code>.</li>
-  <li><strong>Đồng bộ Redis Cache Nguyên tử:</strong> Chỉ tăng bộ đếm <code>unread_count</code> trên Redis khi và chỉ khi bản ghi thực sự được chèn mới (dựa trên <code>rowCount &gt; 0</code>), đảm bảo số lượng badge trên UI luôn tuyệt đối chính xác.</li>
-</ol>
-
-<!-- PHÂN QUYỀN WORKSPACE & LAST OWNER -->
-<h2>3. Phân Quyền Không Gian Làm Việc (Workspaces & RBAC)</h2>
-<p>
-  Tính năng Workspace cho phép người dùng gom nhóm các mẫu, mời thành viên trong nhóm và phân quyền chi tiết theo vai trò:
-</p>
-
-<table>
-  <thead>
-    <tr>
-      <th style="width: 20%;">Vai trò (Role)</th>
-      <th style="width: 25%;">Quyền Quản trị (Admin)</th>
-      <th style="width: 30%;">Quyền Tài nguyên (Templates)</th>
-      <th style="width: 25%;">Giới hạn Bảo mật</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Owner</strong></td>
-      <td>Đổi tên, xóa Workspace, phân quyền Editor/Viewer, mời thành viên</td>
-      <td>Thêm, sửa, xóa tất cả template trong Workspace</td>
-      <td>Phải tuân thủ quy tắc <em>Last Owner Guard</em></td>
-    </tr>
-    <tr>
-      <td><strong>Editor</strong></td>
-      <td>Mời thành viên (vai trò Viewer/Editor)</td>
-      <td>Thêm và sửa template được gán vào Workspace</td>
-      <td>Không thể xóa Workspace hoặc đổi quyền thành viên</td>
-    </tr>
-    <tr>
-      <td><strong>Viewer</strong></td>
-      <td>Chỉ đọc</td>
-      <td>Xem và clone template để sử dụng cá nhân</td>
-      <td>Không thể chỉnh sửa hay ghi đè nội dung</td>
-    </tr>
-  </tbody>
-</table>
-
-<blockquote class="callout" data-callout="warning" style="border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.08); padding: 14px 18px; margin: 18px 0; border-radius: 0 8px 8px 0;">
-  <p><strong>Giải quyết bài toán "The Last Owner Problem":</strong> Khi 2 request hạ quyền hoặc rời nhóm của 2 Owner diễn ra đồng thời, nếu chỉ dùng <code>SELECT COUNT(*)</code> thông thường sẽ gặp lỗi <em>Race Condition</em> dẫn tới Workspace không còn ai quản trị. EruSentia áp dụng khóa bi quan PostgreSQL: <code>SELECT role FROM workspace_members WHERE workspace_id = $1 AND role = 'owner' FOR UPDATE</code>. Mọi request thứ hai buộc phải đợi giao dịch đầu tiên hoàn tất và bị chặn với mã <code>409 CONFLICT</code>.</p>
-</blockquote>
-
-<!-- CÔNG CỤ TƯƠNG TÁC 1: SWAGGER CONSOLE -->
-<h2>4. Công cụ Tương tác 1: Bảng Điều Khiển Swagger & API Console Trực Tiếp</h2>
-<p>
-  Thay vì tài liệu tĩnh, đây là thành phần công cụ <strong>EruSentia Native Tool Widget</strong> cho phép bạn bấm kiểm tra và gửi HTTP Request thực tế đến Sentia Hub Backend đang chạy tại máy cục bộ (<code>http://127.0.0.1:3001</code>):
-</p>
-
-<div class="embedded-template eru-tool-widget" data-eru-tool="swagger-console" data-eru-template-block="true" data-eru-template-level="semi" style="margin: 20px 0; border: 1px solid var(--border-normal); border-radius: 10px; padding: 20px; background: var(--bg-editor);">
-  <header class="eru-tool-header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--accent); padding-bottom: 12px; margin-bottom: 16px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <span style="font-size: 1.4rem;">⚡</span>
-      <h3 style="margin: 0; font-size: 1.15rem; color: var(--text-primary);">Sentia Hub API Live Tester</h3>
-    </div>
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span id="cfg-token-status" style="font-size: 0.78rem; font-weight: 700; background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 2px 10px; border-radius: 12px;">Chưa xác thực</span>
-    </div>
-  </header>
-
-  <!-- Controls Bar -->
-  <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 16px; background: var(--bg-app); padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">
-    <label class="eru-tool-field" style="flex: 1; min-width: 220px;">
-      <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Máy chủ API (Base URL)</span>
-      <input type="text" id="cfg-api-url" value="http://127.0.0.1:3001" style="font-family: monospace; font-size: 13px;">
-    </label>
-    <label class="eru-tool-field" style="width: 200px;">
-      <span style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Tài khoản Demo</span>
-      <select id="cfg-account" style="font-size: 13px;">
-        <option value="creator">Creator (creator@erusentia.test)</option>
-        <option value="user">User (user@erusentia.test)</option>
-        <option value="admin">Admin (admin@erusentia.test)</option>
-      </select>
-    </label>
-    <button type="button" class="eru-btn" style="background: #4f46e5; color: white; padding: 8px 16px; font-weight: 600; border-radius: 6px; border: none; cursor: pointer;" onclick="appQuickLogin()">
-      🔑 Đăng nhập Lấy JWT
-    </button>
-  </div>
-
-  <!-- Endpoints Quick Ping Grid -->
-  <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px;"><strong>Chọn nhanh Endpoint cần kiểm tra:</strong></p>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 18px;">
-    <button type="button" style="text-align: left; padding: 10px 12px; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: 8px; cursor: pointer;" onclick="appPing('GET', '/health')">
-      <span style="display: inline-block; font-size: 0.7rem; font-weight: 800; background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 1px 6px; border-radius: 4px; margin-bottom: 4px;">GET</span>
-      <div style="font-family: monospace; font-size: 0.82rem; font-weight: 700; color: var(--text-primary);">/health</div>
-      <span style="font-size: 0.72rem; color: var(--text-secondary);">Kiểm tra trạng thái Service</span>
-    </button>
-
-    <button type="button" style="text-align: left; padding: 10px 12px; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: 8px; cursor: pointer;" onclick="appPing('GET', '/notifications/unread-count')">
-      <span style="display: inline-block; font-size: 0.7rem; font-weight: 800; background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 1px 6px; border-radius: 4px; margin-bottom: 4px;">GET</span>
-      <div style="font-family: monospace; font-size: 0.82rem; font-weight: 700; color: var(--text-primary);">/notifications/unread-count</div>
-      <span style="font-size: 0.72rem; color: var(--text-secondary);">Đọc số chưa đọc từ Redis</span>
-    </button>
-
-    <button type="button" style="text-align: left; padding: 10px 12px; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: 8px; cursor: pointer;" onclick="appPing('GET', '/notifications?limit=3')">
-      <span style="display: inline-block; font-size: 0.7rem; font-weight: 800; background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 1px 6px; border-radius: 4px; margin-bottom: 4px;">GET</span>
-      <div style="font-family: monospace; font-size: 0.82rem; font-weight: 700; color: var(--text-primary);">/notifications?limit=3</div>
-      <span style="font-size: 0.72rem; color: var(--text-secondary);">Feed phân trang Cursor</span>
-    </button>
-
-    <button type="button" style="text-align: left; padding: 10px 12px; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: 8px; cursor: pointer;" onclick="appPing('GET', '/workspaces')">
-      <span style="display: inline-block; font-size: 0.7rem; font-weight: 800; background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 1px 6px; border-radius: 4px; margin-bottom: 4px;">GET</span>
-      <div style="font-family: monospace; font-size: 0.82rem; font-weight: 700; color: var(--text-primary);">/workspaces</div>
-      <span style="font-size: 0.72rem; color: var(--text-secondary);">Danh sách Không gian & RBAC</span>
-    </button>
-  </div>
-
-  <!-- Live Response Viewer -->
-  <div style="background: #0f172a; border-radius: 8px; padding: 14px; border: 1px solid #1e293b; color: #f8fafc; font-family: monospace;">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px; font-size: 0.78rem;">
-      <span id="app-res-endpoint" style="color: #94a3b8;">Sẵn sàng ping endpoint...</span>
-      <span id="app-res-badge" style="display: none; padding: 2px 8px; border-radius: 4px; font-weight: 700;"></span>
-    </div>
-    <pre id="app-res-body" style="margin: 0; font-size: 0.8rem; max-height: 240px; overflow-y: auto; color: #38bdf8;">// Bấm vào nút [Đăng nhập Lấy JWT] hoặc các nút Endpoint ở trên để chạy thử nghiệm trực tiếp.</pre>
-  </div>
-</div>
-
-<!-- CÔNG CỤ TƯƠNG TÁC 2: HỘP THƯ THÔNG BÁO -->
-<h2>5. Công cụ Tương tác 2: Hộp Thư Thông Báo Mẫu Tái Sử Dụng (Notification Feed)</h2>
-<p>
-  Mẫu giao diện bảng tin thông báo mẫu cập nhật có thể nhúng trực tiếp vào các ghi chú dự án của bạn trong EruSentia:
-</p>
-
-<div class="embedded-template eru-tool-widget" data-eru-tool="notification-feed" data-eru-template-block="true" data-eru-template-level="semi" style="margin: 20px 0; border: 1px solid var(--border-normal); border-radius: 10px; padding: 20px; background: var(--bg-editor);">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border-subtle);">
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span style="font-weight: 700; font-size: 1rem; color: var(--text-primary);">Hộp thư cập nhật</span>
-      <span id="ntf-unread-pill" style="background: #ef4444; color: white; padding: 1px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">2 chưa đọc</span>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <button type="button" class="eru-btn" style="padding: 4px 10px; font-size: 0.78rem; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer;" onclick="demoFilter('all')">Tất cả</button>
-      <button type="button" class="eru-btn" style="padding: 4px 10px; font-size: 0.78rem; background: var(--bg-app); border: 1px solid var(--border-subtle); color: var(--text-secondary); border-radius: 6px; cursor: pointer;" onclick="demoFilter('unread')">Chưa đọc</button>
-      <button type="button" class="eru-btn" style="padding: 4px 10px; font-size: 0.78rem; background: var(--accent-subtle); border: 1px solid var(--accent); color: var(--accent); border-radius: 6px; cursor: pointer;" onclick="demoReadAll()">✓ Đọc tất cả</button>
-    </div>
-  </div>
-
-  <div id="ntf-items-container" style="display: flex; flex-direction: column; gap: 10px;">
-    <div class="ntf-item is-unread" data-id="1" style="display: flex; gap: 12px; padding: 12px; background: var(--accent-subtle); border: 1px solid var(--border-subtle); border-radius: 8px;">
-      <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(99,102,241,0.2); color: #6366f1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📖</div>
-      <div style="flex: 1;">
-        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-          <strong style="color: var(--text-primary); font-size: 0.92rem;">Ma trận quyết định (Decision Matrix)</strong>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">5 phút trước</span>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary); margin: 4px 0;">
-          Tác giả đã phát hành phiên bản mới <span style="background: rgba(99,102,241,0.15); color: #6366f1; padding: 1px 6px; border-radius: 4px; font-weight: 700;">rev #3 • v1.1.0</span> qua Message Queue Outbox.
-        </div>
-        <button type="button" style="font-size: 0.75rem; color: var(--accent); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline;" onclick="demoReadOne('1')">Đánh dấu đã đọc</button>
-      </div>
-    </div>
-
-    <div class="ntf-item is-unread" data-id="2" style="display: flex; gap: 12px; padding: 12px; background: var(--accent-subtle); border: 1px solid var(--border-subtle); border-radius: 8px;">
-      <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(99,102,241,0.2); color: #6366f1; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">👥</div>
-      <div style="flex: 1;">
-        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-          <strong style="color: var(--text-primary); font-size: 0.92rem;">Không gian làm việc: EruSentia Core Dev</strong>
-          <span style="font-size: 0.75rem; color: var(--text-muted);">30 phút trước</span>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary); margin: 4px 0;">
-          Bạn đã được thăng quyền lên <strong style="color: #3b82f6;">Editor</strong> bởi Owner của nhóm.
-        </div>
-        <button type="button" style="font-size: 0.75rem; color: var(--accent); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline;" onclick="demoReadOne('2')">Đánh dấu đã đọc</button>
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-top: 14px; text-align: center;">
-    <button type="button" id="btn-load-cursor" style="width: 100%; padding: 8px; background: var(--bg-app); border: 1px dashed var(--border-normal); color: var(--text-secondary); font-size: 0.8rem; border-radius: 6px; cursor: pointer;" onclick="demoLoadCursor()">
-      ⬇ Tải thông báo cũ hơn (Compound Cursor: beforeCreatedAt & beforeId)
-    </button>
-  </div>
-</div>
-
-<!-- KẾT QUẢ KIỂM THỬ VÀ CHAOS DEMO -->
-<h2>6. Minh Chứng Kiểm Thử Tự Động & Kịch Bản Hỗn Loạn</h2>
-<p>
-  Hệ thống được kiểm thử tự động toàn diện qua 2 bộ test suite và 1 script giả lập lỗi mạng phục vụ buổi bảo vệ đồ án:
-</p>
-
-<h3>6.1. Kết quả Chạy Toàn Bộ Test Suite (29/29 Pass)</h3>
-<pre><code class="language-bash">$ pnpm test:notifications
-▶ Notification outbox dispatch, worker fanout, idempotency & cursor pagination
-  ✔ Transactional outbox: record inserted with published_at IS NULL (5.4ms)
-  ✔ Outbox dispatcher marks published_at using SKIP LOCKED (10.8ms)
-  ✔ Worker deliver performs fanout to all followers (12.4ms)
-  ✔ Idempotency: redelivering the same event creates 0 duplicates (7.6ms)
-  ✔ Cursor pagination: compound (created_at, id) cursor ordering and tie-breaking (8.6ms)
-▶ Template follow & notification lifecycle contract
-  ✔ author creates a public template (55.9ms)
-  ✔ author cannot follow their own template (19.0ms)
-  ✔ follower follows the public template (12.3ms)
-  ✔ follow-status returns correct follower state (6.5ms)
-  ✔ author updates template revision (creates outbox event) (19.2ms)
-  ✔ notifications feed endpoint returns cursor pagination structure (8.5ms)
-  ✔ unread-count endpoint returns count object (6.1ms)
-  ✔ follower unfollows the template (9.4ms)
-ℹ tests 16 | pass 16 | fail 0 (100% PASS)
-
-$ pnpm test:workspaces
-▶ Workspace multi-tenancy, RBAC & Last Owner concurrency contract
-  ✔ Owner creates a new workspace and is automatically assigned owner role (59.1ms)
-  ✔ Duplicate slug rejected with 409 Conflict (18.5ms)
-  ✔ Multi-tenancy isolation: non-member cannot read or update workspace (22.3ms)
-  ✔ Owner generates invitation link for User B (role: editor) (16.0ms)
-  ✔ User B accepts invite and gains editor role (22.8ms)
-  ✔ Reusing accepted invitation token is rejected with 409 Conflict (9.0ms)
-  ✔ RBAC: Editor cannot modify member roles or invite members (11.7ms)
-  ✔ The Last Owner Problem: Sole owner cannot demote self (17.9ms)
-  ✔ The Last Owner Problem: Sole owner cannot leave or be removed (16.9ms)
-  ✔ Owner promotes User B to co-owner (now 2 owners) (26.1ms)
-  ✔ With 2 owners, one owner can now safely leave (22.2ms)
-  ✔ User B (now sole owner) cannot leave workspace (12.7ms)
-ℹ tests 13 | pass 13 | fail 0 (100% PASS)</code></pre>
-
-<h3>6.2. Kịch Bản Hỗn Loạn Live Demo (Chaos & Resilience Execution)</h3>
-<pre><code class="language-bash">$ pnpm demo:notifications
-[KỊCH BẢN DEMO 1] LUỒNG CHUẨN (HAPPY PATH): TRANSACTIONAL OUTBOX & FANOUT WORKER
-✅ [1.1] Tác giả đã xuất bản template v1.0.0 (ID: cff56a14-56db-4dfc-b5ad-b76ccc40f0fe)
-✅ [1.2] Người dùng c97d3d8f bấm theo dõi template.
-✅ [1.3] Transaction commit: Cập nhật template lên v1.1.0 & ghi Outbox event an toàn.
-   📨 [Dispatcher] Đã quét outbox (SKIP LOCKED) và publish message sang RabbitMQ.
-✅ [1.4] Outbox Dispatcher hoàn tất: 1 sự kiện được đẩy sang RabbitMQ.
-✅ [1.5] Worker Fanout: Giao thông báo tới 1 người theo dõi (Ghi DB: 1 bản ghi).
-✅ [1.6] Redis Cache: Số đếm chưa đọc của follower trên Redis = 1 tin.
-
-[KỊCH BẢN DEMO 2] CHỐNG TRÙNG LẶP TUYỆT ĐỐI (IDEMPOTENT CONSUMER RESILIENCE)
-Giả lập kịch bản mạng lag hoặc RabbitMQ redeliver cùng 1 message 2 lần...
-   🔄 Worker nhận lại message trùng lặp:
-   - Số followers: 1
-   - Số bản ghi chèn mới vào DB: 0 (0 bản ghi trùng!)
-✅ [2.1] Kiểm tra Database: Số bản ghi thông báo thực tế = 1 (Đúng chuẩn duy nhất).
-
-[KỊCH BẢN DEMO 3] CURSOR-BASED PAGINATION VÀ ĐÁNH DẤU ĐÃ ĐỌC
-📄 [Trang 1 - Limit 2]:
-   1. [rev: 4] Cập nhật phiên bản v1.4.0
-   2. [rev: 3] Cập nhật phiên bản v1.3.0
-   🔖 Next Cursor Token: MjAyNi0xMS0xMFQwNDo1Mjo1NS4xNTRa...
-📄 [Trang 2 - Dùng Cursor]:
-   1. [rev: 2] Mẫu "EruSentia Architecture Blueprint" vừa phát hành bản 1.1.0
-✅ [3.1] Đã đánh dấu đọc tất cả -&gt; Redis unread count = 0
-🎉 DEMO HOÀN TOÀN THÀNH CÔNG! HỆ THỐNG ĐẠT 100% TIÊU CHUẨN TUẦN 6.</code></pre>
-
-<!-- HƯỚNG DẪN KIỂM CHỨNG CỤC BỘ -->
-<h2>7. Hướng Dẫn Tự Kiểm Chứng trên Máy Cục Bộ</h2>
-<ol>
-  <li><strong>Chạy Backend Tests:</strong> <code>cd erusentia-server &amp;&amp; pnpm test:notifications &amp;&amp; pnpm test:workspaces</code></li>
-  <li><strong>Chạy Demo Hỗn loạn:</strong> <code>cd erusentia-server &amp;&amp; pnpm demo:notifications</code></li>
-  <li><strong>Kiểm tra Frontend:</strong> <code>cd erusentia-app &amp;&amp; pnpm typecheck &amp;&amp; pnpm build:vite</code></li>
-  <li><strong>Xem nhánh Git:</strong> Kiểm tra <code>git diff origin/main...feat/typ-week6-advanced-features</code> trên cả hai thư mục.</li>
-</ol>
-
-<hr style="margin: 32px 0; border: none; border-top: 1px solid var(--border-normal);">
-
-<p style="text-align: center; font-size: 0.85rem; color: var(--text-muted);">
-  Được soạn thảo tự động bằng <strong>EruSentia Pro v1.1.0-beta.2</strong> • EruSentia Flow Layout Engine v3.3.1<br>
-  Lưu trữ trực tiếp trong Vault cá nhân • Presentation-First • Local-First
-</p>
-
-<!-- Embedded Client Scripts for Widgets -->
-<script>
-  let cachedJwt = null;
-
-  async function appQuickLogin() {
-    const baseUrl = document.getElementById('cfg-api-url').value.trim();
-    const role = document.getElementById('cfg-account').value;
-    const body = { email: role + '@erusentia.test', password: 'Password123!' };
-    try {
-      const res = await fetch(baseUrl + '/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      const data = await res.json();
-      if (res.ok && data.accessToken) {
-        cachedJwt = data.accessToken;
-        const statusEl = document.getElementById('cfg-token-status');
-        statusEl.textContent = 'Đã có JWT (' + role + ')';
-        statusEl.style.background = 'rgba(16, 185, 129, 0.15)';
-        statusEl.style.color = '#10b981';
-        showAppResponse(res.status, baseUrl + '/auth/login', { message: 'Đăng nhập thành công!', user: data.user, tokenPrefix: data.accessToken.slice(0, 20) + '...' });
-      } else {
-        throw new Error(data.message || 'Đăng nhập thất bại');
-      }
-    } catch (err) {
-      alert('Lỗi đăng nhập: ' + err.message);
-    }
+@media screen {
+  html[data-paper-mode=separated] .eru-native-document table:has(.eru-page-break-gap-tr) {
+    overflow: visible;
   }
-
-  async function appPing(method, path) {
-    const baseUrl = document.getElementById('cfg-api-url').value.trim();
-    const url = baseUrl + path;
-    const headers = { 'Content-Type': 'application/json' };
-    if (cachedJwt) headers['Authorization'] = 'Bearer ' + cachedJwt;
-
-    try {
-      const res = await fetch(url, { method, headers });
-      const data = await res.json().catch(() => ({}));
-      showAppResponse(res.status, url, data);
-    } catch (err) {
-      showAppResponse(0, url, { error: 'Không thể kết nối tới server: ' + err.message });
-    }
+}
+@media print {
+  html:has(body.eru-native-document) {
+    font-size: 16px !important;
   }
-
-  function showAppResponse(status, url, data) {
-    document.getElementById('app-res-endpoint').textContent = url;
-    const badge = document.getElementById('app-res-badge');
-    badge.style.display = 'inline-block';
-    badge.textContent = status ? 'HTTP ' + status : 'NETWORK ERROR';
-    badge.style.background = (status >= 200 && status < 300) ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
-    badge.style.color = (status >= 200 && status < 300) ? '#34d399' : '#f87171';
-    document.getElementById('app-res-body').textContent = JSON.stringify(data, null, 2);
+  body.eru-native-document {
+    font-size: var(--eru-document-font-size, 16.8px) !important;
+    line-height: 1.75 !important;
   }
-
-  // Feed Demo Helpers
-  function demoFilter(mode) {
-    const items = document.querySelectorAll('.ntf-item');
-    items.forEach(el => {
-      if (mode === 'unread') {
-        el.style.display = el.classList.contains('is-unread') ? 'flex' : 'none';
-      } else {
-        el.style.display = 'flex';
-      }
-    });
+  html[data-paper-mode][data-theme] body.eru-native-document span.eru-page-break-gap {
+    display: block !important;
+    break-before: page !important;
+    page-break-before: always !important;
+    height: 0 !important;
+    line-height: 0 !important;
+    border: 0 !important;
   }
-
-  function demoReadOne(id) {
-    const el = document.querySelector('.ntf-item[data-id="' + id + '"]');
-    if (el) {
-      el.classList.remove('is-unread');
-      el.style.background = 'var(--bg-app)';
-      updateDemoPill();
-    }
+  html[data-paper-mode][data-theme] body.eru-native-document span.eru-page-break-gap > * {
+    display: none !important;
   }
-
-  function demoReadAll() {
-    const items = document.querySelectorAll('.ntf-item');
-    items.forEach(el => {
-      el.classList.remove('is-unread');
-      el.style.background = 'var(--bg-app)';
-    });
-    updateDemoPill();
+  .eru-native-document thead {
+    display: table-row-group;
   }
-
-  function updateDemoPill() {
-    const unread = document.querySelectorAll('.ntf-item.is-unread').length;
-    const pill = document.getElementById('ntf-unread-pill');
-    pill.textContent = unread + ' chưa đọc';
-    pill.style.background = unread > 0 ? '#ef4444' : '#10b981';
+  .eru-native-document tr.eru-page-break-gap-tr + tr,
+  .eru-native-document li.eru-page-break-gap-li + li,
+  .eru-native-document > .eru-page-break-gap + :not(script):not(.no-print) {
+    break-before: page !important;
+    page-break-before: always !important;
   }
-
-  function demoLoadCursor() {
-    const c = document.getElementById('ntf-items-container');
-    const el = document.createElement('div');
-    el.className = 'ntf-item';
-    el.style = 'display: flex; gap: 12px; padding: 12px; background: var(--bg-app); border: 1px solid var(--border-subtle); border-radius: 8px;';
-    el.innerHTML = '<div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.06); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">📜</div><div style="flex: 1;"><div style="display: flex; justify-content: space-between; align-items: baseline;"><strong style="color: var(--text-primary); font-size: 0.92rem;">Báo cáo Khởi động Dự án (Project Charter)</strong><span style="font-size: 0.75rem; color: var(--text-muted);">Hôm qua</span></div><div style="font-size: 0.8rem; color: var(--text-secondary); margin: 4px 0;">Đã lưu bản nháp ban đầu <span style="background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 4px;">rev #1</span>.</div></div>';
-    c.appendChild(el);
-    const btn = document.getElementById('btn-load-cursor');
-    btn.textContent = '✓ Đã tải hết danh sách thông báo';
-    btn.disabled = true;
-  }
-</script>
-
-<script>
-
-(function() {
-  const container = document.currentScript
-    ? (document.currentScript.closest('.agenda-container') || document.querySelector('.agenda-container'))
-    : document.querySelector('.agenda-container');
-  if (!container) return;
-
-  const list = container.querySelector('.agenda-timeline-list');
-  const progressFill = container.querySelector('.agenda-progress-fill');
-  const pctLabel = container.querySelector('.agenda-pct-label');
-  const addBtn = container.querySelector('.agenda-add-btn');
-
-  const updateProgress = () => {
-    const items = list.querySelectorAll('.agenda-item');
-    if (!items.length) {
-      progressFill.style.width = '0%';
-      pctLabel.textContent = '0%';
-      return;
-    }
-    let checkedCount = 0;
-    items.forEach(item => {
-      const chk = item.querySelector('.agenda-checkbox');
-      if (chk && chk.checked) {
-        item.classList.add('checked');
-        checkedCount++;
-      } else {
-        item.classList.remove('checked');
-      }
-    });
-    const pct = Math.round((checkedCount / items.length) * 100);
-    progressFill.style.width = pct + '%';
-    pctLabel.textContent = pct + '%';
-    window.dispatchEvent(new CustomEvent('eru:block-height-changed'));
-  };
-
-  list.addEventListener('change', (e) => {
-    if (e.target.classList.contains('agenda-checkbox')) {
-      updateProgress();
-    }
-  });
-
-  list.addEventListener('click', (e) => {
-    const del = e.target.closest('.agenda-item-del');
-    if (del) {
-      const row = del.closest('.agenda-item');
-      if (row) {
-        row.remove();
-        updateProgress();
-      }
-    }
-  });
-
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      const item = document.createElement('div');
-      item.className = 'agenda-item';
-      item.innerHTML = `
-        <input type="checkbox" class="agenda-checkbox" />
-        <span class="agenda-time-pill" contenteditable="true">11:30 - 12:00</span>
-        <span class="agenda-desc" contenteditable="true">Nội dung công việc mới...</span>
-        <button class="agenda-item-del" title="Xóa mốc">${container.querySelector('.agenda-item-del') ? container.querySelector('.agenda-item-del').innerHTML : '✕'}</button>
-      `;
-      list.appendChild(item);
-      updateProgress();
-    });
-  }
-
-  updateProgress();
-})();
-</script>
-</div><h2>Công việc chuẩn bị</h2><div class="eru-template-kanban kanban-wrap" data-align="center" data-eru-template-block="true" data-eru-contract-version="1" data-eru-template-level="full" data-eru-allow-break="false" data-eru-split-strategy="none" data-eru-safety-offset="20" data-eru-dynamic-height="true" data-eru-fit-mode="fit-template" data-eru-template-width="100%" data-eru-template-height="auto" data-width="100%" data-template-config="eyJ0eXBlIjoia2FuYmFuIiwidGl0bGUiOiJC4bqjbmcgUXXhuqNuIEzDvSBDw7RuZyBWaeG7h2MgKEthbmJhbiBUYXNrIEZsb3cpIiwiY29sdW1ucyI6W3siaWQiOiJ0b2RvIiwidGl0bGUiOiJD4bqnbiBsw6BtIiwiY29sb3IiOiIjM2I4MmY2IiwiY2FyZHMiOlt7ImlkIjoiYzEiLCJ0aXRsZSI6IkluIDI0IHTDoGkgbGnhu4d1IHbDoCA2IGLhu5kgdGjhursgbmjDs20iLCJwcmlvcml0eSI6InVyZ2VudCIsInRhZyI6Ik5naGnDqm4gY+G7qXUifSx7ImlkIjoiYzIiLCJ0aXRsZSI6IlRoaeG6v3Qga+G6vyBnaWFvIGRp4buHbiBuZ8aw4budaSBkw7luZyBjaG8gdMOtbmggbsSDbmcgbeG7m2kiLCJwcmlvcml0eSI6Im1lZGl1bSIsInRhZyI6IlRoaeG6v3Qga+G6vyJ9XX0seyJpZCI6ImlucHJvZ3Jlc3MiLCJ0aXRsZSI6IsSQYW5nIGzDoG0iLCJjb2xvciI6IiNmNTllMGIiLCJjYXJkcyI6W3siaWQiOiJjMyIsInRpdGxlIjoiQ2h14bqpbiBi4buLIGLDoGkgZ2nhuqNuZyB2w6AgY8OidSBo4buPaSB04buxIGtp4buDbSB0cmEiLCJwcmlvcml0eSI6ImhpZ2giLCJ0YWciOiJQaMOhdCB0cmnhu4NuIn1dfSx7ImlkIjoiZG9uZSIsInRpdGxlIjoixJDDoyB4b25nIiwiY29sb3IiOiIjMTBiOTgxIiwiY2FyZHMiOlt7ImlkIjoiYzQiLCJ0aXRsZSI6IljDoWMgbmjhuq1uIHBow7JuZyBo4buNYyB2w6AgbcOheSBjaGnhur91IiwicHJpb3JpdHkiOiJsb3ciLCJ0YWciOiJI4buHIHRo4buRbmcifV19XSwid2lkdGgiOiIxMDAlIiwiYWxpZ24iOiJjZW50ZXIiLCJmaXRNb2RlIjoiZml0LXRlbXBsYXRlIn0=">
+}
+.eru-native-document{--h1-font-size:2rem;--h1-font-weight:700;--h1-color:var(--text-primary);--h1-bg-image:none;--h1-bg-clip:border-box;--h1-text-fill-color:currentColor;--h1-line-height:1.25;--h1-margin-top:2em;--h1-margin-bottom:0.5em;--h1-border-bottom:none;--h1-padding-bottom:0px;--h1-text-transform:none;--h1-letter-spacing:-0.02em;--h2-font-size:1.6rem;--h2-font-weight:700;--h2-color:var(--text-primary);--h2-bg-image:none;--h2-bg-clip:border-box;--h2-text-fill-color:currentColor;--h2-line-height:1.25;--h2-margin-top:2em;--h2-margin-bottom:0.5em;--h2-border-bottom:none;--h2-padding-bottom:0px;--h2-text-transform:none;--h2-letter-spacing:-0.02em;--h3-font-size:1.3rem;--h3-font-weight:600;--h3-color:var(--text-primary);--h3-bg-image:none;--h3-bg-clip:border-box;--h3-text-fill-color:currentColor;--h3-line-height:1.25;--h3-margin-top:2em;--h3-margin-bottom:0.5em;--h3-border-bottom:none;--h3-padding-bottom:0px;--h3-text-transform:none;--h3-letter-spacing:-0.01em;--h4-font-size:1.15rem;--h4-font-weight:600;--h4-color:#475569;--h4-bg-image:none;--h4-bg-clip:border-box;--h4-text-fill-color:currentColor;--h4-line-height:1.35;--h4-margin-top:1.4em;--h4-margin-bottom:0.4em;--h4-border-bottom:none;--h4-padding-bottom:0px;--h4-text-transform:none;--h4-letter-spacing:0em;--h5-font-size:1.05rem;--h5-font-weight:600;--h5-color:#475569;--h5-bg-image:none;--h5-bg-clip:border-box;--h5-text-fill-color:currentColor;--h5-line-height:1.4;--h5-margin-top:1.2em;--h5-margin-bottom:0.3em;--h5-border-bottom:none;--h5-padding-bottom:0px;--h5-text-transform:none;--h5-letter-spacing:0em;--h6-font-size:0.95rem;--h6-font-weight:600;--h6-color:#64748b;--h6-bg-image:none;--h6-bg-clip:border-box;--h6-text-fill-color:currentColor;--h6-line-height:1.4;--h6-margin-top:1.1em;--h6-margin-bottom:0.3em;--h6-border-bottom:none;--h6-padding-bottom:0px;--h6-text-transform:uppercase;--h6-letter-spacing:0.04em;}</style>
 <style>
-  .kanban-wrap {
-    background: var(--bg-card, #ffffff);
-    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
-    border-radius: var(--radius-xl, 14px);
-    padding: 20px;
-    margin: 0;
-    font-family: inherit;
-    color: var(--text-primary, #0f172a);
-    box-sizing: border-box;
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
-  }
-  .kanban-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-    border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06));
-    padding-bottom: 14px;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .kanban-title-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.05rem;
-    font-weight: 700;
-  }
-  .kanban-title-badge .k-icon {
-    color: var(--accent, #6366f1);
-    font-size: 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .kanban-board-title {
-    outline: none;
-    border-radius: 4px;
-    padding: 2px 6px;
-    margin: -2px -6px;
-    transition: background 0.15s ease;
-  }
-  .kanban-board-title:focus {
-    background: rgba(var(--accent-rgb, 99, 102, 241), 0.08);
-  }
-  .kanban-header-meta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: var(--text-secondary, #64748b);
-  }
-  .kanban-columns {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    overflow-x: auto;
-    padding-bottom: 6px;
-    scrollbar-width: thin;
-  }
-  .kanban-columns::-webkit-scrollbar {
-    height: 5px;
-  }
-  .kanban-columns::-webkit-scrollbar-thumb {
-    background: var(--border-normal, rgba(0, 0, 0, 0.15));
-    border-radius: 999px;
-  }
-  .kanban-col {
-    flex: 1 1 0;
-    min-width: 155px;
-    background: var(--bg-card-subtle, rgba(0, 0, 0, 0.02));
-    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06));
-    border-radius: var(--radius-lg, 10px);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    min-height: 280px;
-    box-sizing: border-box;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .kanban-col.drag-over {
-    background: rgba(var(--accent-rgb, 99, 102, 241), 0.06);
-    border: 1px dashed var(--accent, #6366f1);
-    box-shadow: 0 0 0 2px rgba(var(--accent-rgb, 99, 102, 241), 0.15);
-  }
-  .kanban-col-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-top: 3px solid #3b82f6;
-    border-radius: 2px 2px 0 0;
-  }
-  .col-title-wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .col-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-  .col-title-text {
-    outline: none;
-    border-radius: 4px;
-    padding: 2px 4px;
-  }
-  .col-title-text:focus {
-    background: rgba(0, 0, 0, 0.05);
-  }
-  .badge-count {
-    background: var(--bg-card, #ffffff);
-    color: var(--text-secondary, #64748b);
-    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
-    border-radius: 999px;
-    padding: 2px 8px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    min-width: 18px;
-    text-align: center;
-  }
-  .kanban-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex: 1;
-    min-height: 80px;
-  }
-  .kanban-card {
-    background: var(--bg-card, #ffffff);
-    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
-    border-radius: var(--radius-md, 8px);
-    padding: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    cursor: grab;
-    user-select: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    box-sizing: border-box;
-  }
-  .kanban-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(0, 0, 0, 0.02);
-    border-color: rgba(var(--accent-rgb, 99, 102, 241), 0.3);
-  }
-  .kanban-card:active {
-    cursor: grabbing;
-  }
-  .kanban-card.is-dragging {
-    opacity: 0.4;
-    transform: scale(0.97);
-  }
-  .card-text {
-    font-size: 0.88rem;
-    font-weight: 500;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    outline: none;
-    word-break: break-word;
-    color: var(--text-primary, #0f172a);
-  }
-  .card-text:focus {
-    background: rgba(var(--accent-rgb, 99, 102, 241), 0.05);
-    border-radius: 4px;
-    padding: 2px 4px;
-  }
-  .card-desc {
-    font-size: 0.78rem;
-    color: var(--text-secondary, #64748b);
-    line-height: 1.45;
-    margin-bottom: 8px;
-    outline: none;
-  }
-  .card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 4px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-  }
-  .card-tags-row {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
-  .card-tag, .card-tag-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 22px;
-    line-height: 20px;
-    font-size: 0.72rem;
-    padding: 0 8px;
-    border-radius: 5px;
-    box-sizing: border-box;
-    vertical-align: middle;
-  }
-  .card-tag {
-    font-weight: 700;
-    cursor: pointer;
-    transition: filter 0.15s ease;
-    letter-spacing: 0.02em;
-  }
-  .card-tag:hover {
-    filter: brightness(0.95);
-  }
-  .tag-urgent {
-    background: rgba(239, 68, 68, 0.12);
-    color: #dc2626;
-    border: 1px solid rgba(239, 68, 68, 0.25);
-  }
-  .tag-high {
-    background: rgba(249, 115, 22, 0.12);
-    color: #ea580c;
-    border: 1px solid rgba(249, 115, 22, 0.25);
-  }
-  .tag-medium {
-    background: rgba(234, 179, 8, 0.14);
-    color: #ca8a04;
-    border: 1px solid rgba(234, 179, 8, 0.28);
-  }
-  .tag-low {
-    background: rgba(16, 185, 129, 0.12);
-    color: #059669;
-    border: 1px solid rgba(16, 185, 129, 0.25);
-  }
-  .card-tag-pill {
-    font-weight: 500;
-    color: var(--text-secondary, #64748b);
-    background: var(--bg-card-subtle, rgba(0, 0, 0, 0.04));
-    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
-  }
-  .card-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-  }
-  .move-btn, .card-del-btn {
-    border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.1));
-    background: var(--bg-card, #ffffff);
-    color: var(--text-secondary, #64748b);
-    border-radius: 5px;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.68rem;
-    transition: all 0.15s ease;
-  }
-  .move-btn:hover {
-    background: var(--accent, #6366f1);
-    color: #ffffff;
-    border-color: var(--accent, #6366f1);
-  }
-  .card-del-btn:hover {
-    background: #ef4444;
-    color: #ffffff;
-    border-color: #ef4444;
-  }
-  .add-card-wrap {
-    margin-top: 10px;
-  }
-  .add-card-input {
-    width: 100%;
-    padding: 7px 10px;
-    font-size: 0.8rem;
-    border: 1px dashed var(--border-subtle, rgba(0, 0, 0, 0.15));
-    border-radius: var(--radius-md, 8px);
-    background: transparent;
-    color: var(--text-primary, #0f172a);
-    box-sizing: border-box;
-    outline: none;
-    transition: all 0.15s ease;
-  }
-  .add-card-input:focus {
-    background: var(--bg-card, #ffffff);
-    border: 1px solid var(--accent, #6366f1);
-    box-shadow: 0 0 0 2px rgba(var(--accent-rgb, 99, 102, 241), 0.15);
-  }
+.week6-report{--h1-font-size:clamp(26px,3vw,40px);--h1-font-weight:650;--h1-margin-top:0px;--h1-margin-bottom:16px;--h1-line-height:1.2;--h1-letter-spacing:-.035em;--h2-font-size:22px;--h2-font-weight:650;--h2-margin-top:38px;--h2-margin-bottom:12px;--h2-line-height:1.4;--h3-font-size:15px;--h3-font-weight:600;--h3-margin-top:0px;--h3-margin-bottom:6px;font-family:var(--font-main,system-ui,sans-serif);white-space:normal;color:var(--text-primary,#202024)}
+.week6-report .report-header{padding:8px 0 28px;border-bottom:1px solid var(--border-normal,#e4e4e7);margin-bottom:32px}
+.week6-report .report-eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary,#71717a);margin:0 0 10px}
+.week6-report h1{font-size:clamp(26px,3vw,40px);line-height:1.2;letter-spacing:-.035em;margin:0 0 16px;border:0;font-weight:650}
+.week6-report .report-lead{font-size:16px;line-height:1.75;max-width:72ch;color:var(--text-secondary,#71717a);margin:0 0 18px}
+.week6-report .report-meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12px;color:var(--text-secondary,#71717a)}
+.week6-report .report-meta strong{font-weight:550;color:var(--text-primary,#202024)}
+.week6-report h2{font-size:22px;font-weight:650;letter-spacing:-.025em;border:0;margin:38px 0 12px;padding:0;line-height:1.4}
+.week6-report h3{font-size:15px;font-weight:600;border:0;margin:0 0 6px}
+.week6-report .report-copy{max-width:78ch;font-size:14px;line-height:1.8;color:var(--text-secondary,#71717a);margin:0 0 20px}
+.week6-report .report-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0 24px}
+.week6-report .report-step{border:1px solid var(--border-normal,#e4e4e7);border-radius:9px;padding:18px;background:var(--bg-editor,#fff)}
+.week6-report .report-step>span{display:block;font-size:11px;color:var(--accent,#f2274c);margin-bottom:10px;font-weight:650}
+.week6-report .report-step p{font-size:13px;line-height:1.7;color:var(--text-secondary,#71717a);margin:0}
+.week6-report .report-table-wrap{overflow:auto;margin:16px 0 24px}.week6-report table{width:100%;border-collapse:collapse;font-size:13px;min-width:580px;line-height:1.7;margin:0}.week6-report th,.week6-report td{border:0;border-bottom:1px solid var(--border-normal,#e4e4e7);padding:12px 14px;text-align:left;vertical-align:top}.week6-report th{font-weight:550;color:var(--text-secondary,#71717a);background:var(--bg-hover,#f7f7f8);font-size:12px}.week6-report td:first-child{font-weight:550;width:20%}
+.week6-report .report-flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:18px;border:1px solid var(--border-normal,#e4e4e7);border-radius:8px;font-size:12px;margin:16px 0 20px}.week6-report .report-flow span{padding:6px 10px;background:var(--bg-hover,#f7f7f8);border-radius:5px}.week6-report .report-flow b{font-weight:400;color:var(--text-secondary,#71717a)}
+.week6-report .report-details{border:1px solid var(--border-normal,#e4e4e7);border-radius:8px;padding:14px 18px;margin:16px 0}.week6-report .report-details summary{font-weight:550;font-size:13px;cursor:pointer}.week6-report .report-details p,.week6-report .report-details li{font-size:13px;line-height:1.8;color:var(--text-secondary,#71717a)}
+.week6-report .report-command{background:var(--bg-hover,#f7f7f8);color:var(--text-primary,#202024);padding:16px;border:1px solid var(--border-normal,#e4e4e7);border-radius:8px;font-size:12px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;margin:16px 0}
+.week6-report .report-note{padding:12px 16px;border-left:2px solid var(--accent,#f2274c);font-size:13px;line-height:1.8;color:var(--text-secondary,#71717a);margin:20px 0}
+.week6-report .report-footer{border-top:1px solid var(--border-normal,#e4e4e7);padding-top:18px;margin-top:36px;font-size:12px;color:var(--text-secondary,#71717a)}
+@media(max-width:680px){.week6-report .report-steps{grid-template-columns:1fr}.week6-report .report-header{margin-bottom:20px;padding-bottom:20px}.week6-report h2{margin-top:28px}}
+@media print{.week6-report .report-steps{grid-template-columns:1fr 1fr 1fr}.week6-report .report-table-wrap{overflow:visible}.week6-report table{min-width:0}.week6-report .report-step{break-inside:avoid}.week6-report .report-command{white-space:pre-wrap}}
 </style>
-<div class="kanban-header">
-  <div class="kanban-title-badge">
-    <span class="k-icon"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M128 192h208c17.7 0 32 14.3 32 32v576c0 17.7-14.3 32-32 32H128c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32zm48 72v512h112V264H176zm232-72h208c17.7 0 32 14.3 32 32v384c0 17.7-14.3 32-32 32H408c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32zm48 72v320h112V264H456zm232-72h208c17.7 0 32 14.3 32 32v480c0 17.7-14.3 32-32 32H688c-17.7 0-32-14.3-32-32V224c0-17.7 14.3-32 32-32zm48 72v416h112V264H736z"></path></svg></span>
-    <span class="kanban-board-title" contenteditable="true">Bảng Quản Lý Công Việc (Kanban Task Flow)</span>
-  </div>
-  <div class="kanban-header-meta">
-    <span class="kanban-task-total"><strong>4</strong> công việc</span>
-    <span style="opacity:0.35;">•</span>
-    <span class="kanban-col-total"><strong>3</strong> cột</span>
-  </div>
-</div>
-<div class="kanban-columns">
-  
-    <div class="kanban-col col-todo" data-col-id="todo" style="--col-accent: #3b82f6;">
-      <div class="kanban-col-header" style="border-top: 3px solid #3b82f6;">
-        <div class="col-title-wrap">
-          <span class="col-indicator" style="background: #3b82f6;"></span>
-          <span class="col-title-text" contenteditable="true">Cần làm</span>
-        </div>
-        <span class="badge-count">2</span>
-      </div>
-      <div class="kanban-cards">
-        
-      <div class="kanban-card" draggable="true" data-card-id="c1">
-        <div class="card-text" contenteditable="true" style="">In 24 tài liệu và 6 bộ thẻ nhóm</div>
-        
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="card-tag tag-urgent" title="Nhấp để chuyển mức độ ưu tiên">Gấp</span>
-            <span class="card-tag-pill">Nghiên cứu</span>
-          </div>
-          <div class="card-actions">
-            <button type="button" class="card-del-btn" title="Xóa thẻ"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M360 184h304c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8zm464 48H680l-28.8-72A72 72 0 00584.8 112H439.2a72 72 0 00-66.4 48L344 232H200c-17.7 0-32 14.3-32 32v16c0 4.4 3.6 8 8 8h48v544c0 44.2 35.8 80 80 80h416c44.2 0 80-35.8 80-80V288h48c4.4 0 8-3.6 8-8v-16c0-17.7-14.3-32-32-32zm-72 632c0 8.8-7.2 16-16 16H288c-8.8 0-16-7.2-16-16V288h480v576zm-360-96c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304zm160 0c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304z"></path></svg></button>
-            
-            <button type="button" class="move-btn next-col-btn" title="Chuyển sang cột tiếp theo"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.8 31.8 0 000-50.4z"></path></svg></button>
-          </div>
-        </div>
-      </div>
-      <div class="kanban-card" draggable="true" data-card-id="c2">
-        <div class="card-text" contenteditable="true" style="">Thiết kế giao diện người dùng cho tính năng mới</div>
-        
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="card-tag tag-medium" title="Nhấp để chuyển mức độ ưu tiên">Bình thường</span>
-            <span class="card-tag-pill">Thiết kế</span>
-          </div>
-          <div class="card-actions">
-            <button type="button" class="card-del-btn" title="Xóa thẻ"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M360 184h304c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8zm464 48H680l-28.8-72A72 72 0 00584.8 112H439.2a72 72 0 00-66.4 48L344 232H200c-17.7 0-32 14.3-32 32v16c0 4.4 3.6 8 8 8h48v544c0 44.2 35.8 80 80 80h416c44.2 0 80-35.8 80-80V288h48c4.4 0 8-3.6 8-8v-16c0-17.7-14.3-32-32-32zm-72 632c0 8.8-7.2 16-16 16H288c-8.8 0-16-7.2-16-16V288h480v576zm-360-96c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304zm160 0c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304z"></path></svg></button>
-            
-            <button type="button" class="move-btn next-col-btn" title="Chuyển sang cột tiếp theo"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.8 31.8 0 000-50.4z"></path></svg></button>
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="add-card-wrap">
-        <input type="text" class="add-card-input" placeholder="+ Thêm công việc (Enter)...">
-      </div>
-    </div>
-    <div class="kanban-col col-inprogress" data-col-id="inprogress" style="--col-accent: #f59e0b;">
-      <div class="kanban-col-header" style="border-top: 3px solid #f59e0b;">
-        <div class="col-title-wrap">
-          <span class="col-indicator" style="background: #f59e0b;"></span>
-          <span class="col-title-text" contenteditable="true">Đang làm</span>
-        </div>
-        <span class="badge-count">1</span>
-      </div>
-      <div class="kanban-cards">
-        
-      <div class="kanban-card" draggable="true" data-card-id="c3">
-        <div class="card-text" contenteditable="true" style="">Chuẩn bị bài giảng và câu hỏi tự kiểm tra</div>
-        
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="card-tag tag-high" title="Nhấp để chuyển mức độ ưu tiên">Quan trọng</span>
-            <span class="card-tag-pill">Phát triển</span>
-          </div>
-          <div class="card-actions">
-            <button type="button" class="card-del-btn" title="Xóa thẻ"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M360 184h304c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8zm464 48H680l-28.8-72A72 72 0 00584.8 112H439.2a72 72 0 00-66.4 48L344 232H200c-17.7 0-32 14.3-32 32v16c0 4.4 3.6 8 8 8h48v544c0 44.2 35.8 80 80 80h416c44.2 0 80-35.8 80-80V288h48c4.4 0 8-3.6 8-8v-16c0-17.7-14.3-32-32-32zm-72 632c0 8.8-7.2 16-16 16H288c-8.8 0-16-7.2-16-16V288h480v576zm-360-96c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304zm160 0c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304z"></path></svg></button>
-            <button type="button" class="move-btn prev-col-btn" title="Lùi lại cột trước"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.8 31.8 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"></path></svg></button>
-            <button type="button" class="move-btn next-col-btn" title="Chuyển sang cột tiếp theo"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.8 31.8 0 000-50.4z"></path></svg></button>
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="add-card-wrap">
-        <input type="text" class="add-card-input" placeholder="+ Thêm công việc (Enter)...">
-      </div>
-    </div>
-    <div class="kanban-col col-done" data-col-id="done" style="--col-accent: #10b981;">
-      <div class="kanban-col-header" style="border-top: 3px solid #10b981;">
-        <div class="col-title-wrap">
-          <span class="col-indicator" style="background: #10b981;"></span>
-          <span class="col-title-text" contenteditable="true">Đã xong</span>
-        </div>
-        <span class="badge-count">1</span>
-      </div>
-      <div class="kanban-cards">
-        
-      <div class="kanban-card" draggable="true" data-card-id="c4">
-        <div class="card-text" contenteditable="true" style="text-decoration: line-through; opacity: 0.72;">Xác nhận phòng học và máy chiếu</div>
-        
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="card-tag tag-low" title="Nhấp để chuyển mức độ ưu tiên">Thấp</span>
-            <span class="card-tag-pill">Hệ thống</span>
-          </div>
-          <div class="card-actions">
-            <button type="button" class="card-del-btn" title="Xóa thẻ"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M360 184h304c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8zm464 48H680l-28.8-72A72 72 0 00584.8 112H439.2a72 72 0 00-66.4 48L344 232H200c-17.7 0-32 14.3-32 32v16c0 4.4 3.6 8 8 8h48v544c0 44.2 35.8 80 80 80h416c44.2 0 80-35.8 80-80V288h48c4.4 0 8-3.6 8-8v-16c0-17.7-14.3-32-32-32zm-72 632c0 8.8-7.2 16-16 16H288c-8.8 0-16-7.2-16-16V288h480v576zm-360-96c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304zm160 0c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304z"></path></svg></button>
-            <button type="button" class="move-btn prev-col-btn" title="Lùi lại cột trước"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.8 31.8 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"></path></svg></button>
-            
-          </div>
-        </div>
-      </div>
-      </div>
-      <div class="add-card-wrap">
-        <input type="text" class="add-card-input" placeholder="+ Thêm công việc (Enter)...">
-      </div>
-    </div>
-</div>
-<script>
-(function() {
-  const container = document.currentScript
-    ? (document.currentScript.closest('.kanban-wrap') || document.querySelector('.kanban-wrap'))
-    : document.querySelector('.kanban-wrap');
-  if (!container) return;
+<style data-eru-runtime="presentation">
+#eru-presentation-controls { display:none; }
+#eru-laser-dot { position:fixed; top:0; left:0; width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%; background:#ff234b; box-shadow:0 0 0 3px #ff234b33,0 0 16px #ff234b; z-index:2147483647; pointer-events:none; transform:translate(-100px,-100px); }
+html[data-eru-presenting] { background:var(--bg-page,#f4f4f6)!important; }
+html[data-eru-presenting] body { width:100%!important; max-width:none!important; height:100vh!important; min-height:0!important; margin:0!important; padding:32px 40px 88px!important; overflow:hidden!important; box-sizing:border-box!important; background:transparent!important; border:0!important; box-shadow:none!important; zoom:1!important; display:flex; align-items:center; justify-content:center; }
+html[data-eru-presenting] .eru-product-slide { box-sizing:border-box; width:min(100%,1120px); max-height:100%; overflow:auto; padding:32px; background:var(--paper-bg,#fff); color:var(--paper-text-color,#1e1c1b); border:1px solid #78716c33; border-radius:8px; box-shadow:0 12px 40px #0002; }
+.eru-product-slide[hidden] { display:none!important; }
+html[data-eru-presenting] #eru-standalone-fab { display:none!important; }
+html[data-eru-presenting] #eru-presentation-controls { position:fixed; z-index:2147483646; bottom:20px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:10px; padding:8px 12px; border:1px solid var(--border-normal,#d6d3d1); border-radius:10px; background:var(--bg-page,#fff); color:var(--text-primary,#292524); box-shadow:0 4px 20px #0002; font:14px system-ui; }
+#eru-presentation-controls button { width:36px; height:36px; display:grid; place-items:center; background:transparent; color:inherit; border:0; border-radius:6px; cursor:pointer; }
+#eru-presentation-controls button:hover,#eru-presentation-controls button[aria-pressed="true"] { background:#f2274c1a; color:#f2274c; }
+#eru-presentation-controls button:disabled { opacity:.35; cursor:default; }
+#eru-presentation-controls button:focus-visible { outline:2px solid #f2274c; }
+@media(max-width:600px) { html[data-eru-presenting] body { padding:12px 12px 80px!important; } html[data-eru-presenting] .eru-product-slide { padding:18px; } #eru-presentation-controls { gap:2px!important; padding:6px!important; } }
+</style>
+</head>
+<body class="eru-standalone-content eru-native-document" >
+<main class="week6-report">
+<header class="report-header"><p class="report-eyebrow">EruSentia / TYP 2026 / Tuần 06</p><h1>API, thông báo &amp; không gian làm việc</h1><p class="report-lead">Tài liệu thao tác cho hai tính năng tuần 6. Dùng API Explorer bên dưới để khám phá endpoint, gửi yêu cầu và kiểm tra dữ liệu trực tiếp từ máy chủ của bạn.</p><div class="report-meta"><span>Cập nhật <strong>10.11.2026</strong></span><span>Nhánh <strong>feat/typ-week6-advanced-features</strong></span><span>Trạng thái <strong>Đang hoàn thiện tích hợp</strong></span></div></header>
+<h2>1. Bắt đầu từ một yêu cầu thật</h2><p class="report-copy">Hai Full Template đã có trong thư viện mẫu của app: tìm <strong>API Explorer</strong> hoặc <strong>Thông báo trực tiếp</strong>. Mỗi khối có cấu hình riêng và hoạt động khi được chèn vào ghi chú hay xuất ra HTML standalone.</p>
+<div class="report-steps"><section class="report-step"><span>01 / KẾT NỐI</span><h3>Chọn máy chủ</h3><p>Nhập Base URL của API. Khối đã có sẵn một số yêu cầu cơ bản để kiểm tra kết nối; chưa tự gửi yêu cầu nào.</p></section><section class="report-step"><span>02 / THỬ YÊU CẦU</span><h3>Gửi và đọc kết quả</h3><p>Giữ yêu cầu <code>GET /health</code> mặc định rồi bấm Gửi yêu cầu. HTTP status, thời gian và nội dung bên dưới là phản hồi thật.</p></section><section class="report-step"><span>03 / DÙNG TÀI KHOẢN</span><h3>Mở các luồng cá nhân</h3><p>Nạp OpenAPI, đăng nhập trong mục Xác thực, rồi thử <code>/auth/me</code>, workspace. Hộp thông báo là một template riêng. Không dùng chung phiên với app.</p></section></div>
+<div class="eru-api-console" data-eru-tool="api-console" data-template-config="eyJ0eXBlIjoiYXBpLWNvbnNvbGUiLCJ2ZXJzaW9uIjoyLCJ0aXRsZSI6IkFQSSBFeHBsb3JlciIsImJhc2VVcmwiOiJhdXRvIiwidHJhbnNwb3J0IjoiZGlyZWN0IiwiZ2F0ZXdheVVybCI6Imh0dHBzOi8vZXJ1c2VudGlhLWFwaS5vbnJlbmRlci5jb20iLCJ3aWR0aCI6IjEwMCUiLCJhbGlnbiI6ImNlbnRlciIsImZpdE1vZGUiOiJmaXQtdGVtcGxhdGUifQ==" data-eru-template-block="true" data-eru-template-level="full" data-width="100%" style="width:100%;max-width:100%;box-sizing:border-box"><style>:is(.eru-api-console,.eru-notification-feed){--api-accent:var(--accent,#f2274c);--api-bg:var(--bg-editor,#fff);--api-soft:var(--bg-hover,#f7f7f8);--api-line:var(--border-normal,#e4e4e7);--api-text:var(--text-primary,#202024);--api-muted:var(--text-secondary,#71717a);font:14px/1.5 system-ui,sans-serif;color:var(--api-text);background:var(--api-bg);border:1px solid var(--api-line);border-radius:12px;overflow:hidden;white-space:normal;text-align:left;container-type:inline-size}
+:is(.eru-api-console,.eru-notification-feed) *{box-sizing:border-box}:is(.eru-api-console,.eru-notification-feed) [hidden]{display:none!important}
+:is(.eru-api-console,.eru-notification-feed) h2,:is(.eru-api-console,.eru-notification-feed) h3,:is(.eru-api-console,.eru-notification-feed) p{margin:0;color:inherit;border:0;padding:0;line-height:1.5;letter-spacing:normal}
+:is(.eru-api-console,.eru-notification-feed) h2{font-size:20px;font-weight:650}:is(.eru-api-console,.eru-notification-feed) h3{font-size:14px;font-weight:650}:is(.eru-api-console,.eru-notification-feed) button,:is(.eru-api-console,.eru-notification-feed) input,:is(.eru-api-console,.eru-notification-feed) select,:is(.eru-api-console,.eru-notification-feed) textarea{font:inherit;line-height:1.5;margin:0;border-radius:6px;box-shadow:none;text-transform:none;letter-spacing:normal}
+:is(.eru-api-console,.eru-notification-feed) button{min-height:34px;border:1px solid var(--api-line);padding:6px 12px;background:var(--api-bg);color:var(--api-text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:normal}:is(.eru-api-console,.eru-notification-feed) button:hover:not(:disabled){background:var(--api-soft);border-color:var(--api-muted)}:is(.eru-api-console,.eru-notification-feed) button:disabled{opacity:.5;cursor:default}:is(.eru-api-console,.eru-notification-feed) .api-primary{background:var(--api-accent);color:white;border-color:var(--api-accent)}:is(.eru-api-console,.eru-notification-feed) .api-primary:hover:not(:disabled){background:var(--api-accent);filter:brightness(.94);border-color:var(--api-accent)}
+:is(.eru-api-console,.eru-notification-feed) :is(input,select,textarea){display:block;width:100%;min-width:0;color:var(--api-text);background:var(--api-bg);border:1px solid var(--api-line);padding:8px 10px}:is(.eru-api-console,.eru-notification-feed) textarea{min-height:120px;resize:vertical;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}:is(.eru-api-console,.eru-notification-feed) :is(button,input,select,textarea,summary):focus-visible{outline:2px solid var(--api-accent);outline-offset:2px}:is(.eru-api-console,.eru-notification-feed) label{display:flex;flex-direction:column;gap:5px;min-width:0;font-size:12px;font-weight:550}:is(.eru-api-console,.eru-notification-feed) small,:is(.eru-api-console,.eru-notification-feed) .api-muted{font-size:12px;color:var(--api-muted);font-weight:400}:is(.eru-api-console,.eru-notification-feed) code,:is(.eru-api-console,.eru-notification-feed) pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+:is(.eru-api-console,.eru-notification-feed) .api-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;border-bottom:1px solid var(--api-line)}:is(.eru-api-console,.eru-notification-feed) .api-eyebrow{font-size:10px;font-weight:650;text-transform:uppercase;letter-spacing:.12em;color:var(--api-muted);margin-bottom:4px}:is(.eru-api-console,.eru-notification-feed) .api-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;white-space:nowrap;color:var(--api-muted)}:is(.eru-api-console,.eru-notification-feed) .api-status:before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}:is(.eru-api-console,.eru-notification-feed) .api-status[data-state=ok]{color:#16804a}:is(.eru-api-console,.eru-notification-feed) .api-status[data-state=error]{color:#c23c44}
+:is(.eru-api-console,.eru-notification-feed) .api-connection{padding:16px 24px;border-bottom:1px solid var(--api-line)}:is(.eru-api-console,.eru-notification-feed) .api-connect-row{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap}:is(.eru-api-console,.eru-notification-feed) .api-connect-row>label:first-child{flex:1 1 240px}:is(.eru-api-console,.eru-notification-feed) .api-connect-row>button{min-height:39px}:is(.eru-api-console,.eru-notification-feed) details{margin:12px 0 0}:is(.eru-api-console,.eru-notification-feed) summary{font-size:12px;color:var(--api-muted);cursor:pointer;padding:4px 0}:is(.eru-api-console,.eru-notification-feed) .api-auth-grid{display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:10px;margin-top:10px}:is(.eru-api-console,.eru-notification-feed) .api-token-row{display:flex;gap:8px;align-items:end;margin-top:10px;flex-wrap:wrap}:is(.eru-api-console,.eru-notification-feed) .api-token-row>label{flex:1 1 220px}:is(.eru-api-console,.eru-notification-feed) .api-token-row>button{min-height:39px}:is(.eru-api-console,.eru-notification-feed) .api-auth-note{margin-top:10px;font-size:12px;color:var(--api-muted)}
+:is(.eru-api-console,.eru-notification-feed) .api-tabs{display:flex;gap:20px;padding:0 24px;border-bottom:1px solid var(--api-line)}:is(.eru-api-console,.eru-notification-feed) .api-tabs button{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;padding:12px 0;font-size:13px;color:var(--api-muted)}:is(.eru-api-console,.eru-notification-feed) .api-tabs button[aria-selected=true]{border-bottom-color:var(--api-accent);color:var(--api-text);font-weight:600}
+:is(.eru-api-console,.eru-notification-feed) .api-layout{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:430px}:is(.eru-api-console,.eru-notification-feed) .api-sidebar{padding:16px 12px;border-right:1px solid var(--api-line);min-width:0}:is(.eru-api-console,.eru-notification-feed) .api-sidebar input{font-size:12px;margin-bottom:12px}:is(.eru-api-console,.eru-notification-feed) .api-operation-list{max-height:510px;overflow:auto;display:flex;flex-direction:column;gap:3px}:is(.eru-api-console,.eru-notification-feed) .api-operation{display:flex;justify-content:flex-start;gap:8px;border:0;min-height:40px;padding:8px;width:100%;text-align:left;border-radius:5px}:is(.eru-api-console,.eru-notification-feed) .api-operation[aria-current=true]{background:var(--api-soft)}:is(.eru-api-console,.eru-notification-feed) .api-operation span:last-child{font-size:12px;overflow-wrap:anywhere;min-width:0;flex:1}:is(.eru-api-console,.eru-notification-feed) .api-method{font:650 10px/1.5 ui-monospace,monospace;min-width:42px;color:#167649}:is(.eru-api-console,.eru-notification-feed) .api-method[data-method=POST]{color:#955d08}:is(.eru-api-console,.eru-notification-feed) .api-method[data-method=DELETE]{color:#b52c3b}:is(.eru-api-console,.eru-notification-feed) .api-method[data-method=PATCH],:is(.eru-api-console,.eru-notification-feed) .api-method[data-method=PUT]{color:#4558b0}
+:is(.eru-api-console,.eru-notification-feed) .api-main{padding:20px 24px;min-width:0}:is(.eru-api-console,.eru-notification-feed) .api-operation-summary{margin-bottom:16px}:is(.eru-api-console,.eru-notification-feed) .api-operation-summary p{font-size:12px;color:var(--api-muted);margin-top:4px;overflow-wrap:anywhere}:is(.eru-api-console,.eru-notification-feed) .api-request-line{display:grid;grid-template-columns:95px minmax(0,1fr) auto;gap:8px;align-items:end;margin-bottom:14px}:is(.eru-api-console,.eru-notification-feed) .api-request-line>button{min-height:39px}:is(.eru-api-console,.eru-notification-feed) .api-params{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px}:is(.eru-api-console,.eru-notification-feed) .api-body-label{margin-bottom:10px}:is(.eru-api-console,.eru-notification-feed) .api-section-label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:12px;font-weight:600}:is(.eru-api-console,.eru-notification-feed) .api-headers textarea{min-height:70px}:is(.eru-api-console,.eru-notification-feed) .api-response{border-top:1px solid var(--api-line);margin-top:20px;padding-top:16px}:is(.eru-api-console,.eru-notification-feed) .api-response-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}:is(.eru-api-console,.eru-notification-feed) .api-response-meta{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--api-muted)}:is(.eru-api-console,.eru-notification-feed) .api-response-code{font-weight:650;color:var(--api-text)}:is(.eru-api-console,.eru-notification-feed) .api-response-code[data-error=true]{color:#c23c44}:is(.eru-api-console,.eru-notification-feed) .api-response pre{display:block;margin:0;background:var(--api-soft);color:var(--api-text);border:1px solid var(--api-line);border-radius:6px;padding:14px;font-size:12px;line-height:1.6;max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;text-indent:0}:is(.eru-api-console,.eru-notification-feed) .api-response-actions{display:flex;gap:6px}:is(.eru-api-console,.eru-notification-feed) .api-response-actions button{font-size:11px;min-height:28px;padding:3px 8px}
+:is(.eru-api-console,.eru-notification-feed) .api-feedback{margin:12px 24px;padding:10px 12px;background:var(--api-soft);border:1px solid var(--api-line);border-radius:6px;font-size:12px;overflow-wrap:anywhere}:is(.eru-api-console,.eru-notification-feed) .api-feedback[data-error=true]{border-left:3px solid #c23c44}:is(.eru-api-console,.eru-notification-feed) .api-empty{padding:32px 16px;text-align:center;color:var(--api-muted);font-size:13px}:is(.eru-api-console,.eru-notification-feed) .api-empty p{margin:5px auto;max-width:460px}:is(.eru-api-console,.eru-notification-feed) .api-footer{padding:10px 24px;border-top:1px solid var(--api-line);font-size:11px;color:var(--api-muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+:is(.eru-api-console,.eru-notification-feed) .api-feed{padding:20px 24px;min-height:300px}:is(.eru-api-console,.eru-notification-feed) .api-feed-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}:is(.eru-api-console,.eru-notification-feed) .api-feed-toolbar h3{margin-right:auto}:is(.eru-api-console,.eru-notification-feed) .api-feed-list{display:flex;flex-direction:column;gap:8px}:is(.eru-api-console,.eru-notification-feed) .api-feed-item{padding:14px;border:1px solid var(--api-line);border-radius:7px;display:flex;gap:12px;align-items:flex-start}:is(.eru-api-console,.eru-notification-feed) .api-feed-item[data-unread=true]{border-left:3px solid var(--api-accent)}:is(.eru-api-console,.eru-notification-feed) .api-feed-item>div{flex:1;min-width:0}:is(.eru-api-console,.eru-notification-feed) .api-feed-item strong{font-size:13px;overflow-wrap:anywhere}:is(.eru-api-console,.eru-notification-feed) .api-feed-item p{font-size:11px;color:var(--api-muted);margin-top:4px}:is(.eru-api-console,.eru-notification-feed) .api-feed-item button{font-size:11px;min-height:28px;padding:3px 8px}:is(.eru-api-console,.eru-notification-feed) .api-feed-more{margin-top:12px}:is(.eru-api-console,.eru-notification-feed) .api-schema{max-height:260px;overflow:auto;font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+@container(max-width:760px){:is(.eru-api-console,.eru-notification-feed) .api-layout{grid-template-columns:1fr}:is(.eru-api-console,.eru-notification-feed) .api-sidebar{border-right:0;border-bottom:1px solid var(--api-line);padding:12px 16px}:is(.eru-api-console,.eru-notification-feed) .api-operation-list{max-height:145px}:is(.eru-api-console,.eru-notification-feed) .api-head,:is(.eru-api-console,.eru-notification-feed) .api-connection,:is(.eru-api-console,.eru-notification-feed) .api-main,:is(.eru-api-console,.eru-notification-feed) .api-feed{padding:16px}:is(.eru-api-console,.eru-notification-feed) .api-tabs{padding:0 16px}:is(.eru-api-console,.eru-notification-feed) .api-auth-grid{grid-template-columns:1fr}:is(.eru-api-console,.eru-notification-feed) .api-head{align-items:flex-start;flex-wrap:wrap}:is(.eru-api-console,.eru-notification-feed) .api-feedback{margin:12px 16px}:is(.eru-api-console,.eru-notification-feed) .api-footer{padding:10px 16px}}
+@container(max-width:420px){:is(.eru-api-console,.eru-notification-feed) .api-request-line{grid-template-columns:85px minmax(0,1fr)}:is(.eru-api-console,.eru-notification-feed) .api-request-line>button{grid-column:1/-1}:is(.eru-api-console,.eru-notification-feed) .api-connect-row>button{flex:1}:is(.eru-api-console,.eru-notification-feed) .api-feed-item{flex-wrap:wrap}:is(.eru-api-console,.eru-notification-feed) .api-feed-item>div{flex-basis:100%}}
+@media print{:is(.eru-api-console,.eru-notification-feed) .api-connection,:is(.eru-api-console,.eru-notification-feed) .api-sidebar,:is(.eru-api-console,.eru-notification-feed) .api-request-line>button,:is(.eru-api-console,.eru-notification-feed) .api-auth-grid,:is(.eru-api-console,.eru-notification-feed) .api-response-actions{display:none}:is(.eru-api-console,.eru-notification-feed) .api-layout{display:block}:is(.eru-api-console,.eru-notification-feed) .api-response pre{max-height:none;overflow:visible}}
+/* The native document's heading system uses variables with !important rules. */
+:is(.eru-api-console,.eru-notification-feed){--h2-font-size:20px;--h2-font-weight:650;--h2-margin-top:0px;--h2-margin-bottom:0px;--h2-line-height:1.5;--h2-letter-spacing:normal;--h2-color:var(--api-text);--h3-font-size:14px;--h3-font-weight:600;--h3-margin-top:0px;--h3-margin-bottom:0px;--h3-line-height:1.5;--h3-letter-spacing:normal;--h3-color:var(--api-text)}
+@container(max-width:420px){:is(.eru-api-console,.eru-notification-feed) .api-connect-row>label:first-child{flex:1 1 100%}:is(.eru-api-console,.eru-notification-feed) .api-connect-row>button{flex:1 1 120px}}
+html[data-theme=dark] :is(.eru-api-console,.eru-notification-feed) .api-method{color:#73cca4}html[data-theme=dark] :is(.eru-api-console,.eru-notification-feed) .api-method[data-method=POST]{color:#e9be77}html[data-theme=dark] :is(.eru-api-console,.eru-notification-feed) .api-method[data-method=DELETE]{color:#f08b99}html[data-theme=dark] :is(.eru-api-console,.eru-notification-feed) .api-method[data-method=PATCH],html[data-theme=dark] :is(.eru-api-console,.eru-notification-feed) .api-method[data-method=PUT]{color:#aeaafa}html[data-theme=dark] :is(.eru-api-console,.eru-notification-feed) .api-status[data-state=ok]{color:#73cca4}
+:is(.eru-api-console,.eru-notification-feed) .api-collection-toolbar{display:flex;flex-wrap:wrap;gap:6px;padding:12px 24px;border-bottom:1px solid var(--api-line)}:is(.eru-api-console,.eru-notification-feed) .api-collection-toolbar button{font-size:12px}:is(.eru-api-console,.eru-notification-feed) .api-endpoint-editor{padding:18px 24px;border-bottom:1px solid var(--api-line);background:var(--api-soft)}:is(.eru-api-console,.eru-notification-feed) .api-endpoint-editor h3{margin-bottom:12px}:is(.eru-api-console,.eru-notification-feed) .api-param-row{display:grid;grid-template-columns:minmax(100px,1fr) 90px 90px 90px auto;gap:6px;align-items:center;margin-bottom:8px}:is(.eru-api-console,.eru-notification-feed) .api-param-row label{display:flex;flex-direction:row;align-items:center;gap:4px}:is(.eru-api-console,.eru-notification-feed) .api-param-row input[type=checkbox]{width:auto}
+:is(.eru-api-console,.eru-notification-feed) .api-network-grid,.eru-notification-feed .api-network-grid{display:grid;gap:10px;margin-top:10px}:is(.eru-api-console,.eru-notification-feed) [data-gateway-settings],.eru-notification-feed [data-gateway-settings]{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}:is(.eru-api-console,.eru-notification-feed) [data-connection-actions],.eru-notification-feed [data-connection-actions]{display:flex;gap:8px;flex-wrap:wrap}.eru-notification-feed .api-feed-options{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.eru-notification-feed .api-feed-options label{font-size:12px;flex-direction:row;align-items:center}.eru-notification-feed .api-feed-options select{width:65px}
+@container(max-width:760px){:is(.eru-api-console,.eru-notification-feed) .api-param-row{grid-template-columns:minmax(100px,1fr) 90px;gap:8px}:is(.eru-api-console,.eru-notification-feed) [data-gateway-settings],.eru-notification-feed [data-gateway-settings]{grid-template-columns:1fr}:is(.eru-api-console,.eru-notification-feed) .api-collection-toolbar,:is(.eru-api-console,.eru-notification-feed) .api-endpoint-editor{padding:12px 16px}:is(.eru-api-console,.eru-notification-feed) [data-connection-actions],.eru-notification-feed [data-connection-actions]{flex:1 1 100%}}
+</style><div data-api-ui="" data-eru-transient="true"></div><script>{
+function createEruHostedResourceBridge(connection) {
+  const endpoint = new URL(connection.gatewayUrl)
+  if (
+    endpoint.username ||
+    endpoint.password ||
+    endpoint.pathname !== '/' ||
+    endpoint.search ||
+    endpoint.hash ||
+    !['https:', 'http:'].includes(endpoint.protocol)
+  )
+    throw Error('Địa chỉ dịch vụ tài nguyên không hợp lệ.')
+  if (
+    endpoint.protocol === 'http:' &&
+    !['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname)
+  )
+    throw Error('Dịch vụ online cần HTTPS.')
+  const origin = endpoint.origin,
+    mount = connection.hostedMount
+  if (!mount) throw Error('Không tìm thấy khung đăng nhập dịch vụ tài nguyên.')
+  const session = Array.from(
+    crypto.getRandomValues(new Uint8Array(16)),
+    (value) => value.toString(16).padStart(2, '0'),
+  ).join('')
+  const frame = document.createElement('iframe')
+  frame.title = 'Đăng nhập dịch vụ tài nguyên EruSentia'
+  frame.referrerPolicy = 'no-referrer'
+  frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin')
+  frame.style.cssText =
+    'display:block;width:100%;height:300px;border:1px solid var(--border-normal,#ddd);border-radius:8px;background:#fafafa'
+  frame.src = origin + '/resource-gateway/connect#' + session
+  let identity = null
+  const pending = new Map()
+  const post = (value) =>
+    frame.contentWindow?.postMessage(
+      { type: 'eru-resource-v1', session, ...value },
+      origin,
+    )
+  const hello = () => post({ kind: 'hello' })
+  const receive = (event) => {
+    const data = event.data
+    if (
+      event.source !== frame.contentWindow ||
+      event.origin !== origin ||
+      data?.type !== 'eru-resource-v1' ||
+      data.session !== session
+    )
+      return
+    if (data.kind === 'authenticated') {
+      identity = data.value?.enabled ? data.value : null
+      connection.onIdentity?.(identity)
+      return
+    }
+    if (data.kind === 'disconnected') {
+      identity = null
+      connection.onIdentity?.(null)
+      return
+    }
+    if (data.kind !== 'result' || !pending.has(data.id)) return
+    const entry = pending.get(data.id)
+    pending.delete(data.id)
+    entry.cleanup()
+    if (data.error) {
+      const messages = {
+        RESOURCE_DOCUMENT_ACCESS_DENIED:
+          'Tài khoản này chưa được cấp quyền mở tài liệu.',
+        RESOURCE_DOCUMENT_NOT_FOUND: 'Tài liệu không tồn tại hoặc đã bị xóa.',
+        RESOURCE_DAILY_QUOTA_EXCEEDED:
+          'Đã hết hạn mức hôm nay. Thử lại ngày mai hoặc liên hệ quản trị viên.',
+        RESOURCE_PLAN_REQUIRED_OR_BLOCKED:
+          'Tài khoản chưa được cấp quyền dùng dịch vụ hoặc đang bị khóa.',
+        RESOURCE_TARGET_NOT_ALLOWED:
+          'Máy chủ API chưa được dịch vụ cho phép. Liên hệ quản trị viên để thêm origin.',
+        RESOURCE_TARGET_PATH_NOT_ALLOWED:
+          'Đường dẫn này không được gọi qua proxy. Dùng giao diện quản trị hoặc API trực tiếp.',
+        RESOURCE_GATEWAY_DISABLED: 'Dịch vụ tài nguyên đang tạm tắt.',
+        RESOURCE_SERVICE_BUSY: 'Dịch vụ đang bận. Hãy thử lại sau.',
+        RESOURCE_PRIVATE_ADDRESS_BLOCKED:
+          'Dịch vụ online không truy cập mạng riêng. Hãy dùng gateway cục bộ.',
+        RESOURCE_UPSTREAM_UNAVAILABLE:
+          'Dịch vụ không kết nối được máy chủ API đích. Kiểm tra URL và thử lại.',
+        RESOURCE_UPSTREAM_TIMEOUT:
+          'Máy chủ API đích chưa phản hồi kịp. Hãy thử lại.',
+      }
+      const error = Error(
+        messages[data.error.message] ||
+          data.error.message ||
+          'Dịch vụ tài nguyên từ chối yêu cầu.',
+      )
+      error.status = data.error.status
+      entry.reject(error)
+    } else entry.resolve(data.value)
+  }
+  addEventListener('message', receive)
+  frame.addEventListener('load', hello)
+  mount.replaceChildren(frame)
+  const expand = () => {
+    const details = mount.closest('[data-network]')
+    if (details) details.open = true
+  }
+  return {
+    origin,
+    async call(action, payload, signal) {
+      expand()
+      if (!identity)
+        throw Error(
+          'Đăng nhập dịch vụ EruSentia trong khung kết nối trước khi sử dụng proxy online.',
+        )
+      if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
+      return new Promise((resolve, reject) => {
+        const id = crypto.randomUUID()
+        let timer
+        const abort = () => {
+          post({ kind: 'cancel', id })
+          pending.delete(id)
+          cleanup()
+          reject(new DOMException('Aborted', 'AbortError'))
+        }
+        const cleanup = () => {
+          clearTimeout(timer)
+          signal?.removeEventListener('abort', abort)
+        }
+        timer = setTimeout(() => {
+          post({ kind: 'cancel', id })
+          pending.delete(id)
+          cleanup()
+          reject(Error('Dịch vụ tài nguyên chưa phản hồi sau 15 giây.'))
+        }, 15000)
+        pending.set(id, { resolve, reject, cleanup })
+        signal?.addEventListener('abort', abort, { once: true })
+        post({ kind: 'request', id, action, payload })
+      })
+    },
+    identity: () => identity,
+    destroy() {
+      for (const entry of pending.values()) {
+        entry.cleanup()
+        entry.reject(Error('Kết nối dịch vụ đã đóng.'))
+      }
+      pending.clear()
+      removeEventListener('message', receive)
+      frame.remove()
+      identity = null
+    },
+  }
+}
 
-  let config = null;
+function createEruResourceTransport() {
+  const gatewayAddress = (value) => {
+    const url = new URL(value)
+    if (
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      url.pathname !== '/' ||
+      !['http:', 'https:'].includes(url.protocol)
+    )
+      throw Error('Địa chỉ gateway không hợp lệ.')
+    if (
+      url.protocol === 'http:' &&
+      !['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)
+    )
+      throw Error('Gateway HTTP phải chạy trên máy cục bộ.')
+    return url.origin
+  }
+  let hosted
+  const bridge = (connection) => {
+    const origin = new URL(connection.gatewayUrl).origin
+    if (!hosted || hosted.origin !== origin) {
+      hosted?.destroy()
+      hosted = createEruHostedResourceBridge(connection)
+    }
+    return hosted
+  }
+  const decode = (result, method) => {
+    if (
+      result.version !== 1 ||
+      typeof result.bodyBase64 !== 'string' ||
+      !Number.isInteger(result.status)
+    )
+      throw Error('Dịch vụ trả về định dạng không được hỗ trợ.')
+    const bytes = Uint8Array.from(atob(result.bodyBase64), (c) =>
+      c.charCodeAt(0),
+    )
+    return new Response(
+      [204, 205, 304].includes(result.status) || method === 'HEAD'
+        ? null
+        : bytes,
+      {
+        status: result.status,
+        statusText: result.statusText,
+        headers: result.headers,
+      },
+    )
+  }
+  return {
+    disconnectHosted() {
+      hosted?.destroy()
+      hosted = null
+    },
+    connectHosted(connection) {
+      return bridge(connection)
+    },
+    async openDocument(id, connection, signal) {
+      return bridge(connection).call('document', { id }, signal)
+    },
+    async checkGateway(connection, signal) {
+      if (connection.transport === 'hosted') {
+        const info = await bridge(connection).call('status', {}, signal)
+        return { ...info, targets: info.targetOrigins }
+      }
+      if (!connection.gatewayKey)
+        throw Error(
+          'Dán khóa phiên được in trong terminal chạy Resource Gateway.',
+        )
+      const response = await fetch(
+        gatewayAddress(connection.gatewayUrl) + '/v1/status',
+        {
+          headers: { 'X-Eru-Gateway-Key': connection.gatewayKey },
+          credentials: 'omit',
+          redirect: 'error',
+          signal,
+        },
+      )
+      if (!response.ok)
+        throw Error('Gateway từ chối khóa phiên hoặc không sẵn sàng.')
+      return response.json()
+    },
+    async request(url, options, connection) {
+      if (connection.transport === 'hosted')
+        return decode(
+          await bridge(connection).call(
+            'request',
+            {
+              url,
+              method: options.method || 'GET',
+              headers: Object.fromEntries(new Headers(options.headers)),
+              ...(options.body !== undefined ? { body: options.body } : {}),
+              ...(connection.documentId
+                ? { documentId: connection.documentId }
+                : {}),
+            },
+            options.signal,
+          ),
+          options.method,
+        )
+      if (connection.transport !== 'gateway')
+        return fetch(url, {
+          ...options,
+          credentials: 'omit',
+          redirect: 'error',
+        })
+      if (!connection.gatewayKey)
+        throw Error(
+          'Cần khóa phiên để dùng gateway. Chạy Resource Gateway rồi dán khóa vào mục Kết nối.',
+        )
+      const response = await fetch(
+        gatewayAddress(connection.gatewayUrl) + '/v1/request',
+        {
+          method: 'POST',
+          credentials: 'omit',
+          redirect: 'error',
+          signal: options.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Eru-Gateway-Key': connection.gatewayKey,
+          },
+          body: JSON.stringify({
+            url,
+            method: options.method || 'GET',
+            headers: Object.fromEntries(new Headers(options.headers)),
+            ...(options.body !== undefined ? { body: options.body } : {}),
+          }),
+        },
+      )
+      const result = await response.json()
+      if (!response.ok) {
+        const messages = {
+          TARGET_NOT_ALLOWED:
+            'Máy chủ này chưa được gateway cho phép. Khởi động gateway với --target đúng origin.',
+          GATEWAY_PAIRING_REQUIRED:
+            'Khóa gateway không đúng hoặc phiên đã đổi.',
+          UPSTREAM_REDIRECT_BLOCKED:
+            'Máy chủ chuyển hướng. Dùng URL đích trực tiếp để tránh chuyển thông tin xác thực sang máy chủ khác.',
+          UPSTREAM_TIMEOUT: 'Máy chủ đích không phản hồi trong thời gian chờ.',
+          UPSTREAM_UNREACHABLE:
+            'Gateway không kết nối được API đích. Kiểm tra địa chỉ và dịch vụ.',
+          UPSTREAM_TLS_ERROR:
+            'Chứng chỉ TLS của API chưa được tin cậy. Cài CA hợp lệ cho gateway; không tắt xác minh TLS.',
+          RESPONSE_TOO_LARGE: 'Phản hồi vượt giới hạn 2 MiB của gateway.',
+        }
+        throw Error(
+          messages[result.error] ||
+            `Gateway không hoàn tất yêu cầu: ${result.error || response.status}`,
+        )
+      }
+      return decode(result, options.method)
+    },
+  }
+}
+
+function createEruToolConnectionMarkup(config, escape) {
+  let targetOrigin = config.baseUrl
   try {
-    const raw = container.getAttribute('data-template-config');
-    if (raw) config = JSON.parse(decodeURIComponent(escape(atob(raw))));
-  } catch (e) {
-    console.error('Kanban parse error', e);
+    targetOrigin = new URL(config.baseUrl).origin
+  } catch {
+    /* Editable URL. */
   }
-
-  if (!config) {
-    config = {
-      type: 'kanban',
-      title: 'Bảng Quản Lý Công Việc',
-      columns: []
-    };
+  const mode = ['gateway', 'hosted'].includes(config.transport)
+    ? config.transport
+    : 'direct'
+  return `<section class="api-connection" aria-label="Cấu hình kết nối"><div class="api-connect-row"><label>Máy chủ API<input data-base type="url" value="${escape(config.baseUrl)}" spellcheck="false" placeholder="http://127.0.0.1:3001"></label><span data-connection-actions></span></div>
+  <details data-network ${mode === 'hosted' ? 'open' : ''}><summary>Đường kết nối <span data-route-label>· ${mode === 'hosted' ? 'Dịch vụ Render' : mode === 'gateway' ? 'Gateway cục bộ' : 'Trực tiếp'}</span></summary><div class="api-network-grid"><label>Phương thức kết nối<select data-transport><option value="hosted" ${mode === 'hosted' ? 'selected' : ''}>EruSentia online · đăng nhập tài khoản</option><option value="direct" ${mode === 'direct' ? 'selected' : ''}>Trực tiếp · API cho phép CORS</option><option value="gateway" ${mode === 'gateway' ? 'selected' : ''}>Resource Gateway · file HTML / API khác origin</option></select></label><div data-gateway-settings ${mode === 'direct' ? 'hidden' : ''}><label>Địa chỉ gateway<input data-gateway-url value="${escape(config.gatewayUrl || (mode === 'hosted' ? 'https://erusentia-api.onrender.com' : 'http://127.0.0.1:3198'))}" type="url"></label><label data-local-key ${mode !== 'gateway' ? 'hidden' : ''}>Khóa phiên gateway<input data-gateway-key type="password" autocomplete="off" placeholder="Dán khóa được in trong terminal"></label><button type="button" data-action="check-gateway">Kiểm tra gateway</button></div></div><div data-hosted-settings ${mode !== 'hosted' ? 'hidden' : ''}><div data-hosted-mount></div><label style="margin-top:12px">ID tài liệu được bảo vệ (tùy chọn)<input data-document-id value="${escape(config.documentId || '')}" placeholder="UUID do chủ tài liệu cấp"></label><button type="button" data-action="open-document">Mở tài liệu được cấp quyền</button><div data-document-preview hidden></div><p class="api-auth-note">Dịch vụ kiểm tra tài khoản, quyền tài liệu và hạn mức. Phiên đăng nhập chỉ nằm trong khung dịch vụ. Với API cùng máy chủ, phiên này được dùng để xác thực yêu cầu; API khác có thể cần token riêng ở mục Xác thực.</p></div><p data-local-help class="api-auth-note" ${mode !== 'gateway' ? 'hidden' : ''}>Chạy <code>pnpm resource:gateway --target ${escape(targetOrigin)}</code>. Chỉ máy chủ được khai báo mới được chuyển tiếp; khóa phiên không lưu vào tài liệu.</p></details>
+  <details data-auth><summary>Xác thực API đích <span data-auth-label>· Chưa đăng nhập</span></summary><form data-login class="api-auth-grid"><label>Email<input data-email type="email" autocomplete="off" required placeholder="ban@example.com"></label><label>Mật khẩu<input data-password type="password" autocomplete="off" required placeholder="Mật khẩu tài khoản"></label><button class="api-primary" type="submit">Đăng nhập</button></form><div class="api-token-row"><label>Hoặc Bearer token<input data-token type="password" autocomplete="off" placeholder="Dán access token"></label><button type="button" data-action="authorize">Dùng token</button><button type="button" data-action="logout" hidden>Xóa xác thực</button></div><p class="api-auth-note">Mật khẩu, Bearer token và khóa gateway chỉ ở trong bộ nhớ của khối này.</p></details></section>`
+}
+function createEruToolConnection({
+  root,
+  ui,
+  config,
+  feedback,
+  status,
+  busy = () => {},
+  changed = () => {},
+  authChanged = () => {},
+}) {
+  const $ = (selector) => ui.querySelector(selector)
+  const transport = createEruResourceTransport()
+  let token = '',
+    tokenBase = '',
+    pending = null,
+    epoch = 0
+  const base = () => {
+    const url = new URL($('[data-base]').value.trim())
+    if (
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      !['http:', 'https:'].includes(url.protocol)
+    )
+      throw Error(
+        'Nhập URL HTTP/HTTPS không kèm tài khoản, query hoặc fragment.',
+      )
+    return url.href.replace(/\/$/, '')
   }
-
-  function updateMeta() {
-    let total = 0;
-    const cols = container.querySelectorAll('.kanban-col');
-    cols.forEach(col => {
-      const colId = col.getAttribute('data-col-id');
-      const cards = col.querySelectorAll('.kanban-card');
-      const countEl = col.querySelector('.badge-count');
-      if (countEl) countEl.textContent = cards.length;
-      total += cards.length;
-    });
-    const totalEl = container.querySelector('.kanban-task-total strong');
-    if (totalEl) totalEl.textContent = total;
+  const settings = () => ({
+    baseUrl: base(),
+    transport: $('[data-transport]').value,
+    gatewayUrl: $('[data-gateway-url]').value.trim(),
+    ...($('[data-document-id]').value.trim()
+      ? { documentId: $('[data-document-id]').value.trim() }
+      : {}),
+  })
+  const secretSettings = () => ({
+    ...settings(),
+    gatewayKey: $('[data-gateway-key]').value.trim(),
+    hostedMount: $('[data-hosted-mount]'),
+    onIdentity: () => {
+      let active = false
+      try {
+        active = authenticated()
+      } catch {
+        /* Editable URL. */
+      }
+      if (!token)
+        $('[data-auth-label]').textContent = active
+          ? '· Dùng phiên dịch vụ'
+          : '· Chưa đăng nhập'
+      authChanged(active)
+    },
+  })
+  const hosted = () => transport.connectHosted(secretSettings())
+  const authenticated = () =>
+    !!token ||
+    (settings().transport === 'hosted' &&
+      !!hosted().identity() &&
+      new URL(base()).origin === hosted().origin)
+  const clear = () => {
+    token = ''
+    tokenBase = ''
+    $('[data-token]').value = ''
+    $('[data-password]').value = ''
+    $('[data-auth-label]').textContent = '· Chưa đăng nhập'
+    $('[data-action="logout"]').hidden = true
+    authChanged(false)
   }
-
-  function saveConfig() {
+  const authorize = (value, label) => {
+    if (!value?.trim() || /\s/.test(value.trim()))
+      throw Error('Token trống hoặc có khoảng trắng không hợp lệ.')
+    token = value.trim()
+    tokenBase = base()
+    $('[data-token]').value = ''
+    $('[data-password]').value = ''
+    $('[data-auth-label]').textContent = `· ${label}`
+    $('[data-action="logout"]').hidden = false
+    authChanged(true)
+    feedback('Đã cấp token cho máy chủ này. Token không được lưu vào tài liệu.')
+  }
+  const request = async (path, options = {}, anonymous = false) => {
+    if (pending)
+      throw Error('Đang có yêu cầu chạy. Hãy đợi hoặc hủy yêu cầu hiện tại.')
+    const server = base(),
+      currentEpoch = epoch
+    if (token && tokenBase !== server) clear()
+    const url = new URL(path.startsWith('http') ? path : server + path)
+    if (url.origin !== new URL(server).origin)
+      throw Error('Yêu cầu phải thuộc máy chủ API đang chọn.')
+    const controller = new AbortController()
+    pending = controller
+    let timedOut = false
+    const timer = setTimeout(() => {
+      timedOut = true
+      controller.abort()
+    }, 15000)
+    busy(true)
+    status('Đang kết nối…')
     try {
-      const boardTitleEl = container.querySelector('.kanban-board-title');
-      if (boardTitleEl) config.title = boardTitleEl.textContent || 'Bảng Quản Lý Công Việc';
-
-      const cols = container.querySelectorAll('.kanban-col');
-      const newColumns = [];
-      cols.forEach(col => {
-        const colId = col.getAttribute('data-col-id') || 'col_' + Math.random().toString(36).slice(2, 6);
-        const titleEl = col.querySelector('.col-title-text');
-        const colTitle = titleEl ? titleEl.textContent : 'Cột';
-        const color = col.style.getPropertyValue('--col-accent') || '#3b82f6';
-
-        const cards = [];
-        const cardEls = col.querySelectorAll('.kanban-card');
-        cardEls.forEach(cardEl => {
-          const cardId = cardEl.getAttribute('data-card-id') || 'c_' + Math.random().toString(36).slice(2, 6);
-          const textEl = cardEl.querySelector('.card-text');
-          const descEl = cardEl.querySelector('.card-desc');
-          const tagEl = cardEl.querySelector('.card-tag');
-          const pillEl = cardEl.querySelector('.card-tag-pill');
-
-          let priority = 'medium';
-          if (tagEl) {
-            if (tagEl.classList.contains('tag-urgent')) priority = 'urgent';
-            else if (tagEl.classList.contains('tag-high')) priority = 'high';
-            else if (tagEl.classList.contains('tag-low')) priority = 'low';
-          }
-
-          cards.push({
-            id: cardId,
-            title: textEl ? textEl.textContent || '' : '',
-            description: descEl ? descEl.textContent || '' : undefined,
-            priority: priority,
-            tag: pillEl ? pillEl.textContent || undefined : undefined
-          });
-        });
-
-        newColumns.push({
-          id: colId,
-          title: colTitle || 'Cột',
-          color: color,
-          cards: cards
-        });
-      });
-
-      config.columns = newColumns;
-      const json = JSON.stringify(config);
-      const bytes = new TextEncoder().encode(json);
-      let binary = '';
-      for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-      container.setAttribute('data-template-config', btoa(binary));
-      container.dispatchEvent(new Event('change', { bubbles: true }));
-    } catch (e) {
-      console.error('Kanban saveConfig error', e);
+      const res = await transport.request(
+        url.href,
+        {
+          ...options,
+          signal: controller.signal,
+          headers: {
+            ...options.headers,
+            ...(!anonymous && token
+              ? { Authorization: `Bearer ${token}` }
+              : {}),
+          },
+        },
+        secretSettings(),
+      )
+      const text = options.method === 'HEAD' ? '' : await res.text()
+      if (text.length > 2000000)
+        throw Error('Phản hồi lớn hơn 2 MB. Hãy thu hẹp truy vấn.')
+      if (currentEpoch !== epoch || server !== base())
+        throw Error('Kết nối đã thay đổi. Hãy gửi lại yêu cầu.')
+      status(
+        `HTTP ${res.status} · ${settings().transport === 'hosted' ? 'Render' : settings().transport === 'gateway' ? 'Gateway' : 'Trực tiếp'}`,
+        res.ok ? 'ok' : 'error',
+      )
+      let data
+      try {
+        data = text ? JSON.parse(text) : null
+      } catch {
+        data = text
+      }
+      return { res, data, text }
+    } catch (error) {
+      status('Chưa nhận phản hồi', 'error')
+      if (controller.signal.aborted)
+        throw Error(
+          timedOut ? 'Máy chủ không phản hồi sau 15 giây.' : 'Đã hủy yêu cầu.',
+        )
+      if (error instanceof TypeError)
+        throw Error(
+          settings().transport === 'gateway'
+            ? 'Không kết nối được gateway. Kiểm tra địa chỉ, dịch vụ cục bộ và quyền truy cập mạng của trình duyệt.'
+            : `Không kết nối được. Kiểm tra địa chỉ, CORS và máy chủ. Với file HTML hoặc API chặn CORS, mở Đường kết nối và chọn Resource Gateway. Origin hiện tại: ${location.origin}.`,
+        )
+      throw error
+    } finally {
+      clearTimeout(timer)
+      pending = null
+      busy(false)
     }
   }
-
-  // Drag and drop logic
-  let draggedCard = null;
-
-  container.addEventListener('dragstart', (e) => {
-    const card = e.target.closest('.kanban-card');
-    if (!card) return;
-    draggedCard = card;
-    card.classList.add('is-dragging');
-    e.dataTransfer.setData('text/plain', card.getAttribute('data-card-id') || '');
-    e.dataTransfer.effectAllowed = 'move';
-  });
-
-  container.addEventListener('dragend', () => {
-    if (draggedCard) {
-      draggedCard.classList.remove('is-dragging');
-      draggedCard = null;
+  $('[data-login]').addEventListener('submit', async (event) => {
+    event.preventDefault()
+    feedback()
+    try {
+      const email = $('[data-email]').value.trim(),
+        password = $('[data-password]').value
+      const { res, data } = await request(
+        '/auth/login',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        },
+        true,
+      )
+      if (!res.ok || typeof data?.accessToken !== 'string')
+        throw Error(
+          `Đăng nhập thất bại (HTTP ${res.status}). Kiểm tra tài khoản và mật khẩu.`,
+        )
+      authorize(data.accessToken, data.user?.email || email)
+    } catch (error) {
+      feedback(error.message, true)
+    } finally {
+      $('[data-password]').value = ''
     }
-    const cols = container.querySelectorAll('.kanban-col');
-    cols.forEach(c => c.classList.remove('drag-over'));
-  });
-
-  const cols = container.querySelectorAll('.kanban-col');
-  cols.forEach(col => {
-    col.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      col.classList.add('drag-over');
-    });
-
-    col.addEventListener('dragleave', (e) => {
-      if (!col.contains(e.relatedTarget)) {
-        col.classList.remove('drag-over');
+  })
+  ui.addEventListener('click', async (event) => {
+    const action = event.target.closest('button')?.dataset.action
+    try {
+      if (action === 'authorize')
+        authorize($('[data-token]').value, 'Đã cấp Bearer token')
+      if (action === 'logout') {
+        epoch++
+        pending?.abort()
+        clear()
+        feedback('Đã xóa xác thực trong khối này.')
       }
-    });
-
-    col.addEventListener('drop', (e) => {
-      e.preventDefault();
-      col.classList.remove('drag-over');
-      if (!draggedCard) return;
-
-      const cardsContainer = col.querySelector('.kanban-cards');
-      if (cardsContainer) {
-        cardsContainer.appendChild(draggedCard);
-        updateMeta();
-        saveConfig();
+      if (action === 'cancel') pending?.abort()
+      if (action === 'open-document') {
+        const id = $('[data-document-id]').value.trim()
+        if (!/^[0-9a-f-]{36}$/i.test(id))
+          throw Error('Nhập ID tài liệu hợp lệ do chủ tài liệu cấp.')
+        const result = await transport.openDocument(
+          id,
+          secretSettings(),
+          AbortSignal.timeout(15000),
+        )
+        const frame = document.createElement('iframe')
+        frame.title = result.title || 'Tài liệu được cấp quyền'
+        frame.setAttribute('sandbox', 'allow-scripts')
+        frame.referrerPolicy = 'no-referrer'
+        frame.style.cssText =
+          'width:100%;height:600px;border:1px solid #ddd;border-radius:8px;margin-top:12px'
+        frame.srcdoc = result.html
+        $('[data-document-preview]').replaceChildren(frame)
+        $('[data-document-preview]').hidden = false
+        feedback(
+          'Đã xác minh quyền và mở tài liệu. Lượt truy cập được ghi nhận trên dịch vụ.',
+        )
       }
-    });
-  });
-
-  // Click actions: Delete, Move, Priority cycle
-  container.addEventListener('click', (e) => {
-    // Delete
-    const delBtn = e.target.closest('.card-del-btn');
-    if (delBtn) {
-      const card = delBtn.closest('.kanban-card');
-      if (card) {
-        card.remove();
-        updateMeta();
-        saveConfig();
+      if (action === 'check-gateway') {
+        const result = await transport.checkGateway(
+          secretSettings(),
+          AbortSignal.timeout(5000),
+        )
+        const allowed = result.targets?.includes(new URL(base()).origin)
+        feedback(
+          allowed
+            ? `Dịch vụ sẵn sàng${result.plan ? ' · ' + result.user.email + ' · gói ' + result.plan + ' · còn ' + result.remaining + '/' + result.dailyLimit + ' yêu cầu' : ''}.`
+            : 'Dịch vụ chưa cho phép máy chủ này. Quản trị viên cần thêm đúng origin vào danh sách cho phép.',
+          !allowed,
+        )
       }
-      return;
+    } catch (error) {
+      feedback(error.message, true)
     }
-
-    // Move next/prev
-    const nextBtn = e.target.closest('.next-col-btn');
-    if (nextBtn) {
-      const card = nextBtn.closest('.kanban-card');
-      const currentCol = card.closest('.kanban-col');
-      const nextCol = currentCol ? currentCol.nextElementSibling : null;
-      if (nextCol && nextCol.classList.contains('kanban-col')) {
-        nextCol.querySelector('.kanban-cards').appendChild(card);
-        updateMeta();
-        saveConfig();
+  })
+  const update = (event) => {
+    if (
+      event.target.matches(
+        '[data-base],[data-transport],[data-gateway-url],[data-document-id]',
+      )
+    ) {
+      epoch++
+      pending?.abort()
+      const connectionChanged = !event.target.matches('[data-document-id]')
+      if (connectionChanged) clear()
+      status('Chưa kết nối')
+      const mode = $('[data-transport]').value
+      if (event.target.matches('[data-transport]')) {
+        const address = $('[data-gateway-url]')
+        if (mode === 'hosted' && address.value === 'http://127.0.0.1:3198')
+          address.value = 'https://erusentia-api.onrender.com'
+        if (
+          mode === 'gateway' &&
+          address.value === 'https://erusentia-api.onrender.com'
+        )
+          address.value = 'http://127.0.0.1:3198'
       }
-      return;
-    }
-
-    const prevBtn = e.target.closest('.prev-col-btn');
-    if (prevBtn) {
-      const card = prevBtn.closest('.kanban-card');
-      const currentCol = card.closest('.kanban-col');
-      const prevCol = currentCol ? currentCol.previousElementSibling : null;
-      if (prevCol && prevCol.classList.contains('kanban-col')) {
-        prevCol.querySelector('.kanban-cards').appendChild(card);
-        updateMeta();
-        saveConfig();
+      $('[data-gateway-settings]').hidden = mode === 'direct'
+      $('[data-local-key]').hidden = mode !== 'gateway'
+      $('[data-local-help]').hidden = mode !== 'gateway'
+      $('[data-hosted-settings]').hidden = mode !== 'hosted'
+      $('[data-document-preview]').replaceChildren()
+      $('[data-document-preview]').hidden = true
+      if (event.target.matches('[data-transport],[data-gateway-url]'))
+        transport.disconnectHosted()
+      $('[data-route-label]').textContent =
+        mode === 'hosted'
+          ? '· Dịch vụ Render'
+          : mode === 'gateway'
+            ? '· Gateway cục bộ'
+            : '· Trực tiếp'
+      if (mode === 'hosted') {
+        try {
+          hosted()
+        } catch (error) {
+          feedback(error.message, true)
+        }
       }
-      return;
-    }
-
-    // Priority Cycle
-    const tagBtn = e.target.closest('.card-tag');
-    if (tagBtn) {
-      if (tagBtn.classList.contains('tag-urgent')) {
-        tagBtn.className = 'card-tag tag-high';
-        tagBtn.textContent = 'Quan trọng';
-      } else if (tagBtn.classList.contains('tag-high')) {
-        tagBtn.className = 'card-tag tag-medium';
-        tagBtn.textContent = 'Bình thường';
-      } else if (tagBtn.classList.contains('tag-medium')) {
-        tagBtn.className = 'card-tag tag-low';
-        tagBtn.textContent = 'Thấp';
-      } else {
-        tagBtn.className = 'card-tag tag-urgent';
-        tagBtn.textContent = 'Gấp';
+      try {
+        Object.assign(config, settings())
+        if (!token && authenticated())
+          $('[data-auth-label]').textContent = '· Dùng phiên dịch vụ'
+        changed()
+        feedback(
+          connectionChanged
+            ? 'Đã cập nhật đường kết nối.'
+            : 'Đã cập nhật tài liệu được bảo vệ.',
+        )
+      } catch (error) {
+        feedback(error.message, true)
       }
-      saveConfig();
-      return;
     }
-  });
-
-  // Inline input to add card
-  container.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.classList.contains('add-card-input')) {
-      const input = e.target;
-      const text = input.value.trim();
-      if (!text) return;
-
-      const col = input.closest('.kanban-col');
-      if (!col) return;
-
-      const cardsContainer = col.querySelector('.kanban-cards');
-      if (!cardsContainer) return;
-
-      const newId = 'c_' + Date.now().toString(36);
-      const cardEl = document.createElement('div');
-      cardEl.className = 'kanban-card';
-      cardEl.setAttribute('draggable', 'true');
-      cardEl.setAttribute('data-card-id', newId);
-
-      const isDoneCol = col.classList.contains('col-done');
-      const textStyle = isDoneCol ? 'text-decoration: line-through; opacity: 0.72;' : '';
-
-      cardEl.innerHTML = `
-        <div class="card-text" contenteditable="true" style="${textStyle}">${text}</div>
-        <div class="card-footer">
-          <div class="card-tags-row">
-            <span class="card-tag tag-medium" title="Nhấp để chuyển mức độ ưu tiên">Bình thường</span>
-          </div>
-          <div class="card-actions">
-            <button type="button" class="card-del-btn" title="Xóa thẻ"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M360 184h304c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H360c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8zm464 48H680l-28.8-72A72 72 0 00584.8 112H439.2a72 72 0 00-66.4 48L344 232H200c-17.7 0-32 14.3-32 32v16c0 4.4 3.6 8 8 8h48v544c0 44.2 35.8 80 80 80h416c44.2 0 80-35.8 80-80V288h48c4.4 0 8-3.6 8-8v-16c0-17.7-14.3-32-32-32zm-72 632c0 8.8-7.2 16-16 16H288c-8.8 0-16-7.2-16-16V288h480v576zm-360-96c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304zm160 0c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V432c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8v304z"/></svg></button>
-            <button type="button" class="move-btn prev-col-btn" title="Lùi lại cột trước"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.8 31.8 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"/></svg></button>
-            <button type="button" class="move-btn next-col-btn" title="Chuyển sang cột tiếp theo"><svg viewBox="0 0 1024 1024" width="1em" height="1em" fill="currentColor"><path d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.8 31.8 0 000-50.4z"/></svg></button>
-          </div>
-        </div>
-      `;
-
-      cardsContainer.appendChild(cardEl);
-      input.value = '';
-      updateMeta();
-      saveConfig();
+  }
+  ui.addEventListener('change', update)
+  window.addEventListener(
+    'pagehide',
+    () => {
+      pending?.abort()
+      transport.disconnectHosted()
+      token = ''
+      $('[data-gateway-key]').value = ''
+    },
+    { once: true },
+  )
+  if (settings().transport === 'hosted') {
+    try {
+      hosted()
+    } catch (error) {
+      feedback(error.message, true)
     }
-  });
+  }
+  return {
+    request,
+    base,
+    settings,
+    authenticated,
+    abort: () => pending?.abort(),
+    clear,
+  }
+}
 
-  // Auto-sync contenteditable typing
-  container.addEventListener('input', (e) => {
-    if (e.target.closest('[contenteditable="true"]')) {
-      saveConfig();
+// Self-contained runtime. Requests, credentials and responses never enter saved HTML.
+;(() => {
+  const root = document.currentScript.closest('.eru-api-console')
+  if (!root) return
+  const ui = root.querySelector('[data-api-ui]')
+  const $ = selector => ui.querySelector(selector)
+  const esc = value => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;')
+  let config = { type: 'api-console', version: 2, title: 'API Explorer', baseUrl: 'http://127.0.0.1:3001', transport: 'direct', gatewayUrl: 'http://127.0.0.1:3198' }
+  try { config = { ...config, ...JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(root.dataset.templateConfig), c => c.charCodeAt(0)))) } } catch { /* Use editable defaults. */ }
+  if (config.baseUrl === 'auto') {
+    config.baseUrl = /^https?:$/.test(location.protocol) ? location.origin : 'https://erusentia-api.onrender.com'
+    if (!/^https?:$/.test(location.protocol)) { config.transport = 'hosted'; config.gatewayUrl = 'https://erusentia-api.onrender.com' }
+  }
+  const starter = { openapi: '3.0.3', info: { title: 'EruSentia · các yêu cầu cơ bản', version: '1' }, paths: {
+    '/health': { get: { summary: 'Kiểm tra kết nối', tags: ['Hệ thống'], responses: { 200: { description: 'Máy chủ đang hoạt động' } } } },
+    '/auth/me': { get: { summary: 'Tài khoản hiện tại', tags: ['Tài khoản'], security: [{ bearer: [] }] } },
+    '/templates': { get: { summary: 'Danh sách template', tags: ['Template'], parameters: [{ in: 'query', name: 'page', schema: { type: 'integer', default: 0 } }, { in: 'query', name: 'size', schema: { type: 'integer', default: 10 } }] } },
+    '/notifications': { get: { summary: 'Thông báo của bạn', tags: ['Thông báo'], security: [{ bearer: [] }], parameters: [{ in: 'query', name: 'limit', schema: { type: 'integer', default: 15 } }] } },
+    '/workspaces': { get: { summary: 'Không gian làm việc', tags: ['Workspace'], security: [{ bearer: [] }] }, post: { summary: 'Tạo không gian làm việc', tags: ['Workspace'], security: [{ bearer: [] }], requestBody: { content: { 'application/json': { schema: { type: 'object', properties: { name: { type: 'string', example: 'Nhóm tài liệu' }, slug: { type: 'string', example: 'nhom-tai-lieu' } } } } } } } }
+  } }
+  let spec = starter, operations = [], selected = null, responseText = '', editingKey = null
+  const history = []
+  ui.innerHTML = `<header class="api-head"><div><div class="api-eyebrow">EruSentia / Developer tools</div><h2>${esc(config.title)}</h2><p class="api-muted">Đọc tài liệu. Gửi yêu cầu. Xem phản hồi thật.</p></div><span class="api-status" data-state="idle" data-status>Chưa kết nối</span></header>
+  ${createEruToolConnectionMarkup(config, esc)}
+  <div class="api-feedback" role="status" aria-live="polite" hidden data-feedback></div>
+  <section aria-label="Trình quản lý API"><div class="api-collection-toolbar"><button type="button" data-action="new-endpoint">Thêm endpoint</button><button type="button" data-action="edit-endpoint">Sửa endpoint</button><button type="button" data-action="delete-endpoint">Xóa endpoint</button><button type="button" data-action="export-collection">Xuất bộ sưu tập</button><button type="button" data-action="undo-collection" disabled>Hoàn tác</button><span data-delete-confirm hidden>Xóa endpoint đang chọn? <button type="button" data-action="confirm-delete">Xác nhận xóa</button><button type="button" data-action="cancel-delete">Hủy</button></span></div>
+  <section data-endpoint-editor hidden class="api-endpoint-editor"><form data-endpoint-form><h3 data-endpoint-heading>Thêm endpoint</h3><div class="api-params"><label>Tên endpoint<input data-edit-title maxlength="150" required></label><label>Phương thức<select data-edit-method>${['GET','POST','PUT','PATCH','DELETE','HEAD','OPTIONS'].map(m=>`<option>${m}</option>`).join('')}</select></label><label>Đường dẫn<input data-edit-path placeholder="/items/{id}" required></label></div><h3>Tham số</h3><div data-edit-params></div><button type="button" data-action="add-param">Thêm tham số</button><label style="margin-top:12px">JSON body mẫu (tùy chọn)<textarea data-edit-body placeholder="Không nhập mật khẩu hoặc token vào body mẫu được lưu."></textarea></label><div class="api-collection-toolbar"><button type="submit" class="api-primary">Lưu endpoint</button><button type="button" data-action="cancel-endpoint">Hủy chỉnh sửa</button></div></form></section><div class="api-layout"><aside class="api-sidebar" aria-label="Danh sách endpoint"><input type="search" data-search placeholder="Tìm đường dẫn hoặc chức năng…" aria-label="Tìm endpoint"><div class="api-operation-list" data-operations></div><p class="api-muted" data-spec-name style="margin-top:12px"></p></aside><div class="api-main"><div class="api-operation-summary"><h3 data-summary></h3><p data-description></p></div><form data-request><div class="api-request-line"><label>Phương thức<select data-request-method>${['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'].map(method => `<option>${method}</option>`).join('')}</select></label><label>Đường dẫn<input data-path spellcheck="false" required aria-label="Đường dẫn API"></label><button type="submit" class="api-primary" data-send>Gửi yêu cầu</button></div><div data-params class="api-params"></div><label class="api-body-label" data-body-wrap hidden>Body · application/json<textarea data-body spellcheck="false" aria-label="JSON body"></textarea></label><details class="api-headers"><summary>Headers tùy chỉnh</summary><textarea data-headers spellcheck="false" aria-label="Headers JSON" placeholder='{"If-Match":"revision-etag"}'></textarea></details><details><summary>Schema & phản hồi dự kiến</summary><pre class="api-schema" data-schema></pre></details></form><section class="api-response" aria-label="Phản hồi API"><div class="api-response-head"><div class="api-response-meta"><span class="api-response-code" data-response-code>Chưa gửi yêu cầu</span><span data-duration></span></div><div class="api-response-actions"><button type="button" data-action="cancel" hidden>Hủy yêu cầu</button><button type="button" data-action="copy" disabled>Sao chép</button><button type="button" data-action="download" disabled>Tải phản hồi</button></div></div><pre data-response>Chọn một endpoint và bấm Gửi yêu cầu để xem dữ liệu từ máy chủ.</pre><details data-response-headers-wrap hidden><summary>Response headers</summary><pre data-response-headers></pre></details></section></div></div></section>
+  <footer class="api-footer"><span data-footnote>Cấu hình và bộ sưu tập được lưu. Yêu cầu chạy khi bạn bấm Gửi.</span><span>OpenAPI 3 · JSON</span></footer>`
+  const feedback = (message = '', error = false) => { $('[data-feedback]').hidden = !message; $('[data-feedback]').textContent = message; $('[data-feedback]').dataset.error = String(error) }
+  const status = (text, state = 'idle') => { $('[data-status]').textContent = text; $('[data-status]').dataset.state = state }
+  $('[data-connection-actions]').innerHTML = '<button type="button" data-action="load-spec">Nạp OpenAPI</button><button type="button" data-action="import">Nhập tệp JSON</button><input type="file" accept=".json,application/json" data-file hidden>'
+  const persist = () => {
+    const state = { type: 'api-console', version: 2, title: config.title, ...connection.settings(), width: config.width || '100%', align: config.align || 'center', fitMode: config.fitMode || 'fit-template', spec }
+    const bytes = new TextEncoder().encode(JSON.stringify(state))
+    root.dataset.templateConfig = btoa(Array.from(bytes, b => String.fromCharCode(b)).join(''))
+    root.dispatchEvent(new Event('input', { bubbles: true }))
+  }
+  const connection = createEruToolConnection({ root, ui, config, feedback, status, changed: persist, busy: value => setBusy(value) })
+  const base = connection.base
+  const fetchApi = connection.request
+  const resolve = (value, depth = 0) => {
+    if (!value || typeof value !== 'object' || depth > 12) return value || {}
+    if (!value.$ref) return value
+    if (!value.$ref.startsWith('#/')) throw Error('Chỉ hỗ trợ $ref bên trong tệp OpenAPI; hãy gộp các tệp trước khi nhập.')
+    let result = spec
+    for (const part of value.$ref.slice(2).split('/')) result = result?.[part.replaceAll('~1', '/').replaceAll('~0', '~')]
+    if (!result) throw Error(`Không tìm thấy schema ${value.$ref}`)
+    return resolve(result, depth + 1)
+  }
+  const example = (raw, depth = 0) => {
+    if (depth > 5) return null
+    const schema = resolve(raw)
+    if (schema.example !== undefined) return schema.example
+    if (schema.default !== undefined) return schema.default
+    if (schema.enum) return schema.enum[0]
+    if (schema.allOf) return Object.assign({}, ...schema.allOf.map(item => example(item, depth + 1)))
+    if (schema.oneOf || schema.anyOf) return example((schema.oneOf || schema.anyOf)[0], depth + 1)
+    if (schema.type === 'object' || schema.properties) return Object.fromEntries(Object.entries(schema.properties || {}).filter(([, field]) => !resolve(field).readOnly).map(([key, value]) => [key, example(value, depth + 1)]))
+    if (schema.type === 'array') return [example(schema.items, depth + 1)]
+    if (schema.type === 'boolean') return false
+    if (schema.type === 'number' || schema.type === 'integer') return schema.minimum ?? 0
+    if (schema.format === 'email') return 'ban@example.com'
+    if (schema.format === 'uuid') return '00000000-0000-0000-0000-000000000000'
+    return ''
+  }
+  const requestInfo = () => {
+    const method = $('[data-request-method]').value
+    let path = $('[data-path]').value.trim()
+    const headers = { Accept: 'application/json' }, query = new URLSearchParams()
+    for (const input of ui.querySelectorAll('[data-param]')) {
+      const value = input.value.trim(), name = input.dataset.param
+      if (!value && input.required) throw Error(`Điền tham số bắt buộc: ${name}`)
+      if (!value) continue
+      if (input.dataset.in === 'path') path = path.replaceAll(`{${name}}`, encodeURIComponent(value))
+      if (input.dataset.in === 'query') query.set(name, value)
+      if (input.dataset.in === 'header') headers[name] = value
     }
-  });
-})();
-</script>
-</div><h2>Điều phối tại phòng</h2><ul data-type="taskList"><li data-type="taskItem" data-checked="true"><label><input type="checkbox" checked=""><span></span></label><div><p>Xác nhận phòng và máy chiếu</p></div></li><li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>In 24 tài liệu và 6 bộ thẻ</p></div></li><li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>Chia vai trò điều phối, ghi chép, phản biện</p></div></li><li data-type="taskItem" data-checked="false"><label><input type="checkbox"><span></span></label><div><p>Thu một phản hồi có hành động từ mỗi nhóm</p></div></li></ul><p>Đối chiếu <a class="eru-wikilink" data-note-id="03 Dữ liệu/01 Ngân sách workshop.html" data-title="01 Ngân sách workshop" href="../03%20D%E1%BB%AF%20li%E1%BB%87u/01%20Ng%C3%A2n%20s%C3%A1ch%20workshop.html">ngân sách</a> trước khi đặt mua. Bài học ở <a class="eru-wikilink" data-note-id="01 Học tập/01 Ôn tập nền tảng Web.html" data-title="01 Ôn tập nền tảng Web" href="../01%20H%E1%BB%8Dc%20t%E1%BA%ADp/01%20%C3%94n%20t%E1%BA%ADp%20n%E1%BB%81n%20t%E1%BA%A3ng%20Web.html">bộ ôn tập</a>; lý do đổi lịch ở <a class="eru-wikilink" data-note-id="09 Git/02 Quyết định phát hành.html" data-title="02 Quyết định phát hành" href="../09%20Git/02%20Quy%E1%BA%BFt%20%C4%91%E1%BB%8Bnh%20ph%C3%A1t%20h%C3%A0nh.html">quyết định phát hành</a>.</p>
+    if (/\{[^}]+\}/.test(path)) throw Error('Điền đầy đủ tham số đường dẫn trước khi gửi.')
+    if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) throw Error('Đường dẫn phải bắt đầu bằng một dấu / và thuộc máy chủ đã chọn.')
+    const url = new URL(base() + path)
+    if (url.origin !== new URL(base()).origin) throw Error('Yêu cầu phải thuộc máy chủ đã chọn.')
+    for (const [key, value] of query) url.searchParams.set(key, value)
+    if ($('[data-headers]').value.trim()) {
+      const extra = JSON.parse($('[data-headers]').value)
+      if (!extra || Array.isArray(extra) || typeof extra !== 'object') throw Error('Headers phải là một JSON object.')
+      for (const [key, value] of Object.entries(extra)) {
+        if (typeof value !== 'string') throw Error('Giá trị header phải là chuỗi.')
+        headers[key] = value
+      }
+    }
+    let body
+    if (!['GET', 'HEAD'].includes(method) && $('[data-body]').value.trim()) {
+      body = JSON.stringify(JSON.parse($('[data-body]').value))
+      headers['Content-Type'] = 'application/json'
+    }
+    return { method, url: url.href, headers, body }
+  }
+  const setBusy = busy => {
+    for (const button of ui.querySelectorAll('[data-send],[data-action="load-spec"],[data-action="authorize"],[data-login] button,[data-operation],[data-action="new-endpoint"],[data-action="edit-endpoint"],[data-action="delete-endpoint"]')) button.disabled = busy
+    $('[data-action="cancel"]').hidden = !busy
+    if (!busy) { $('[data-action="edit-endpoint"]').disabled = !selected; $('[data-action="delete-endpoint"]').disabled = !selected }
+    ui.setAttribute('aria-busy', String(busy))
+  }
+  const renderOperations = () => {
+    const search = $('[data-search]').value.toLowerCase()
+    const matches = operations.filter(item => `${item.method} ${item.path} ${item.operation.summary || ''} ${(item.operation.tags || []).join(' ')}`.toLowerCase().includes(search))
+    $('[data-operations]').innerHTML = matches.length ? matches.map(item => `<button class="api-operation" type="button" data-operation="${item.index}" aria-current="${selected?.index === item.index}"><span class="api-method" data-method="${item.method}">${item.method}</span><span>${esc(item.path)}</span></button>`).join('') : '<p class="api-empty">Không có endpoint phù hợp.</p>'
+  }
+  const choose = index => {
+    selected = operations[index]
+    if (!selected) return
+    const operation = selected.operation
+    $('[data-request-method]').value = selected.method
+    $('[data-path]').value = selected.path
+    $('[data-summary]').textContent = operation.summary || selected.path
+    $('[data-description]').textContent = operation.description || (operation.security?.length || spec.security?.length ? 'Endpoint có xác thực. Mở mục Xác thực để cấp Bearer token.' : 'Điền tham số nếu cần, rồi gửi yêu cầu.')
+    const combined = [...(selected.pathItem.parameters || []), ...(operation.parameters || [])].map(item => resolve(item))
+    const params = [...new Map(combined.map(param => [`${param.in}:${param.name}`, param])).values()].filter(param => ['path', 'query', 'header'].includes(param.in))
+    $('[data-params]').innerHTML = params.map(param => {
+      const schema = resolve(param.schema), required = param.required || param.in === 'path'
+      const label = `${param.name}${required ? ' *' : ''} · ${param.in}`
+      const attrs = `data-param="${esc(param.name)}" data-in="${esc(param.in)}" aria-label="${esc(param.name)}" ${required ? 'required' : ''}`
+      const value = param.example ?? schema.default ?? ''
+      return `<label>${esc(label)}${schema.enum ? `<select ${attrs}>${!required ? '<option value="">Không gửi</option>' : ''}${schema.enum.map(option => `<option value="${esc(option)}" ${String(option) === String(value) ? 'selected' : ''}>${esc(option)}</option>`).join('')}</select>` : `<input ${attrs} value="${esc(value)}" placeholder="${esc(param.description || schema.type || 'Giá trị')}">`}</label>`
+    }).join('')
+    const body = resolve(operation.requestBody), media = body.content?.['application/json'] || Object.entries(body.content || {}).find(([key]) => key.endsWith('+json'))?.[1]
+    $('[data-body]').value = media ? JSON.stringify(media.example ?? (media.examples ? resolve(Object.values(media.examples)[0]).value : undefined) ?? example(media.schema), null, 2) : ''
+    $('[data-body-wrap]').hidden = ['GET', 'HEAD'].includes(selected.method)
+    $('[data-schema]').textContent = JSON.stringify({ parameters: params, requestBody: body, responses: operation.responses || {} }, null, 2)
+    $('[data-response-code]').textContent = 'Chưa gửi yêu cầu'
+    $('[data-duration]').textContent = ''
+    $('[data-response]').textContent = 'Phản hồi sẽ xuất hiện tại đây.'
+    $('[data-response-headers-wrap]').hidden = true
+    responseText = ''
+    $('[data-action="copy"]').disabled = true
+    $('[data-action="download"]').disabled = true
+    renderOperations()
+  }
+  const installSpec = document => {
+    if (!/^3\./.test(document?.openapi || '') || !document.paths || typeof document.paths !== 'object') throw Error('Cần tệp OpenAPI 3 dạng JSON với trường paths.')
+    const entries = []
+    for (const [path, pathItem] of Object.entries(document.paths)) {
+      if (!path.startsWith('/') || path.startsWith('//')) continue
+      for (const [method, operation] of Object.entries(pathItem || {})) if (['get', 'post', 'put', 'patch', 'delete', 'head', 'options'].includes(method) && operation && typeof operation === 'object') entries.push({ method: method.toUpperCase(), path, pathItem, operation })
+    }
+
+    spec = document
+    operations = entries.map((entry, index) => ({ ...entry, index }))
+    $('[data-spec-name]').textContent = `${spec.info?.title || 'OpenAPI'} · ${operations.length} endpoint`
+    $('[data-search]').value = ''
+    $('[data-action="edit-endpoint"]').disabled = !operations.length
+    $('[data-action="delete-endpoint"]').disabled = !operations.length
+    if (operations.length) choose(0)
+    else { selected = null; renderOperations(); $('[data-summary]').textContent = 'Chưa có endpoint. Bấm Thêm endpoint để bắt đầu.'; $('[data-params]').replaceChildren() }
+  }
+  const remember = () => { history.push(JSON.stringify(spec)); if (history.length > 30) history.shift(); $('[data-action="undo-collection"]').disabled = false }
+  const paramRow = (param = {}) => `<div class="api-param-row"><input data-param-name aria-label="Tên tham số" value="${esc(param.name || '')}" placeholder="Tên"><select data-param-in aria-label="Vị trí tham số">${['query','path','header'].map(value => `<option ${value === param.in ? 'selected' : ''}>${value}</option>`).join('')}</select><select data-param-type aria-label="Kiểu tham số">${['string','integer','number','boolean'].map(value => `<option ${value === (param.schema?.type || 'string') ? 'selected' : ''}>${value}</option>`).join('')}</select><label><input data-param-required type="checkbox" ${param.required ? 'checked' : ''}>Bắt buộc</label><button type="button" data-action="remove-param">Xóa</button></div>`
+  const openEndpointEditor = edit => {
+    editingKey = edit && selected ? { path: selected.path, method: selected.method.toLowerCase() } : null
+    $('[data-endpoint-heading]').textContent = editingKey ? 'Sửa endpoint' : 'Thêm endpoint'
+    $('[data-edit-title]').value = editingKey ? selected.operation.summary || '' : ''
+    $('[data-edit-path]').value = editingKey ? selected.path : '/'
+    $('[data-edit-method]').value = editingKey ? selected.method : 'GET'
+    const params = editingKey ? [...(selected.pathItem.parameters || []), ...(selected.operation.parameters || [])].map(param => resolve(param)) : []
+    $('[data-edit-params]').innerHTML = params.map(paramRow).join('')
+    const media = editingKey ? resolve(selected.operation.requestBody).content?.['application/json'] : null
+    $('[data-edit-body]').value = media ? JSON.stringify(media.example ?? example(media.schema), null, 2) : ''
+    $('[data-endpoint-editor]').hidden = false
+    $('[data-edit-title]').focus()
+  }
+  $('[data-endpoint-form]').addEventListener('submit', event => {
+    event.preventDefault()
+    try {
+      const endpointPath = $('[data-edit-path]').value.trim(), method = $('[data-edit-method]').value.toLowerCase(), title = $('[data-edit-title]').value.trim()
+      if (!endpointPath.startsWith('/') || endpointPath.startsWith('//') || endpointPath.includes('\\') || endpointPath.includes('?') || endpointPath.includes('#')) throw Error('Đường dẫn bắt đầu bằng /; query được khai báo trong tham số.')
+      if (spec.paths[endpointPath]?.[method] && !(editingKey?.path === endpointPath && editingKey?.method === method)) throw Error('Endpoint với phương thức và đường dẫn này đã tồn tại.')
+      const params = [...ui.querySelectorAll('.api-param-row')].map(row => ({ name: row.querySelector('[data-param-name]').value.trim(), in: row.querySelector('[data-param-in]').value, required: row.querySelector('[data-param-required]').checked || row.querySelector('[data-param-in]').value === 'path', schema: { type: row.querySelector('[data-param-type]').value } }))
+      if (params.some(param => !param.name) || new Set(params.map(param => param.in + ':' + param.name)).size !== params.length) throw Error('Tham số cần có tên và không trùng tên trong cùng vị trí.')
+      for (const match of endpointPath.matchAll(/\{([^}]+)\}/g)) if (!params.some(param => param.in === 'path' && param.name === match[1])) throw Error(`Thêm tham số path cho {${match[1]}}.`)
+      const body = $('[data-edit-body]').value.trim() ? JSON.parse($('[data-edit-body]').value) : undefined
+      const next = structuredClone(spec)
+      const previous = editingKey ? next.paths[editingKey.path][editingKey.method] : {}
+      if (editingKey) { delete next.paths[editingKey.path][editingKey.method]; if (!Object.keys(next.paths[editingKey.path]).length) delete next.paths[editingKey.path] }
+      const operation = { ...previous, summary: title, parameters: params, responses: previous.responses || { 200: { description: 'Phản hồi từ máy chủ' } } }
+      if (body !== undefined && !['get','head'].includes(method)) operation.requestBody = { content: { 'application/json': { example: body } } }
+      else delete operation.requestBody
+      next.paths[endpointPath] = { ...(next.paths[endpointPath] || {}), [method]: operation }
+      remember(); installSpec(next); persist()
+      choose(operations.findIndex(item => item.path === endpointPath && item.method.toLowerCase() === method))
+      $('[data-endpoint-editor]').hidden = true
+      feedback('Đã lưu endpoint vào cấu hình của khối. Chưa gửi yêu cầu nào.')
+    } catch (error) { feedback(error.message, true) }
+  })
+  $('[data-request]').addEventListener('submit', async event => {
+    event.preventDefault(); feedback()
+    try {
+      const request = requestInfo(), started = performance.now()
+      $('[data-response-code]').textContent = 'Đang gửi…'
+      $('[data-response]').textContent = `${request.method} ${request.url}`
+      const { res, data } = await fetchApi(request.url, request)
+      // Render data as text, never execute a response as HTML.
+      responseText = typeof data === 'string' ? data : data === null ? '(Không có nội dung)' : JSON.stringify(data, null, 2)
+      $('[data-response-code]').textContent = `HTTP ${res.status} ${res.statusText}`
+      $('[data-response-code]').dataset.error = String(!res.ok)
+      $('[data-duration]').textContent = `${Math.round(performance.now() - started)} ms`
+      $('[data-response]').textContent = responseText
+      $('[data-response-headers]').textContent = [...res.headers].map(([key, value]) => `${key}: ${value}`).join('\n')
+      $('[data-response-headers-wrap]').hidden = false
+      $('[data-action="copy"]').disabled = false
+      $('[data-action="download"]').disabled = false
+    } catch (error) { feedback(error.message, true); $('[data-response-code]').textContent = 'Chưa hoàn tất'; $('[data-response]').textContent = error.message }
+  })
+  ui.addEventListener('click', async event => {
+    const button = event.target.closest('button')
+    if (!button || button.disabled) return
+    if (button.dataset.operation !== undefined) { try { choose(Number(button.dataset.operation)) } catch (error) { feedback(error.message, true) } return }
+    const action = button.dataset.action
+    if (!action || ['cancel','authorize','logout','check-gateway'].includes(action)) return
+    feedback()
+    try {
+      if (action === 'cancel') return
+      if (action === 'load-spec') {
+        const { res, data } = await fetchApi('/docs-json', { headers: { Accept: 'application/json' } }, true)
+        if (!res.ok) throw Error(`Không tải được OpenAPI (HTTP ${res.status}). Có thể nhập tệp JSON thay thế.`)
+        remember(); installSpec(data); persist(); feedback(`Đã nạp ${operations.length} endpoint từ máy chủ. Chọn một yêu cầu để bắt đầu.`)
+      }
+      if (action === 'import') $('[data-file]').click()
+      if (action === 'new-endpoint' || action === 'edit-endpoint') openEndpointEditor(action === 'edit-endpoint')
+      if (action === 'cancel-endpoint') $('[data-endpoint-editor]').hidden = true
+      if (action === 'add-param') $('[data-edit-params]').insertAdjacentHTML('beforeend', paramRow())
+      if (action === 'remove-param') button.closest('.api-param-row').remove()
+      if (action === 'delete-endpoint') $('[data-delete-confirm]').hidden = false
+      if (action === 'cancel-delete') $('[data-delete-confirm]').hidden = true
+      if (action === 'confirm-delete' && selected) {
+        const next = structuredClone(spec); delete next.paths[selected.path][selected.method.toLowerCase()]
+        if (!Object.keys(next.paths[selected.path]).length) delete next.paths[selected.path]
+        remember(); installSpec(next); persist(); $('[data-delete-confirm]').hidden = true; feedback('Đã xóa endpoint. Có thể hoàn tác.')
+      }
+      if (action === 'undo-collection' && history.length) { installSpec(JSON.parse(history.pop())); persist(); button.disabled = !history.length }
+      if (action === 'export-collection') {
+        const url = URL.createObjectURL(new Blob([JSON.stringify(spec, null, 2)], { type: 'application/json' }))
+        const link = document.createElement('a'); link.href = url; link.download = 'api-collection.json'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+      }
+      if (action === 'copy') { await navigator.clipboard.writeText(responseText); feedback('Đã sao chép phản hồi.') }
+      if (action === 'download') {
+        const url = URL.createObjectURL(new Blob([responseText], { type: 'text/plain;charset=utf-8' }))
+        const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'api-response.txt'; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+      }
+    } catch (error) { feedback(error.message, true) }
+  })
+  $('[data-file]').addEventListener('change', async event => {
+    try {
+      const file = event.target.files[0]
+      if (!file) return
+      if (file.size > 2000000) throw Error('Tệp OpenAPI tối đa 2 MB.')
+      remember(); installSpec(JSON.parse(await file.text())); persist()
+      feedback(`Đã nạp ${operations.length} endpoint từ ${file.name}.`)
+    } catch (error) { feedback(error.message, true) } finally { event.target.value = '' }
+  })
+  $('[data-search]').addEventListener('input', renderOperations)
+  $('[data-request-method]').addEventListener('change', () => { $('[data-body-wrap]').hidden = ['GET', 'HEAD'].includes($('[data-request-method]').value) })
+  installSpec(config.spec || starter)
+  root.dataset.toolReady = 'true'
+
+})()
+
+}</script></div>
+<p class="report-note">API Explorer hỗ trợ thêm, sửa, xóa endpoint, khai báo tham số/body mẫu, nhập/xuất bộ sưu tập OpenAPI và hoàn tác. Cấu hình được giữ khi lưu/mở lại ghi chú. Với file HTML, mặc định dùng dịch vụ <strong>Render</strong>: đăng nhập trong khung <strong>Đường kết nối</strong> để kiểm tra quyền và hạn mức. API trên máy hoặc mạng riêng dùng <strong>Resource Gateway cục bộ</strong>; chạy <code>pnpm resource:gateway --target http://127.0.0.1:3001</code> rồi ghép khóa phiên. Xem thiết kế chi tiết trong <code>docs/RESOURCE_RUNTIME.md</code> ở repo app.</p>
+<details class="report-details"><summary>Không kết nối được máy chủ?</summary><p>Kiểm tra URL và máy chủ đang chạy. Với EruSentia, bật <code>SWAGGER_ENABLED=true</code> để có <code>/docs-json</code>. API phải cho phép CORS từ địa chỉ đang mở tài liệu. Để dùng ngay với EruSentia, mở <code>/docs/week-6</code> trên chính máy chủ API: không cần cấu hình CORS. Nếu mở HTML đã xuất qua một máy chủ HTTP khác, thêm origin đó vào <code>CORS_ORIGINS</code>. File HTML trực tiếp có origin <code>null</code>, bị EruSentia từ chối mặc định. Không thể bỏ qua CORS từ trình duyệt.</p><p>Nếu chỉ muốn xem tài liệu khi offline, nhập tệp OpenAPI 3 JSON. Các thao tác gọi API vẫn cần máy chủ. Token, mật khẩu, JSON body và phản hồi không được lưu vào ghi chú.</p></details>
+<h2>2. Theo dõi một template</h2><p class="report-copy">Đăng nhập bằng tài khoản người theo dõi. Nạp OpenAPI, tìm endpoint theo dõi template, điền ID một template công khai do tài khoản khác sở hữu rồi gửi yêu cầu. Khi tác giả xuất bản bản cập nhật, mở công cụ Hộp thông báo tại <a href="/docs/tools/notifications">/docs/tools/notifications</a> và bấm Làm mới. Công cụ này có runtime và cấu hình riêng, không chứa trình quản lý endpoint.</p>
+<div class="report-flow" aria-label="Luồng thông báo"><span>Tác giả cập nhật</span><b>→</b><span>PostgreSQL + Outbox</span><b>→</b><span>RabbitMQ</span><b>→</b><span>Worker</span><b>→</b><span>Hộp thông báo</span></div>
+<div class="report-table-wrap"><code>POST /templates/{id}/follow</code><table><thead><tr><th>Thao tác</th><th>Endpoint</th><th>Kết quả cần quan sát</th></tr></thead><tbody><tr><td>Theo dõi</td><td><code>isFollowing: true</code>. Không theo dõi template của chính mình.</td></tr><tr><td>Kiểm tra trạng thái</td><td><code>GET /templates/{id}/follow-status</code></td><td>Trạng thái theo dõi và tổng số người theo dõi.</td></tr><tr><td>Xem thông báo</td><td><code>GET /notifications</code></td><td>Dữ liệu thật của tài khoản, cùng con trỏ tải trang tiếp theo nếu có.</td></tr><tr><td>Đánh dấu đã đọc</td><td><code>PATCH /notifications/{id}/read</code></td><td>HTTP 204, số chưa đọc được cập nhật sau khi tải lại.</td></tr></tbody></table></div>
+<h2>3. Tạo và quản lý không gian làm việc</h2><p class="report-copy">Trong app, mở menu tài khoản → Không gian làm việc. Tạo tên và slug duy nhất, mời đúng email người nhận và chọn quyền. Người nhận đăng nhập bằng email đó để nhập mã mời. Bạn cũng có thể thực hiện các thao tác qua API Explorer.</p><div class="report-table-wrap"><table><thead><tr><th>Vai trò</th><th>Quyền hiện có</th><th>Lưu ý</th></tr></thead><tbody><tr><td>Owner</td><td>Quản lý workspace, mời thành viên, thay đổi vai trò.</td><td>Không được hạ quyền hoặc xóa owner cuối cùng.</td></tr><tr><td>Editor</td><td>Xem thành viên, liên kết tài nguyên qua API.</td><td>Không tạo lời mời hoặc thay đổi quyền thành viên.</td></tr><tr><td>Viewer</td><td>Xem workspace và các liên kết được phép.</td><td>Không tự cấp quyền chỉnh sửa.</td></tr></tbody></table></div><p class="report-note">Workspace hiện quản lý thành viên và liên kết tài nguyên. Quyền truy cập/chỉnh sửa template riêng tư chưa được nối xuyên suốt mọi API; chưa có đồng biên tập. Không dùng mô tả “chia sẻ hoàn chỉnh” cho phần này.</p>
+<h2>4. Kiểm chứng &amp; phạm vi</h2><p class="report-copy">Các con số là kết quả rà soát ngày 10/11/2026, không phải trạng thái sức khỏe của máy chủ bạn đang kết nối. Công cụ phía trên chỉ báo kết nối sau khi nhận phản hồi thật.</p><div class="report-table-wrap"><table><thead><tr><th>Phạm vi</th><th>Bằng chứng đã chạy</th><th>Giới hạn</th></tr></thead><tbody><tr><td>Session &amp; app</td><td>88 bài kiểm thử qua, gồm gateway HTTP và phục vụ tài nguyên local.</td><td>Không thay thế kiểm thử bản desktop đã đóng gói.</td></tr><tr><td>API &amp; dữ liệu</td><td>44 bài kiểm thử server trong PostgreSQL tạm, gồm quyền tài liệu và quota proxy.</td><td>Kiểm thử cache dùng Redis giả lập; chưa chứng minh toàn bộ RabbitMQ/worker thật.</td></tr><tr><td>HTML &amp; PDF</td><td>19 bài kiểm thử HTML/PDF và luồng UI tuần 6 qua.</td><td>API Explorer có kiểm thử riêng cho kết nối thật, auth và phản hồi.</td></tr></tbody></table></div>
+<pre class="eru-code-block" class="report-command"><code class="hljs language-stata"># Server · database <span class="hljs-keyword">test</span> tạ<span class="hljs-keyword">m</span>, được <span class="hljs-keyword">d</span>ọ<span class="hljs-keyword">n</span> sau khi chạy
+<span class="hljs-keyword">cd</span> erusentia-server
+pnpm <span class="hljs-keyword">test</span>:week6
+
+# <span class="hljs-keyword">App</span> · kiể<span class="hljs-keyword">u</span> <span class="hljs-keyword">d</span>ữ <span class="hljs-keyword">li</span>ệ<span class="hljs-keyword">u</span>, session và giao <span class="hljs-keyword">di</span>ệ<span class="hljs-keyword">n</span> công cụ API
+<span class="hljs-keyword">cd</span> erusentia-<span class="hljs-keyword">app</span>
+pnpm typecheck
+pnpm <span class="hljs-keyword">test</span>:session
+pnpm <span class="hljs-keyword">test</span>:api-tools</code></pre><details class="report-details"><summary>Các phần còn cần hoàn thiện trước khi phát hành</summary><ul><li>Kiểm chứng publish → queue → worker → Redis → app bằng dịch vụ thật, gồm retry, DLQ và nhiều worker.</li><li>Hoàn thiện quản lý và phân quyền tài nguyên workspace xuyên suốt.</li><li>Tích hợp các cập nhật main mới hơn và kiểm tra hồi quy trước khi merge/release.</li></ul></details><footer class="report-footer">Nguồn: mã app/server trên nhánh tuần 6. Phạm vi chi tiết: <code>docs/WEEK_6_READINESS_REVIEW.md</code>. API Explorer hỗ trợ OpenAPI 3 JSON, tham số path/query/header và body JSON; không thay thế các luồng OAuth hay multipart upload.</footer></main>
 <script data-eru-runtime="engine">
 (function() {
   var communityRuntime = (function createCommunityRuntimeTools() {
@@ -4364,7 +4301,7 @@ Giả lập kịch bản mạng lag hoặc RabbitMQ redeliver cùng 1 message 2 
       });
     }
 
-    var initialMode = document.documentElement.getAttribute('data-paper-mode') || 'separated';
+    var initialMode = document.documentElement.getAttribute('data-paper-mode') || 'off';
     applyPaperMode(initialMode);
     if (document.fonts) {
       var fontPaginationFrame = 0;
@@ -4820,7 +4757,6 @@ Giả lập kịch bản mạng lag hoặc RabbitMQ redeliver cùng 1 message 2 
 })({"aim":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M952 474H829.8C812.5 327.6 696.4 211.5 550 194.2V72c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v122.2C327.6 211.5 211.5 327.6 194.2 474H72c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h122.2C211.5 696.4 327.6 812.5 474 829.8V952c0 4.4 3.6 8 8 8h60c4.4 0 8-3.6 8-8V829.8C696.4 812.5 812.5 696.4 829.8 550H952c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8zM512 756c-134.8 0-244-109.2-244-244s109.2-244 244-244 244 109.2 244 244-109.2 244-244 244z\"></path><path d=\"M512 392c-32.1 0-62.1 12.4-84.8 35.2-22.7 22.7-35.2 52.7-35.2 84.8s12.5 62.1 35.2 84.8C449.9 619.4 480 632 512 632s62.1-12.5 84.8-35.2C619.4 574.1 632 544 632 512s-12.5-62.1-35.2-84.8A118.57 118.57 0 00512 392z\"></path></svg>","bulb":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M632 888H392c-4.4 0-8 3.6-8 8v32c0 17.7 14.3 32 32 32h192c17.7 0 32-14.3 32-32v-32c0-4.4-3.6-8-8-8zM512 64c-181.1 0-328 146.9-328 328 0 121.4 66 227.4 164 284.1V792c0 17.7 14.3 32 32 32h264c17.7 0 32-14.3 32-32V676.1c98-56.7 164-162.7 164-284.1 0-181.1-146.9-328-328-328zm127.9 549.8L604 634.6V752H420V634.6l-35.9-20.8C305.4 568.3 256 484.5 256 392c0-141.4 114.6-256 256-256s256 114.6 256 256c0 92.5-49.4 176.3-128.1 221.8z\"></path></svg>","fullscreen":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M290 236.4l43.9-43.9a8.01 8.01 0 00-4.7-13.6L169 160c-5.1-.6-9.5 3.7-8.9 8.9L179 329.1c.8 6.6 8.9 9.4 13.6 4.7l43.7-43.7L370 423.7c3.1 3.1 8.2 3.1 11.3 0l42.4-42.3c3.1-3.1 3.1-8.2 0-11.3L290 236.4zm352.7 187.3c3.1 3.1 8.2 3.1 11.3 0l133.7-133.6 43.7 43.7a8.01 8.01 0 0013.6-4.7L863.9 169c.6-5.1-3.7-9.5-8.9-8.9L694.8 179c-6.6.8-9.4 8.9-4.7 13.6l43.9 43.9L600.3 370a8.03 8.03 0 000 11.3l42.4 42.4zM845 694.9c-.8-6.6-8.9-9.4-13.6-4.7l-43.7 43.7L654 600.3a8.03 8.03 0 00-11.3 0l-42.4 42.3a8.03 8.03 0 000 11.3L734 787.6l-43.9 43.9a8.01 8.01 0 004.7 13.6L855 864c5.1.6 9.5-3.7 8.9-8.9L845 694.9zm-463.7-94.6a8.03 8.03 0 00-11.3 0L236.3 733.9l-43.7-43.7a8.01 8.01 0 00-13.6 4.7L160.1 855c-.6 5.1 3.7 9.5 8.9 8.9L329.2 845c6.6-.8 9.4-8.9 4.7-13.6L290 787.6 423.7 654c3.1-3.1 3.1-8.2 0-11.3l-42.4-42.4z\"></path></svg>","play":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z\"></path><path d=\"M719.4 499.1l-296.1-215A15.9 15.9 0 00398 297v430c0 13.1 14.8 20.5 25.3 12.9l296.1-215a15.9 15.9 0 000-25.8zm-257.6 134V390.9L628.5 512 461.8 633.1z\"></path></svg>","left":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.86 31.86 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z\"></path></svg>","right":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z\"></path></svg>","close":"<svg fill-rule=\"evenodd\" viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z\"></path></svg>","list":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M912 192H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM104 228a56 56 0 10112 0 56 56 0 10-112 0zm0 284a56 56 0 10112 0 56 56 0 10-112 0zm0 284a56 56 0 10112 0 56 56 0 10-112 0z\"></path></svg>","file":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M854.6 288.6L639.4 73.4c-6-6-14.1-9.4-22.6-9.4H192c-17.7 0-32 14.3-32 32v832c0 17.7 14.3 32 32 32h640c17.7 0 32-14.3 32-32V311.3c0-8.5-3.4-16.7-9.4-22.7zM790.2 326H602V137.8L790.2 326zm1.8 562H232V136h302v216a42 42 0 0042 42h216v494z\"></path></svg>","up":"<svg viewBox=\"64 64 896 896\" focusable=\"false\" width=\"16\" height=\"16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M890.5 755.3L537.9 269.2c-12.8-17.6-39-17.6-51.7 0L133.5 755.3A8 8 0 00140 768h75c5.1 0 9.9-2.5 12.9-6.6L512 369.8l284.1 391.6c3 4.1 7.8 6.6 12.9 6.6h75c6.5 0 10.3-7.4 6.5-12.7z\"></path></svg>"});
   }
 })();
-
 </script>
 </body>
 </html>

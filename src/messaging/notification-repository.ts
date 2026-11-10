@@ -79,6 +79,7 @@ export class NotificationRepository {
       }
 
       let totalInserted = 0;
+      const invalidateRecipients = new Set<string>();
       const title = `Mẫu "${event.title}" vừa phát hành phiên bản mới ${event.version}`;
       const payloadJson = JSON.stringify({
         templateId: event.templateId,
@@ -116,16 +117,16 @@ export class NotificationRepository {
           );
           if (res.rowCount && res.rowCount > 0) {
             totalInserted += res.rowCount;
-            if (redis?.isOpen) {
-              await redis
-                .incr(`eru:unread_count:${recipientId}`)
-                .catch(() => {});
-            }
+            invalidateRecipients.add(recipientId);
           }
         }
       }
 
       await client.query("COMMIT");
+      // Redis is a cache: only invalidate after durable database delivery.
+      if (redis?.isOpen) {
+        await Promise.all([...invalidateRecipients].map(id => redis.del(`eru:unread_count:${id}`).catch(() => {})));
+      }
       return { recipients: followers.length, inserted: totalInserted };
     } catch (error) {
       await client.query("ROLLBACK");

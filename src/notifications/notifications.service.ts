@@ -157,7 +157,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
   async getUnreadCount(user: UserIdentity): Promise<UnreadCountDto> {
     if (this.redis?.isOpen) {
       const cached = await this.redis.get(this.redisKey(user.id)).catch(() => null);
-      if (cached !== null) {
+      if (cached !== null && Number.isFinite(Number(cached)) && Number(cached) >= 0) {
         return { count: Math.max(0, Number(cached)) };
       }
     }
@@ -185,15 +185,13 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     if (!this.db) return;
 
     const res = await this.db.query(
-      "UPDATE notifications SET is_read = TRUE, read_at = CURRENT_TIMESTAMP WHERE id = $1 AND recipient_id = $2 AND is_read = FALSE",
+      "WITH updated AS (UPDATE notifications SET is_read = TRUE, read_at = CURRENT_TIMESTAMP WHERE id = $1 AND recipient_id = $2 AND is_read = FALSE RETURNING id) SELECT id FROM updated",
       [id, user.id],
     );
 
-    if (res.rowCount && res.rowCount > 0 && this.redis?.isOpen) {
-      const remaining = await this.redis.decr(this.redisKey(user.id)).catch(() => null);
-      if (remaining !== null && remaining < 0) {
-        await this.redis.set(this.redisKey(user.id), "0").catch(() => {});
-      }
+    // The outer SELECT normalizes TypeORM results to an array of returned IDs.
+    if (res.length > 0 && this.redis?.isOpen) {
+      await this.redis.del(this.redisKey(user.id)).catch(() => {});
     }
   }
 
@@ -206,7 +204,7 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
     );
 
     if (this.redis?.isOpen) {
-      await this.redis.set(this.redisKey(user.id), "0", { EX: 3600 }).catch(() => {});
+      await this.redis.del(this.redisKey(user.id)).catch(() => {});
     }
   }
 }

@@ -117,6 +117,11 @@ test("Workspace multi-tenancy, RBAC & Last Owner concurrency contract", async (t
     assert.equal(body.role, "editor");
   });
 
+  await t.test("A different email cannot accept an unused invitation", async () => {
+    const res = await fetch(`${base}/workspaces/invites/${inviteToken}/accept`, { method: "POST", headers: userC.headers });
+    assert.equal(res.status, 403);
+  });
+
   await t.test("User B accepts invite and gains editor role", async () => {
     const res = await fetch(`${base}/workspaces/invites/${inviteToken}/accept`, {
       method: "POST",
@@ -173,6 +178,18 @@ test("Workspace multi-tenancy, RBAC & Last Owner concurrency contract", async (t
     assert.equal(res.status, 409);
     const body = await res.json();
     assert.match(body.message, /last remaining owner/i);
+  });
+
+  await t.test("A viewer invitation cannot downgrade the sole owner", async () => {
+    const inviteRes = await fetch(`${base}/workspaces/${workspaceId}/invites`, {
+      method: "POST", headers: ownerA.headers, body: JSON.stringify({ email: ownerA.email, role: "viewer" })
+    });
+    assert.equal(inviteRes.status, 201);
+    const { token } = await inviteRes.json();
+    const accept = await fetch(`${base}/workspaces/invites/${token}/accept`, { method: "POST", headers: ownerA.headers });
+    assert.equal(accept.status, 201);
+    const detail = await fetch(`${base}/workspaces/${workspaceId}`, { headers: ownerA.headers });
+    assert.equal((await detail.json()).currentUserRole, "owner");
   });
 
   await t.test("Owner promotes User B to co-owner (now 2 owners)", async () => {

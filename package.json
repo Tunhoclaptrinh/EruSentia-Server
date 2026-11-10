@@ -16,7 +16,7 @@
     "db:indexes": "node --import tsx scripts/run-sql.ts sql/02_indexes.sql",
     "db:seed": "node --import tsx scripts/seed.ts",
     "db:reset": "node --import tsx scripts/run-sql.ts sql/00_reset.sql",
-    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue && pnpm db:cache && pnpm db:revisions && pnpm db:controls && pnpm db:moderation && pnpm db:notifications && pnpm db:workspaces",
+    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue && pnpm db:cache && pnpm db:revisions && pnpm db:controls && pnpm db:moderation && pnpm db:notifications && pnpm db:workspaces && pnpm db:resources",
     "db:benchmark": "node --import tsx scripts/benchmark.ts",
     "demo:oop": "node --import tsx src/week01-practice/oop/demo.ts",
     "demo:di": "node --import tsx src/week01-practice/di/demo.ts",
@@ -61,7 +61,10 @@
     "test:notifications": "pnpm build && node --test test/notifications.test.cjs test/notifications-worker.test.cjs",
     "demo:notifications": "pnpm build && node scripts/demo-chaos-notifications.mjs",
     "db:workspaces": "node --import tsx scripts/run-sql.ts sql/13_workspaces_rbac.sql",
-    "test:workspaces": "pnpm build && node --test test/workspaces.test.cjs"
+    "test:workspaces": "pnpm build && node --test test/workspaces.test.cjs",
+    "test:week6": "pnpm build && node scripts/check-week6-readiness.cjs",
+    "db:resources": "node --import tsx scripts/run-sql.ts sql/14_resource_gateway.sql",
+    "test:resources": "pnpm build && node --test test/resources.test.cjs"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",

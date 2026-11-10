@@ -389,3 +389,13 @@ ITemplateRepository tuần 1 tách biệt TemplateStore dùng cho projection HTT
 Seed nội dung không tạo tài khoản có thể đăng nhập, không reset dữ liệu và không áp dụng migration C3.
 
 Kiểm duyệt nội dung C4-C: [quyền, API, migration và kiểm thử](docs/CONTENT_MODERATION.md).
+
+### Tài liệu tương tác và template API
+
+Khi bật Swagger, mở `/docs/week-6` trên máy chủ API để đọc hướng dẫn và gửi yêu cầu cùng origin. `/docs/tools/api-explorer` là template API độc lập; `/docs/tools/notifications` là hộp thông báo trực tiếp. Các trang dùng Bearer token riêng trong phiên; không dùng chung session của app.
+
+Tạo lại tài liệu từ repo app bằng `pnpm docs:week6`. Chạy `pnpm test:week6` để kiểm thử backend trong PostgreSQL tạm. Hai template cũng xuất hiện trong thư viện mẫu app. Xem [phạm vi và bằng chứng](docs/WEEK_6_READINESS_REVIEW.md) trước khi nghiệm thu toàn bộ tuần 6.
+
+## Hosted resource service
+
+Module `resources` chạy chung API Render để cung cấp proxy có JWT/session, plan free/premium/blocked, quota và tài liệu private/shared/premium. Xem [RESOURCE_SERVICE.md](docs/RESOURCE_SERVICE.md). Migration `14_resource_gateway.sql` được bootstrap trước startup; không cần service hay database trả phí mới.
