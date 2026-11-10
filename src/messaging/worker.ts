@@ -8,6 +8,9 @@ import { RabbitTransport } from "./rabbit";
 import { WelcomeRepository } from "./welcome-repository";
 import { LocalWelcomeMailer } from "./welcome-mailer";
 import { WelcomeWorker } from "./welcome-worker";
+import { NotificationRepository } from "./notification-repository";
+import { NotificationWorker } from "./notification-worker";
+import { createClient } from "redis";
 
 async function main() {
   config();
@@ -38,8 +41,16 @@ async function main() {
   process.once("SIGTERM", stop);
   try {
     await pool.query("SELECT event_id FROM welcome_email_deliveries LIMIT 0");
+    await pool.query("SELECT id FROM notifications LIMIT 0");
+    let redisClient: ReturnType<typeof createClient> | undefined;
+    if (settings.cache.enabled) {
+      redisClient = createClient({ url: settings.cache.url });
+      redisClient.on("error", () => {});
+      await redisClient.connect().catch(() => {});
+    }
     while (!stopping) {
       let worker: WelcomeWorker | undefined;
+      let notificationWorker: NotificationWorker | undefined;
       try {
         active = await RabbitTransport.open(settings.queue);
         let closed = false;
@@ -47,21 +58,31 @@ async function main() {
           closed = true;
         });
         worker = new WelcomeWorker(new WelcomeRepository(pool), active, mailer);
+        notificationWorker = new NotificationWorker(
+          new NotificationRepository(pool),
+          active,
+          redisClient,
+        );
         await worker.startConsumer();
+        await notificationWorker.startConsumer();
         if (readyFile) await writeFile(readyFile, "ready\n", { mode: 0o600 });
-        console.log("Welcome worker ready: outbox → RabbitMQ → local Mailpit");
+        console.log(
+          "Worker ready: outbox → RabbitMQ (welcome email + template notifications)",
+        );
         while (!stopping && !closed) {
           await worker.dispatch();
+          await notificationWorker.dispatch();
           await delay(1000);
         }
       } catch {
         if (!stopping)
           console.error(
-            "Welcome worker unavailable; retrying in 3 seconds (outbox retained)",
+            "Worker unavailable; retrying in 3 seconds (outbox retained)",
           );
       } finally {
         await clearReady();
         await worker?.stopConsumer();
+        await notificationWorker?.stopConsumer();
         await active?.close();
         active = undefined;
       }

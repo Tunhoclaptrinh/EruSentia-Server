@@ -280,7 +280,36 @@ export class PostgresTemplateStore implements TemplateStore {
         throw new PreconditionFailedException(
           "Template changed; keep your draft and reload the current revision",
         );
-      return (await this.find(id, true, manager))!;
+      const updated = (await this.find(id, true, manager))!;
+      if (
+        operation === "update" &&
+        updated.isPublic &&
+        updated.moderationState !== "hidden"
+      ) {
+        const outboxTable = await manager.query(
+          "SELECT to_regclass('public.message_outbox') AS exists",
+        );
+        if (outboxTable[0]?.exists) {
+          await manager.query(
+            `INSERT INTO message_outbox (id, event_type, payload, created_at)
+             VALUES (gen_random_uuid(), 'template.version_published', $1, CURRENT_TIMESTAMP)`,
+            [
+              JSON.stringify({
+                templateId: updated.id,
+                revision: updated.revision,
+                title: updated.title,
+                version: updated.version,
+                isPublic: updated.isPublic,
+                actorId: actor.id,
+                authorId: updated.authorId,
+                slug: updated.slug,
+                occurredAt: new Date().toISOString(),
+              }),
+            ],
+          );
+        }
+      }
+      return updated;
     });
   }
   update(

@@ -13,6 +13,8 @@ import { AuthModule } from "./auth/auth.module";
 import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
 import { HealthController } from "./common/health.controller";
 import { ServiceControlsModule } from "./service-controls/service-controls.module";
+import { NotificationsModule } from "./notifications/notifications.module";
+import { WorkspacesModule } from "./workspaces/workspaces.module";
 
 @Module({})
 class AppModule {
@@ -40,6 +42,8 @@ class AppModule {
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
         TemplatesModule.register(settings),
+        NotificationsModule.register(settings),
+        WorkspacesModule.register(settings),
       ],
     };
   }

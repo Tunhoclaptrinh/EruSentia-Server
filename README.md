@@ -4,6 +4,8 @@ Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 
 API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
 Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
 Tuần 5 bổ sung Redis cache; bước chuẩn bị project thêm CORS và danh mục có JWT.
+Tuần 6 hoàn thiện hệ thống theo dõi template và thông báo bất đồng bộ (Transactional Outbox,
+RabbitMQ Quorum Queues, Idempotent Consumer, Redis unread counters và Cursor Pagination).
 Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. Đợt C0–C1 đã ghép tài khoản
 với client; App đã bổ sung catalog template, xem thử cô lập và bản sao local ở C2.
 Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiếp theo.
@@ -11,6 +13,16 @@ Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiế
 Tài khoản C4: [quản lý phiên đăng nhập](docs/ACCOUNT_SESSIONS.md).
 Email C4-A2: [xác minh và đặt lại mật khẩu bằng Mailpit local](docs/ACCOUNT_EMAIL.md).
 Kiểm soát C4-B: [rate limit, quota và usage của tài khoản](docs/SERVICE_CONTROLS.md).
+
+## Nghiên cứu đăng nhập Google / GitHub / Microsoft bằng Keycloak
+
+- [Keycloak là gì, các khái niệm và lab làm quen](docs/KEYCLOAK_GUIDE.md).
+- [Phương án tích hợp EruSentia](docs/KEYCLOAK_INTEGRATION_PLAN.md): web BFF,
+  Electron PKCE, ánh xạ tài khoản cũ, phân quyền, session và lộ trình triển khai.
+- [Ràng buộc 0 đồng, không billing và UX khi dịch vụ ngủ](docs/FREE_HOSTING_AND_AUTH_CONSTRAINTS.md):
+  cập nhật lựa chọn triển khai theo ngân sách và nhu cầu bỏ không dài hạn.
+
+Đây là đề xuất nghiên cứu ngày 10/11/2026; đăng nhập hiện tại chưa thay đổi.
 
 ## Stack project: chạy bằng một lệnh
 

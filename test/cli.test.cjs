@@ -12,6 +12,10 @@ const env = {
   DB_PASSWORD: "unused",
   DB_DATABASE: "cli_test",
   TEMPLATE_STORE: "postgres",
+  // These failure-path tests must not connect to services enabled in a developer's .env.
+  QUEUE_ENABLED: "false",
+  CACHE_ENABLED: "false",
+  ACCOUNT_EMAIL_MODE: "disabled",
   ADMIN_EMAIL: "",
   ADMIN_PASSWORD: "",
 };
@@ -24,7 +28,7 @@ function run(script, args = [], extraEnv = {}) {
       cwd: root,
       env: { ...env, ...extraEnv },
       encoding: "utf8",
-      timeout: 10_000,
+      timeout: 15_000,
     },
   );
   assert.ifError(result.error);

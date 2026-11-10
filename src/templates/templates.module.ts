@@ -35,6 +35,7 @@ export class TemplatesModule {
             store === "postgres" ? PostgresTemplateStore : MemoryTemplateStore,
         },
       ],
+      exports: [TEMPLATE_STORE],
     };
   }
 }
