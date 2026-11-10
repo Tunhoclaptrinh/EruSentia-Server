@@ -1,4 +1,5 @@
 import { ResourcesModule } from './resources/resources.module';
+import { ExtensionsModule } from './extensions/extensions.module';
 import "reflect-metadata";
 import { DynamicModule, Module, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
@@ -46,6 +47,7 @@ class AppModule {
         NotificationsModule.register(settings),
         WorkspacesModule.register(settings),
         ResourcesModule.register(settings),
+        ExtensionsModule,
       ],
     };
   }
