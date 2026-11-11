@@ -40,10 +40,11 @@ export class ExtensionsService {
       payload: {
         type: 'template',
         title: 'Cornell Note Template (Installed)',
-        desc: 'Mẫu ghi chép Cornell khoa học chia làm 3 cột tiện lợi cho việc ghi nhớ và tự vấn.',
-        html: `<div class="eru-template-cornell" style="border:1px solid var(--border-normal); border-radius:var(--radius-md); padding:16px; margin:12px 0; background:var(--bg-editor); font-family:sans-serif;">
-  <h3 style="margin-top:0; color:var(--text-primary); border-bottom:2px solid var(--accent); padding-bottom:6px;">📓 Ghi chú Cornell: Chủ đề bài học</h3>
-  <div style="display:grid; grid-template-columns:1fr 2fr; gap:16px; margin-top:12px;">
+        desc: 'Ghi chép Cornell với ba phần: câu hỏi, nội dung và tóm tắt; chỉnh sửa trực tiếp trong ghi chú.',
+        html: `<div class="eru-template-cornell" data-eru-template-block="true" data-eru-shadow-kind="cornell" data-eru-shadow-version="1" style="border:1px solid var(--border-normal); border-radius:var(--radius-md); padding:20px; margin:12px 0; background:var(--bg-editor); font-family:inherit; line-height:1.65; white-space:normal;">
+  <h3 style="margin-top:0; color:var(--text-primary); border-bottom:2px solid var(--accent); padding-bottom:6px;">Ghi chú Cornell: Chủ đề bài học</h3>
+  <style>.eru-template-cornell .cornell-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:20px;margin-top:16px}@media(max-width:540px){.eru-template-cornell .cornell-columns{grid-template-columns:1fr}.eru-template-cornell .cornell-columns>div:first-child{border-right:0!important;border-bottom:1px solid var(--border-subtle);padding-bottom:12px}}</style>
+  <div class="cornell-columns">
     <div style="border-right:1px solid var(--border-subtle); padding-right:12px;">
       <strong style="font-size:0.85rem; color:var(--accent); display:block; margin-bottom:8px;">CUES / QUESTIONS</strong>
       <p style="font-size:0.8rem; font-weight:600; color:var(--text-primary); margin:6px 0;">- Từ khóa chính?</p>
@@ -79,21 +80,30 @@ export class ExtensionsService {
       payload: {
         type: 'template',
         title: 'Daily Planner Template (Installed)',
-        desc: 'Mẫu lập kế hoạch làm việc hàng ngày kết hợp To-do list và chỉ số theo dõi sức khỏe.',
-        html: `<div class="eru-template-planner" style="border:1px solid var(--border-normal); border-radius:var(--radius-md); padding:16px; margin:12px 0; background:var(--bg-editor); font-family:sans-serif;">
-  <h3 style="margin-top:0; color:var(--text-primary); border-bottom:2px solid var(--accent); padding-bottom:6px;">📅 Lập kế hoạch ngày</h3>
-  <div style="display:grid; grid-template-columns:3fr 2fr; gap:16px; margin-top:12px;">
+        desc: 'Phiếu kế hoạch ngày với việc cần làm và mục tiêu thói quen; chỉnh sửa trực tiếp trong ghi chú.',
+        html: `<div class="eru-template-planner" data-eru-template-block="true" data-eru-shadow-kind="daily-planner" data-eru-shadow-version="1" style="border:1px solid var(--border-normal); border-radius:var(--radius-md); padding:20px; margin:12px 0; background:var(--bg-editor); font-family:inherit; line-height:1.65; white-space:normal;">
+  <h3 style="margin-top:0; color:var(--text-primary); border-bottom:2px solid var(--accent); padding-bottom:6px;">Lập kế hoạch ngày</h3>
+  <style>.eru-template-planner .planner-columns{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:20px;margin-top:16px}@media(max-width:540px){.eru-template-planner .planner-columns{grid-template-columns:1fr}}</style>
+  <div class="planner-columns">
     <div>
       <strong style="font-size:0.85rem; color:var(--accent); display:block; margin-bottom:8px;">TO-DO LIST (Việc cần làm)</strong>
-      <ul style="font-size:0.8rem; color:var(--text-secondary); margin:0; padding-left:16px; line-height:1.6;">
-        <li>Nhiệm vụ ưu tiên số 1 trong ngày</li>
-        <li>Nhiệm vụ số 2</li>
-        <li>Nhiệm vụ số 3</li>
-      </ul>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-primary); cursor:pointer;">
+          <input type="checkbox"/> Công việc quan trọng số 1
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-primary); cursor:pointer;">
+          <input type="checkbox"/> Công việc quan trọng số 2
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-primary); cursor:pointer;">
+          <input type="checkbox"/> Ôn tập / Đọc sách
+        </label>
+      </div>
     </div>
-    <div style="border-left:1px solid var(--border-subtle); padding-left:12px;">
-      <strong style="font-size:0.85rem; color:var(--accent); display:block; margin-bottom:8px;">NOTES & HABITS</strong>
-      <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">Uống 2L nước • Tập thể dục 30p • Đọc sách 20 trang</p>
+    <div style="background:var(--bg-app); padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+      <strong style="font-size:0.8rem; color:var(--accent); display:block; margin-bottom:6px;">MỤC TIÊU & THÓI QUEN</strong>
+      <p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0;">Uống nước · Mục tiêu 2 lít</p>
+      <p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0;">Vận động · Mục tiêu 30 phút</p>
+      <p style="font-size:0.75rem; color:var(--text-secondary); margin:4px 0;">Ghi lại cảm nhận của bạn tại đây.</p>
     </div>
   </div>
 </div>`,

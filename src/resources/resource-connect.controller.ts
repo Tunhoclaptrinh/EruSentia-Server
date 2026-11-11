@@ -11,10 +11,10 @@ import { Public } from "../auth/auth.guards";
 export class ResourceConnectController {
   @Get("connect") async page(@Res() response: ServerResponse) {
     const nonce = randomBytes(18).toString("base64");
-    const html = await readFile(
-      resolve(process.cwd(), "public/resource-connect.html"),
-      "utf8",
-    );
+    const [html, logo] = await Promise.all([
+      readFile(resolve(process.cwd(), "public/resource-connect.html"), "utf8"),
+      readFile(resolve(process.cwd(), "public/erusentia-logo.png")),
+    ]);
     response.setHeader("Content-Type", "text/html; charset=utf-8");
     response.setHeader("Cache-Control", "no-store");
     response.setHeader("X-Content-Type-Options", "nosniff");
@@ -23,6 +23,6 @@ export class ResourceConnectController {
       "Content-Security-Policy",
       `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; connect-src 'self'; img-src data:; base-uri 'none'; form-action 'none'`,
     );
-    response.end(html.replace("__ERU_NONCE__", nonce));
+    response.end(html.replace("__ERU_NONCE__", nonce).replace("__ERU_LOGO__", logo.toString("base64")));
   }
 }

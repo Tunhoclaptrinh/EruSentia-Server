@@ -1,0 +1,41 @@
+{
+  "generatedAt": "2026-11-11T03:50:15.825Z",
+  "timezone": "Asia/Bangkok",
+  "session": {
+    "passed": 91,
+    "failed": 0,
+    "date": "11/11/2026",
+    "command": "pnpm test:session",
+    "scope": "Node session, bridge and resource transport tests",
+    "source": "app-session.txt"
+  },
+  "server": {
+    "passed": 44,
+    "failed": 0,
+    "date": "11/11/2026",
+    "command": "pnpm test:week6",
+    "scope": "Temporary PostgreSQL database; test publisher/Redis doubles where used",
+    "source": "server-week6.txt"
+  },
+  "reader": {
+    "passed": 41,
+    "failed": 0,
+    "date": "11/11/2026",
+    "command": "pnpm exec playwright test -c playwright.reader.config.ts",
+    "source": "../2026-11-11-reader-width/validation.json"
+  },
+  "templates": {
+    "passed": 75,
+    "failed": 0,
+    "date": "10/11/2026",
+    "captures": 145,
+    "source": "../2026-11-10-template-audit/validation.json"
+  },
+  "report": {
+    "passed": 12,
+    "failed": 0,
+    "date": "11/11/2026",
+    "command": "pnpm exec playwright test -c playwright.week6-report.config.ts",
+    "source": "report-checks.json"
+  }
+}

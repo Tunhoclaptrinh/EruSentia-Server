@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Kết nối dịch vụ tài nguyên EruSentia</title>
     <style>
+      :root[data-theme="dark"] { color-scheme: dark; --text: #ececef; --muted: #a1a1aa; --border: #3f3f46; --surface: #202024; --input: #28282d; }
+      .brand {display:flex;align-items:center;gap:10px;margin-bottom:10px}.brand img{width:28px;height:28px;object-fit:contain}.brand h1{font-size:14px;margin:0}.brand p{font-size:11px;margin:0}
       * {
         box-sizing: border-box;
       }
@@ -14,8 +16,8 @@
         font:
           13px/1.5 system-ui,
           sans-serif;
-        color: #242428;
-        background: #fafafa;
+        color: var(--text, #242428);
+        background: var(--surface, #fafafa);
       }
       h1 {
         font-size: 15px;
@@ -24,7 +26,7 @@
       }
       p {
         margin: 5px 0;
-        color: #62626c;
+        color: var(--muted, #62626c);
       }
       form {
         display: grid;
@@ -42,29 +44,29 @@
       input,
       button {
         font: inherit;
-        border: 1px solid #d9d9df;
+        border: 1px solid var(--border, #d9d9df);
         border-radius: 6px;
         padding: 8px 10px;
         min-width: 0;
-        background: white;
+        background: var(--input, white);
         color: inherit;
       }
       button {
         cursor: pointer;
-        background: #ee254b;
+        background: #f2274c;
         color: white;
-        border-color: #ee254b;
+        border-color: #f2274c;
       }
       button:disabled {
         opacity: 0.5;
       }
       input:focus-visible,
       button:focus-visible {
-        outline: 2px solid #ee254b;
+        outline: 2px solid #f2274c;
         outline-offset: 2px;
       }
       #identity {
-        border: 1px solid #d9d9df;
+        border: 1px solid var(--border, #d9d9df);
         border-radius: 7px;
         padding: 12px;
         margin: 12px 0;
@@ -87,7 +89,7 @@
     </style>
   </head>
   <body>
-    <h1>Dịch vụ tài nguyên EruSentia</h1>
+    <header class="brand"><img src="data:image/png;base64,__ERU_LOGO__" alt="" aria-hidden="true"><div><h1>EruSentia</h1><p>Dịch vụ tài nguyên</p></div></header>
     <p>Đăng nhập để cấp quyền kết nối cho tài liệu này.</p>
     <p id="source"></p>
     <form id="login">
@@ -239,6 +241,7 @@
           if (data.kind === "hello") {
             if (parentOrigin !== null && parentOrigin !== event.origin) return;
             parentOrigin = event.origin;
+          document.documentElement.dataset.theme = data.theme === 'dark' ? 'dark' : 'light';
             document.getElementById("source").textContent =
               "Tài liệu: " +
               (event.origin === "null" ? "HTML cục bộ" : event.origin);
