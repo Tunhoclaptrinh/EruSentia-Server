@@ -56,11 +56,15 @@ test(
       "02_indexes.sql",
       "03_seed.sql",
       "05_auth_sessions.sql",
+      "06_message_queue.sql",
       "07_template_cache_revision.sql",
       "08_template_revisions.sql",
       "10_service_controls.sql",
-          "11_content_moderation.sql",
-          "12_retained_resources.sql",
+      "11_content_moderation.sql",
+      "12_retained_resources.sql",
+      "12_template_notifications.sql",
+      "13_workspaces_rbac.sql",
+      "14_resource_gateway.sql",
       "07_template_cache_revision.sql",
     ])
       await pool.query(
