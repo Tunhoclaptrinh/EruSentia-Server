@@ -1,5 +1,7 @@
 import { ResourcesModule } from './resources/resources.module';
 import { ExtensionsModule } from './extensions/extensions.module';
+import { OperationsModule } from "./operations/operations.module";
+import { ApiOperations } from "./operations/api-operations";
 import "reflect-metadata";
 import { DynamicModule, Module, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
@@ -40,6 +42,7 @@ class AppModule {
               }),
             ]
           : []),
+        OperationsModule,
         ServiceControlsModule.register(settings),
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
@@ -64,12 +67,19 @@ export async function createApplication(
       abortOnError: false,
     },
   );
+  app.use(app.get(ApiOperations).middleware());
   app.enableCors({
     origin: (origin, done) =>
       done(null, !origin || settings.corsOrigins.includes(origin)),
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type", "If-Match"],
-    exposedHeaders: ["X-Cache", "WWW-Authenticate", "ETag", "Retry-After"],
+    exposedHeaders: [
+      "X-Cache",
+      "WWW-Authenticate",
+      "ETag",
+      "Retry-After",
+      "X-Request-Id",
+    ],
     credentials: false,
     maxAge: 600,
   });

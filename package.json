@@ -16,12 +16,12 @@
     "db:indexes": "node --import tsx scripts/run-sql.ts sql/02_indexes.sql",
     "db:seed": "node --import tsx scripts/seed.ts",
     "db:reset": "node --import tsx scripts/run-sql.ts sql/00_reset.sql",
-    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue && pnpm db:cache && pnpm db:revisions && pnpm db:controls && pnpm db:moderation && pnpm db:notifications && pnpm db:workspaces && pnpm db:resources",
+    "db:fresh": "pnpm db:reset && pnpm db:schema && pnpm db:indexes && pnpm db:seed && pnpm db:auth && pnpm db:queue && pnpm db:cache && pnpm db:revisions && pnpm db:controls && pnpm db:moderation && pnpm db:notifications && pnpm db:workspaces && pnpm db:resources && pnpm db:retained",
     "db:benchmark": "node --import tsx scripts/benchmark.ts",
     "demo:oop": "node --import tsx src/week01-practice/oop/demo.ts",
     "demo:di": "node --import tsx src/week01-practice/di/demo.ts",
-    "test": "pnpm build && node --test test/*.test.cjs",
-    "test:watch": "pnpm build && node --test --watch test/*.test.cjs",
+    "test": "pnpm build && node --test --test-concurrency=2 test/*.test.cjs",
+    "test:watch": "pnpm build && node --test --test-concurrency=2 --watch test/*.test.cjs",
     "test:api": "pnpm build && node --test test/templates.api.test.cjs",
     "test:api:db": "pnpm build && node --test test/templates.postgres.test.cjs",
     "db:auth": "node --import tsx scripts/run-sql.ts sql/05_auth_sessions.sql",
@@ -64,7 +64,10 @@
     "test:workspaces": "pnpm build && node --test test/workspaces.test.cjs",
     "test:week6": "pnpm build && node scripts/check-week6-readiness.cjs",
     "db:resources": "node --import tsx scripts/run-sql.ts sql/14_resource_gateway.sql",
-    "test:resources": "pnpm build && node --test test/resources.test.cjs"
+    "test:resources": "pnpm build && node --test test/resources.test.cjs",
+    "data:retention": "node --import tsx scripts/data-retention.ts",
+    "db:retained": "node --import tsx scripts/run-sql.ts sql/12_retained_resources.sql",
+    "test:retained": "pnpm build && node --test test/retained-resources.test.cjs"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",

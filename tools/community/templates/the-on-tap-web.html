@@ -76,7 +76,7 @@
 </footer>
 </main>
 <script>
-const cards=[
+let cards=[
 {
 q:"Cơ chế Virtual DOM trong React hoạt động như thế nào và đem lại lợi ích gì?",
 a:"Virtual DOM là một bản sao biểu diễn cây DOM thật dưới dạng các JavaScript Object nhẹ trong bộ nhớ. Khi state thay đổi, React so sánh cây cũ và mới (Reconciliation / Diffing) và chỉ áp dụng những thay đổi tối thiểu lên Real DOM, tránh tính toán layout lại quá nhiều lần.",
@@ -114,7 +114,14 @@ hint:"Gợi ý: 1 chiều (Row/Column) vs 2 chiều đồng thời (Grid tracks)
 mastered:false
 }
 ];
-let idx=0,isFlipped=false;
+const root=document.querySelector('main');
+try {
+const saved=JSON.parse(root.dataset.cards||'null');
+if(Array.isArray(saved)&&saved.length===cards.length&&saved.every(c=>c&&typeof c.q==='string'&&typeof c.a==='string'&&typeof c.hint==='string'&&typeof c.mastered==='boolean')) cards=saved;
+} catch {}
+let idx=Number(root.dataset.cardIndex)||0;
+if(!Number.isInteger(idx)||idx<0||idx>=cards.length)idx=0;
+let isFlipped=root.dataset.cardFlipped==='true';
 const scene=document.querySelector('#cardScene');
 const inner=document.querySelector('#cardInner');
 const fBadge=document.querySelector('#cardFrontBadge');
@@ -124,14 +131,17 @@ const bText=document.querySelector('#cardBackText');
 const masteryText=document.querySelector('#masteryText');
 const masteryProgress=document.querySelector('#masteryProgress');
 function updateMastery(){
+root.dataset.cards=JSON.stringify(cards);
+root.dataset.cardIndex=String(idx);
+root.dataset.cardFlipped=String(isFlipped);
 const masteredCount=cards.filter(c=>c.mastered).length;
 const pct=Math.round((masteredCount/cards.length)*100);
 masteryText.textContent=masteredCount+' / '+cards.length+' thẻ ('+pct+'%)';
 masteryProgress.value=pct;
 }
-function renderCard(){
-isFlipped=false;
-inner.classList.remove('is-flipped');
+function renderCard(reset=true){
+if(reset)isFlipped=false;
+inner.classList.toggle('is-flipped',isFlipped);
 const c=cards[idx];
 fBadge.textContent='THẺ '+(idx+1)+' / '+cards.length+(c.mastered?' · 🟢 ĐÃ THUỘC':' · 🔴 CHƯA THUỘC');
 fTitle.textContent=c.q;
@@ -142,6 +152,7 @@ updateMastery();
 scene.onclick=()=>{
 isFlipped=!isFlipped;
 inner.classList.toggle('is-flipped',isFlipped);
+root.dataset.cardFlipped=String(isFlipped);
 };
 document.querySelector('#fcPrev').onclick=()=>{if(idx>0){idx--;renderCard()}};
 document.querySelector('#fcNext').onclick=()=>{idx=(idx+1)%cards.length;renderCard()};
@@ -164,6 +175,6 @@ const j=Math.floor(Math.random()*(i+1));
 }
 idx=0;renderCard();
 };
-renderCard();
+renderCard(false);
 </script>
 </html>

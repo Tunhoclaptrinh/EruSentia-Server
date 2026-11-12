@@ -25,7 +25,7 @@ async function main() {
     const exitCode = await new Promise((resolve, reject) => {
       const child = spawn(process.execPath, ['--test', '--test-isolation=none', 'test/notifications.test.cjs', 'test/notifications-worker.test.cjs', 'test/workspaces.test.cjs', 'test/notification-cache-safety.test.cjs', 'test/workspace-invite-safety.test.cjs', 'test/resources.test.cjs'], {
         stdio: 'inherit',
-        env: { ...process.env, DB_DATABASE: name, RESOURCE_TEST_STORE: 'postgres', API_RATE_LIMITS_ENABLED: 'false' }
+        env: { ...process.env, DB_DATABASE: name, RESOURCE_TEST_STORE: 'postgres', WEEK6_DATABASE_TESTS: 'true', API_RATE_LIMITS_ENABLED: 'false' }
       });
       child.on('error', reject);
       child.on('exit', code => resolve(code ?? 1));

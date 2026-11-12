@@ -80,7 +80,13 @@
 </footer>
 </main>
 <script>
-let totalSec=25*60,remainSec=25*60,timer=null,currentMode='focus',streak=0;
+const root=document.querySelector('main');
+const validSeconds=value=>Number.isInteger(value)&&value>=0&&value<=25*60;
+const savedTotal=Number(root.dataset.totalSeconds),savedRemaining=Number(root.dataset.remaining);
+let totalSec=[300,900,1500].includes(savedTotal)?savedTotal:1500;
+let remainSec=validSeconds(savedRemaining)&&savedRemaining<=totalSec?savedRemaining:totalSec;
+let timer=null,currentMode=['focus','shortBreak','longBreak'].includes(root.dataset.mode)?root.dataset.mode:'focus';
+let streak=Number(root.dataset.streak)||0;
 const circumference=2*Math.PI*90;
 const digits=document.querySelector('#timeDigits');
 const statusLabel=document.querySelector('#statusLabel');
@@ -103,6 +109,10 @@ osc.start();osc.stop(ctx.currentTime+1.2);
 }catch(e){}
 }
 function updateDisplay(){
+root.dataset.totalSeconds=String(totalSec);
+root.dataset.remaining=String(remainSec);
+root.dataset.mode=currentMode;
+root.dataset.streak=String(streak);
 const m=Math.floor(remainSec/60),s=remainSec%60;
 digits.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 const offset=circumference*(1-(remainSec/totalSec));
@@ -167,6 +177,10 @@ btnToggle.textContent='Bắt đầu';
 btnToggle.style.background='var(--accent)';
 updateDisplay();
 };
+document.querySelectorAll('.pomo-mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===currentMode));
+statusLabel.textContent=currentMode==='focus'?'TẬP TRUNG':(currentMode==='shortBreak'?'NGHỈ NGẮN':'NGHỈ DÀI');
+btnToggle.textContent=remainSec<totalSec?'Tiếp tục':'Bắt đầu';
+window.addEventListener('pagehide',()=>clearInterval(timer));
 updateDisplay();
 </script>
 </html>

@@ -11,6 +11,7 @@ import {
   SERVICE_CONTROL_SETTINGS,
   ServiceControlSettings,
 } from "../service-controls/settings";
+import { retainedLimits } from "./template-quota";
 import { TEMPLATE_STORE, TemplateStore } from "./template-store";
 class UsageValuesDto {
   @ApiProperty({ minimum: 0 }) templates!: number;
@@ -21,7 +22,16 @@ class UsageValuesDto {
   })
   contentBytes!: number;
 }
+class RetainedValuesDto extends UsageValuesDto {
+  @ApiProperty({ minimum: 0 }) revisions!: number;
+}
+class RetainedBudgetDto {
+  @ApiProperty({ type: RetainedValuesDto }) used!: RetainedValuesDto;
+  @ApiProperty({ type: RetainedValuesDto }) limits!: RetainedValuesDto;
+  @ApiProperty({ type: RetainedValuesDto }) remaining!: RetainedValuesDto;
+}
 class AccountUsageDto {
+  @ApiProperty({ type: RetainedBudgetDto }) retained!: RetainedBudgetDto;
   @ApiProperty({ type: UsageValuesDto }) used!: UsageValuesDto;
   @ApiProperty({ type: UsageValuesDto }) limits!: UsageValuesDto;
   @ApiProperty({ type: UsageValuesDto }) remaining!: UsageValuesDto;
@@ -44,7 +54,27 @@ export class TemplateUsageController {
         templates: this.settings.maxTemplates,
         contentBytes: this.settings.maxContentBytes,
       };
+    const retainedUsed = await this.store.retainedUsage(user.id),
+      retainedBudget = retainedLimits(this.settings);
     return {
+      retained: {
+        used: retainedUsed,
+        limits: retainedBudget,
+        remaining: {
+          templates: Math.max(
+            0,
+            retainedBudget.templates - retainedUsed.templates,
+          ),
+          revisions: Math.max(
+            0,
+            retainedBudget.revisions - retainedUsed.revisions,
+          ),
+          contentBytes: Math.max(
+            0,
+            retainedBudget.contentBytes - retainedUsed.contentBytes,
+          ),
+        },
+      },
       used,
       limits,
       remaining: {

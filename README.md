@@ -399,3 +399,6 @@ Tạo lại tài liệu từ repo app bằng `pnpm docs:week6`. Chạy `pnpm tes
 ## Hosted resource service
 
 Module `resources` chạy chung API Render để cung cấp proxy có JWT/session, plan free/premium/blocked, quota và tài liệu private/shared/premium. Xem [RESOURCE_SERVICE.md](docs/RESOURCE_SERVICE.md). Migration `14_resource_gateway.sql` được bootstrap trước startup; không cần service hay database trả phí mới.
+Vận hành C4-D: [request ID, log an toàn và thống kê process](docs/PILOT_OPERATIONS.md).
+
+C4-D: [hạn mức dữ liệu lưu giữ và xóa mẫu có xác nhận](docs/RETAINED_DATA.md).

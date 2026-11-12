@@ -1,5 +1,6 @@
 require("dotenv").config();
 const test = require("node:test");
+const week6Database = require("./week6-database.cjs");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { Pool } = require("pg");
@@ -8,7 +9,7 @@ const {
   NotificationRepository,
 } = require("../dist/src/messaging/notification-repository");
 
-test("Notification outbox dispatch, worker fanout, idempotency & cursor pagination", async (t) => {
+test("Notification outbox dispatch, worker fanout, idempotency & cursor pagination", week6Database, async (t) => {
   const settings = readConfig();
   const pool = new Pool({
     ...settings.database,

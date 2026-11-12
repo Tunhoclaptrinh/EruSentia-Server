@@ -22,3 +22,28 @@ export function assertTemplateQuota(
 export function contentBytes(content: unknown) {
   return Buffer.byteLength(JSON.stringify(content), "utf8");
 }
+
+export interface RetainedUsage {
+  templates: number;
+  revisions: number;
+  contentBytes: number;
+}
+export function retainedLimits(
+  settings: ServiceControlSettings,
+): RetainedUsage {
+  return {
+    templates: settings.maxRetainedTemplates,
+    revisions: settings.maxRetainedRevisions,
+    contentBytes: settings.maxRetainedBytes,
+  };
+}
+export function assertRetainedQuota(
+  settings: ServiceControlSettings,
+  before: RetainedUsage,
+  after: RetainedUsage,
+) {
+  const limits = retainedLimits(settings);
+  for (const key of ["templates", "revisions", "contentBytes"] as const)
+    if (after[key] > limits[key] && after[key] > before[key])
+      throw new PolicyError("TEMPLATE_RETAINED_QUOTA_EXCEEDED");
+}

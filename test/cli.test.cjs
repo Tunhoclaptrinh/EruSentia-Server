@@ -13,6 +13,8 @@ const env = {
   DB_DATABASE: "cli_test",
   TEMPLATE_STORE: "postgres",
   // These failure-path tests must not connect to services enabled in a developer's .env.
+  NODE_ENV: "test",
+  DB_SSL: "false",
   QUEUE_ENABLED: "false",
   CACHE_ENABLED: "false",
   ACCOUNT_EMAIL_MODE: "disabled",
@@ -23,7 +25,7 @@ const env = {
 function run(script, args = [], extraEnv = {}) {
   const result = spawnSync(
     process.execPath,
-    ["--import", "tsx", script, ...args],
+    [...(script.endsWith(".ts") ? ["--import", "tsx"] : []), script, ...args],
     {
       cwd: root,
       env: { ...env, ...extraEnv },

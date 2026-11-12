@@ -5,12 +5,17 @@ import {
   HttpException,
   Logger,
 } from "@nestjs/common";
+import { randomUUID } from "node:crypto";
 import { QueryFailedError } from "typeorm";
 import { PolicyError } from "../service-controls/policy-error";
 
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(ApiExceptionFilter.name);
+  constructor(
+    private readonly logger: Pick<Logger, "error"> = new Logger(
+      ApiExceptionFilter.name,
+    ),
+  ) {}
 
   catch(error: unknown, host: ArgumentsHost) {
     let status = 500,
@@ -40,6 +45,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
             412: "PRECONDITION_FAILED",
             428: "PRECONDITION_REQUIRED",
             429: "RATE_LIMITED",
+            503: "SERVICE_UNAVAILABLE",
           } as Record<number, string>
         )[status] ?? "HTTP_ERROR";
       if (error instanceof PolicyError) code = error.policyCode;
@@ -55,11 +61,24 @@ export class ApiExceptionFilter implements ExceptionFilter {
         message = "Author or category does not exist";
       }
     }
-    if (status >= 500)
-      this.logger.error(
-        error instanceof Error ? error.message : "Unknown error",
-      );
     const http = host.switchToHttp();
+    const requestId =
+      typeof http.getRequest().requestId === "string" &&
+      /^[0-9a-f-]{36}$/.test(http.getRequest().requestId)
+        ? http.getRequest().requestId
+        : randomUUID();
+    http.getResponse().setHeader("X-Request-Id", requestId);
+    if (status >= 500) {
+      message =
+        status === 503
+          ? "Service temporarily unavailable"
+          : "An unexpected error occurred";
+      details = [];
+      // SQL errors, upstream messages and stack traces can contain private HTML or credentials.
+      this.logger.error(
+        JSON.stringify({ event: "api_error", status, code, requestId }),
+      );
+    }
     if (status === 429 && error instanceof HttpException) {
       const seconds = (error as HttpException & { retryAfter?: unknown })
         .retryAfter;
@@ -74,6 +93,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
     if (status === 401)
       http.getResponse().setHeader("WWW-Authenticate", "Bearer");
     http.getResponse().status(status).json({
+      requestId,
       statusCode: status,
       code,
       message,

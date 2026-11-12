@@ -6,10 +6,31 @@ on:
     branches: [main]
 permissions:
   contents: read
+concurrency:
+  group: backend-checks-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-week6-only
+          POSTGRES_DB: postgres
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: ci-week6-only
+      DB_DATABASE: postgres
+      DB_SSL: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,6 +43,8 @@ jobs:
       - run: pnpm community:check
       - run: pnpm typecheck
       - run: pnpm test
+      - name: Isolated Week 6 PostgreSQL integration
+        run: pnpm test:week6
       - name: Validate hosted Compose configuration
         run: |
           PROJECT_DB_PASSWORD=ci-only-db-password PROJECT_RABBIT_PASSWORD=ci-only-queue-password PROJECT_JWT_SECRET=ci-only-secret-at-least-32-bytes-long HOSTED_API_DOMAIN=api.example.com \

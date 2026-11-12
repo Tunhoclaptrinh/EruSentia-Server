@@ -98,11 +98,12 @@
 const formatMoney=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+' ₫';
 function calculateSplit(){
 const rawMembers=document.querySelector('#membersInput').value.split(',').map(s=>s.trim()).filter(Boolean);
-const members=rawMembers.length?rawMembers:['Thành viên 1'];
+const uniqueMembers=[...new Set(rawMembers)];
+const members=uniqueMembers.length?uniqueMembers:['Thành viên 1'];
 document.querySelector('#memberCountVal').textContent=members.length+' người';
 const rows=document.querySelectorAll('#expenseRows tr');
 let total=0;
-const paidMap={};
+const paidMap=Object.create(null);
 members.forEach(m=>paidMap[m]=0);
 rows.forEach(r=>{
 const payer=r.querySelector('.item-payer').value.trim()||members[0];
@@ -113,7 +114,7 @@ paidMap[payer]=(paidMap[payer]||0)+cost;
 document.querySelector('#totalExpenseVal').textContent=formatMoney(total);
 const perPerson=members.length?total/members.length:0;
 document.querySelector('#perPersonVal').textContent=formatMoney(perPerson);
-const balanceMap={};
+const balanceMap=Object.create(null);
 members.forEach(m=>{
 balanceMap[m]=(paidMap[m]||0)-perPerson;
 });
@@ -141,7 +142,14 @@ const list=document.querySelector('#settleList');
 if(transfers.length===0){
 list.innerHTML='<div class="settle-item" style="color:var(--muted)">Tất cả đã đóng góp cân bằng, không cần chuyển khoản thêm!</div>';
 }else{
-list.innerHTML=transfers.map(t=>'<div class="settle-item"><span class="settle-who">'+t.from+'</span><span class="settle-arrow">chuyển cho</span><span class="settle-who">'+t.to+'</span><span class="settle-amount">'+formatMoney(t.amount)+'</span></div>').join('');
+list.replaceChildren();
+for(const transfer of transfers){
+const item=document.createElement('div');item.className='settle-item';
+for(const [className,text] of [['settle-who',transfer.from],['settle-arrow','chuyển cho'],['settle-who',transfer.to],['settle-amount',formatMoney(transfer.amount)]]){
+const span=document.createElement('span');span.className=className;span.textContent=text;item.appendChild(span);
+}
+list.appendChild(item);
+}
 }
 }
 document.querySelector('#addExpenseBtn').onclick=()=>{

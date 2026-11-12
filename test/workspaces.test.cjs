@@ -1,12 +1,13 @@
 require("dotenv").config();
 const test = require("node:test");
+const week6Database = require("./week6-database.cjs");
 const assert = require("node:assert/strict");
 const { randomUUID } = require("node:crypto");
 const { readConfig } = require("../dist/src/config");
 const { createApplication } = require("../dist/src/app");
 const { example } = require("./publication-fixture.cjs");
 
-test("Workspace multi-tenancy, RBAC & Last Owner concurrency contract", async (t) => {
+test("Workspace multi-tenancy, RBAC & Last Owner concurrency contract", week6Database, async (t) => {
   const settings = readConfig({
     ...process.env,
     TEMPLATE_STORE: "postgres",
