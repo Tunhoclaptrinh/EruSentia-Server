@@ -1,7 +1,29 @@
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import { INestApplication } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 export function setupOpenApi(app: INestApplication) {
+  // Serve the executable guide beside the API so requests work with the same origin.
+  for (const [route, filename] of Object.entries({
+    '/docs/week-6': 'WEEK_6_TECHNICAL_REPORT.html',
+    '/docs/tools/api-explorer': 'API_EXPLORER.html',
+    '/docs/tools/notifications': 'NOTIFICATION_FEED.html',
+  })) {
+    app.getHttpAdapter().get(route, async (_request: IncomingMessage, response: ServerResponse) => {
+      try {
+        const html = await readFile(resolve(process.cwd(), 'docs', filename), 'utf8');
+        response.setHeader('Content-Type', 'text/html; charset=utf-8');
+        response.setHeader('X-Content-Type-Options', 'nosniff');
+        response.setHeader('Cache-Control', 'no-store');
+        response.end(html);
+      } catch {
+        response.statusCode = 404;
+        response.end('Guide unavailable. Generate the API tool documents from the app repository.');
+      }
+    });
+  }
   const config = new DocumentBuilder()
     .setTitle("EruSentia Template API")
     .setDescription(

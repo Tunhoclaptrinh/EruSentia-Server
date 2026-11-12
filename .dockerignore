@@ -9,6 +9,12 @@
 !scripts/**
 !sql/
 !sql/**
+!public/
+!public/resource-connect.html
+!docs/
+!docs/WEEK_6_TECHNICAL_REPORT.html
+!docs/API_EXPLORER.html
+!docs/NOTIFICATION_FEED.html
 !docker/
 !docker/project-entrypoint.sh
 !tools/

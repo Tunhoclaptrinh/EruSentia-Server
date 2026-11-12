@@ -3,6 +3,8 @@ import * as amqp from "amqplib";
 import type { AppConfig } from "../config";
 import { REGISTERED } from "./registration-event";
 
+export const TEMPLATE_VERSION_PUBLISHED = "template.version_published";
+
 export function queueNames(namespace: string) {
   return {
     exchange: `${namespace}.events`,
@@ -10,6 +12,9 @@ export function queueNames(namespace: string) {
     retry: `${namespace}.welcome.retry`,
     deadExchange: `${namespace}.dead`,
     dead: `${namespace}.welcome.dead`,
+    notificationWork: `${namespace}.notification`,
+    notificationRetry: `${namespace}.notification.retry`,
+    notificationDead: `${namespace}.notification.dead`,
   };
 }
 
@@ -41,6 +46,15 @@ export class RabbitTransport {
         arguments: { "x-queue-type": "quorum" },
       });
       await publisher.bindQueue(names.dead, names.deadExchange, "welcome.dead");
+      await publisher.assertQueue(names.notificationDead, {
+        durable: true,
+        arguments: { "x-queue-type": "quorum" },
+      });
+      await publisher.bindQueue(
+        names.notificationDead,
+        names.deadExchange,
+        "notification.dead",
+      );
       await publisher.assertQueue(names.work, {
         durable: true,
         arguments: {
@@ -53,6 +67,22 @@ export class RabbitTransport {
         },
       });
       await publisher.bindQueue(names.work, names.exchange, REGISTERED);
+      await publisher.assertQueue(names.notificationWork, {
+        durable: true,
+        arguments: {
+          "x-queue-type": "quorum",
+          "x-delivery-limit": 3,
+          "x-dead-letter-exchange": names.deadExchange,
+          "x-dead-letter-routing-key": "notification.dead",
+          "x-dead-letter-strategy": "at-least-once",
+          "x-overflow": "reject-publish",
+        },
+      });
+      await publisher.bindQueue(
+        names.notificationWork,
+        names.exchange,
+        TEMPLATE_VERSION_PUBLISHED,
+      );
       await publisher.assertQueue(names.retry, {
         durable: true,
         arguments: {
@@ -60,6 +90,17 @@ export class RabbitTransport {
           "x-message-ttl": config.retryDelayMs,
           "x-dead-letter-exchange": names.exchange,
           "x-dead-letter-routing-key": REGISTERED,
+          "x-dead-letter-strategy": "at-least-once",
+          "x-overflow": "reject-publish",
+        },
+      });
+      await publisher.assertQueue(names.notificationRetry, {
+        durable: true,
+        arguments: {
+          "x-queue-type": "quorum",
+          "x-message-ttl": config.retryDelayMs,
+          "x-dead-letter-exchange": names.exchange,
+          "x-dead-letter-routing-key": TEMPLATE_VERSION_PUBLISHED,
           "x-dead-letter-strategy": "at-least-once",
           "x-overflow": "reject-publish",
         },

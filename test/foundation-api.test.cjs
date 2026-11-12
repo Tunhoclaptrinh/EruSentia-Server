@@ -256,7 +256,10 @@ test(
             "08_template_revisions.sql",
             "10_service_controls.sql",
             "11_content_moderation.sql",
-          "12_retained_resources.sql",
+            "12_retained_resources.sql",
+            "12_template_notifications.sql",
+            "13_workspaces_rbac.sql",
+            "14_resource_gateway.sql",
           ]) {
             await fs.copyFile(path.resolve("sql", file), path.join(root, file));
           }
@@ -304,6 +307,9 @@ test(
           "10_service_controls.sql",
           "11_content_moderation.sql",
           "12_retained_resources.sql",
+          "12_template_notifications.sql",
+          "13_workspaces_rbac.sql",
+          "14_resource_gateway.sql",
         ]);
         assert.equal(
           (
@@ -311,7 +317,7 @@ test(
               "SELECT count(*)::int n FROM eru_schema_migrations",
             )
           ).rows[0].n,
-          9,
+          12,
         );
         assert.deepEqual(await migrateProject(pool), []);
         assert.equal(

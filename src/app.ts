@@ -1,3 +1,5 @@
+import { ResourcesModule } from './resources/resources.module';
+import { ExtensionsModule } from './extensions/extensions.module';
 import { OperationsModule } from "./operations/operations.module";
 import { ApiOperations } from "./operations/api-operations";
 import "reflect-metadata";
@@ -15,6 +17,8 @@ import { AuthModule } from "./auth/auth.module";
 import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
 import { HealthController } from "./common/health.controller";
 import { ServiceControlsModule } from "./service-controls/service-controls.module";
+import { NotificationsModule } from "./notifications/notifications.module";
+import { WorkspacesModule } from "./workspaces/workspaces.module";
 import { AdminModule } from "./admin/admin.module";
 import { AdminAuditLogEntity } from "./admin/persistence/admin-audit-log.entity";
 
@@ -49,6 +53,10 @@ class AppModule {
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
         TemplatesModule.register(settings),
+        NotificationsModule.register(settings),
+        WorkspacesModule.register(settings),
+        ResourcesModule.register(settings),
+        ExtensionsModule,
         AdminModule.register(settings),
       ],
     };
