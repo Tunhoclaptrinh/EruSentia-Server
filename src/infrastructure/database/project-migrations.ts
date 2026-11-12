@@ -14,6 +14,7 @@ const migrationFiles = [
   "10_service_controls.sql",
   "11_content_moderation.sql",
   "12_retained_resources.sql",
+  "15_admin_portal_core.sql",
 ];
 const optionalMigration = "09_account_email.sql";
 const lockName = "erusentia-project-migrations-v1";

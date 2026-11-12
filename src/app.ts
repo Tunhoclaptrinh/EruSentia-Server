@@ -15,6 +15,8 @@ import { AuthModule } from "./auth/auth.module";
 import { RefreshSessionEntity } from "./auth/persistence/refresh-session.entity";
 import { HealthController } from "./common/health.controller";
 import { ServiceControlsModule } from "./service-controls/service-controls.module";
+import { AdminModule } from "./admin/admin.module";
+import { AdminAuditLogEntity } from "./admin/persistence/admin-audit-log.entity";
 
 @Module({})
 class AppModule {
@@ -28,7 +30,11 @@ class AppModule {
               TypeOrmModule.forRoot({
                 type: "postgres",
                 ...settings.database,
-                entities: [...entities, RefreshSessionEntity],
+                entities: [
+                  ...entities,
+                  RefreshSessionEntity,
+                  AdminAuditLogEntity,
+                ],
                 synchronize: false,
                 migrationsRun: false,
                 installExtensions: false,
@@ -43,6 +49,7 @@ class AppModule {
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
         TemplatesModule.register(settings),
+        AdminModule.register(settings),
       ],
     };
   }
