@@ -18,6 +18,8 @@ COPY --from=dependencies --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/dist ./dist
 COPY --chown=node:node package.json ./
 COPY --chown=node:node sql ./sql
+COPY --chown=node:node public ./public
+COPY --chown=node:node docs/WEEK_6_TECHNICAL_REPORT.html docs/API_EXPLORER.html docs/NOTIFICATION_FEED.html ./docs/
 COPY --chown=node:node tools/community ./tools/community
 COPY --chown=node:node docker/project-entrypoint.sh ./docker/project-entrypoint.sh
 USER node

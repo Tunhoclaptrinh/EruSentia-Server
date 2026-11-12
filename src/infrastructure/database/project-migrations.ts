@@ -13,6 +13,9 @@ const migrationFiles = [
   "08_template_revisions.sql",
   "10_service_controls.sql",
   "11_content_moderation.sql",
+  "12_template_notifications.sql",
+  "13_workspaces_rbac.sql",
+  "14_resource_gateway.sql",
   "12_retained_resources.sql",
 ];
 const optionalMigration = "09_account_email.sql";

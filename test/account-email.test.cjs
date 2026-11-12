@@ -82,7 +82,7 @@ async function contract(t, persistence) {
     const before = (
       await pool.query("SELECT * FROM eru_schema_migrations ORDER BY id")
     ).rows;
-    assert.equal(before.length, 9);
+    assert.equal(before.length, 12);
     const missing = await createApplication(settings, false);
     try {
       await assert.rejects(

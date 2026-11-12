@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kết nối dịch vụ tài nguyên EruSentia</title>
+    <style>
+      :root[data-theme="dark"] { color-scheme: dark; --text: #ececef; --muted: #a1a1aa; --border: #3f3f46; --surface: #202024; --input: #28282d; }
+      .brand {display:flex;align-items:center;gap:10px;margin-bottom:10px}.brand img{width:28px;height:28px;object-fit:contain}.brand h1{font-size:14px;margin:0}.brand p{font-size:11px;margin:0}
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        font:
+          13px/1.5 system-ui,
+          sans-serif;
+        color: var(--text, #242428);
+        background: var(--surface, #fafafa);
+      }
+      h1 {
+        font-size: 15px;
+        margin: 0 0 4px;
+        font-weight: 650;
+      }
+      p {
+        margin: 5px 0;
+        color: var(--muted, #62626c);
+      }
+      form {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 8px;
+        align-items: end;
+        margin: 12px 0;
+      }
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+      }
+      input,
+      button {
+        font: inherit;
+        border: 1px solid var(--border, #d9d9df);
+        border-radius: 6px;
+        padding: 8px 10px;
+        min-width: 0;
+        background: var(--input, white);
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        background: #f2274c;
+        color: white;
+        border-color: #f2274c;
+      }
+      button:disabled {
+        opacity: 0.5;
+      }
+      input:focus-visible,
+      button:focus-visible {
+        outline: 2px solid #f2274c;
+        outline-offset: 2px;
+      }
+      #identity {
+        border: 1px solid var(--border, #d9d9df);
+        border-radius: 7px;
+        padding: 12px;
+        margin: 12px 0;
+      }
+      #feedback {
+        color: #b52e42;
+        overflow-wrap: anywhere;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      @media (max-width: 500px) {
+        form {
+          grid-template-columns: 1fr;
+        }
+        body {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="brand"><img src="data:image/png;base64,__ERU_LOGO__" alt="" aria-hidden="true"><div><h1>EruSentia</h1><p>Dịch vụ tài nguyên</p></div></header>
+    <p>Đăng nhập để cấp quyền kết nối cho tài liệu này.</p>
+    <p id="source"></p>
+    <form id="login">
+      <label
+        >Email<input
+          id="email"
+          type="email"
+          required
+          autocomplete="username" /></label
+      ><label
+        >Mật khẩu<input
+          id="password"
+          type="password"
+          required
+          autocomplete="current-password" /></label
+      ><button type="submit">Đăng nhập & kết nối</button>
+    </form>
+    <div id="identity" hidden>
+      <strong id="account"></strong>
+      <p id="plan"></p>
+      <button type="button" id="disconnect">Ngắt kết nối</button>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <script nonce="__ERU_NONCE__">
+      (() => {
+        const session = location.hash.slice(1);
+        if (!/^[a-f0-9]{32}$/.test(session)) {
+          document.getElementById("feedback").textContent =
+            "Mở kết nối từ template EruSentia.";
+          document.getElementById("login").hidden = true;
+          return;
+        }
+        let parentOrigin = null,
+          access = "",
+          refresh = "",
+          identity = null;
+        const requests = new Map();
+        const send = (value) => {
+          if (parentOrigin !== null)
+            parent.postMessage(
+              { type: "eru-resource-v1", session, ...value },
+              parentOrigin === "null" ? "*" : parentOrigin,
+            );
+        };
+        const feedback = (text) => {
+          document.getElementById("feedback").textContent = text;
+        };
+        const reset = () => {
+          access = "";
+          refresh = "";
+          identity = null;
+          document.getElementById("login").hidden = false;
+          document.getElementById("identity").hidden = true;
+          send({ kind: "disconnected" });
+        };
+        const api = async (path, options = {}) => {
+          const response = await fetch(path, {
+            ...options,
+            credentials: "omit",
+            redirect: "error",
+            headers: {
+              "Content-Type": "application/json",
+              ...(access ? { Authorization: "Bearer " + access } : {}),
+              ...options.headers,
+            },
+          });
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            if (response.status === 401) reset();
+            const error = Error(data.message || "Không hoàn tất yêu cầu");
+            error.status = response.status;
+            throw error;
+          }
+          return data;
+        };
+        document
+          .getElementById("login")
+          .addEventListener("submit", async (event) => {
+            event.preventDefault();
+            feedback("");
+            const button = event.target.querySelector("button");
+            button.disabled = true;
+            try {
+              const pair = await api("/auth/login", {
+                method: "POST",
+                body: JSON.stringify({
+                  email: document.getElementById("email").value.trim(),
+                  password: document.getElementById("password").value,
+                }),
+              });
+              access = pair.accessToken;
+              refresh = pair.refreshToken;
+              identity = await api("/resource-gateway/me");
+              if (!identity.enabled)
+                throw Error(
+                  "Tài khoản chưa được cấp quyền dùng dịch vụ tài nguyên.",
+                );
+              document.getElementById("login").hidden = true;
+              document.getElementById("identity").hidden = false;
+              document.getElementById("account").textContent =
+                identity.user.email;
+              document.getElementById("plan").textContent =
+                "Gói " +
+                identity.plan +
+                " · còn " +
+                identity.remaining +
+                "/" +
+                identity.dailyLimit +
+                " yêu cầu hôm nay";
+              send({ kind: "authenticated", value: identity });
+            } catch (error) {
+              if (refresh) {
+                try {
+                  await api("/auth/logout", {
+                    method: "POST",
+                    body: JSON.stringify({ refreshToken: refresh }),
+                  });
+                } catch {}
+              }
+              reset();
+              feedback(error.message);
+            } finally {
+              document.getElementById("password").value = "";
+              button.disabled = false;
+            }
+          });
+        document
+          .getElementById("disconnect")
+          .addEventListener("click", async () => {
+            for (const controller of requests.values()) controller.abort();
+            try {
+              if (refresh)
+                await api("/auth/logout", {
+                  method: "POST",
+                  body: JSON.stringify({ refreshToken: refresh }),
+                });
+            } catch {}
+            reset();
+          });
+        addEventListener("message", async (event) => {
+          const data = event.data;
+          if (
+            event.source !== parent ||
+            !data ||
+            data.type !== "eru-resource-v1" ||
+            data.session !== session
+          )
+            return;
+          if (data.kind === "hello") {
+            if (parentOrigin !== null && parentOrigin !== event.origin) return;
+            parentOrigin = event.origin;
+          document.documentElement.dataset.theme = data.theme === 'dark' ? 'dark' : 'light';
+            document.getElementById("source").textContent =
+              "Tài liệu: " +
+              (event.origin === "null" ? "HTML cục bộ" : event.origin);
+            send({
+              kind: identity ? "authenticated" : "ready",
+              value: identity,
+            });
+            return;
+          }
+          if (
+            parentOrigin !== event.origin ||
+            !["request", "cancel"].includes(data.kind) ||
+            typeof data.id !== "string" ||
+            !/^[a-z0-9-]{1,64}$/.test(data.id)
+          )
+            return;
+          if (data.kind === "cancel") {
+            requests.get(data.id)?.abort();
+            return;
+          }
+          if (!access || !identity) {
+            send({
+              kind: "result",
+              id: data.id,
+              error: {
+                message:
+                  "Đăng nhập dịch vụ EruSentia trong khung kết nối trước.",
+                status: 401,
+              },
+            });
+            return;
+          }
+          if (requests.has(data.id) || requests.size >= 4) {
+            send({
+              kind: "result",
+              id: data.id,
+              error: {
+                message: "Có quá nhiều yêu cầu đang chạy.",
+                status: 429,
+              },
+            });
+            return;
+          }
+          const controller = new AbortController();
+          requests.set(data.id, controller);
+          const timeout = setTimeout(() => controller.abort(), 14000);
+          try {
+            let value;
+            if (data.action === "request") {
+              const payload = {
+                ...data.payload,
+                headers: { ...data.payload?.headers },
+              };
+              const target = new URL(payload.url);
+              // Delegate this session only to the exact service origin, never to third-party targets.
+              if (
+                target.origin === location.origin &&
+                !Object.keys(payload.headers).some(
+                  (name) => name.toLowerCase() === "authorization",
+                )
+              )
+                payload.headers.Authorization = "Bearer " + access;
+              value = await api("/resource-gateway/requests", {
+                method: "POST",
+                signal: controller.signal,
+                body: JSON.stringify(payload),
+              });
+            } else if (
+              data.action === "document" &&
+              /^[a-f0-9-]{36}$/i.test(data.payload?.id || "")
+            )
+              value = await api(
+                "/resource-documents/" + encodeURIComponent(data.payload.id),
+                { signal: controller.signal },
+              );
+            else if (data.action === "status")
+              value = await api("/resource-gateway/me", {
+                signal: controller.signal,
+              });
+            else throw Error("Thao tác tài nguyên không hợp lệ.");
+            if (data.action === "status") {
+              identity = value;
+              document.getElementById("plan").textContent =
+                "Gói " +
+                value.plan +
+                " · còn " +
+                value.remaining +
+                "/" +
+                value.dailyLimit +
+                " yêu cầu hôm nay";
+              send({ kind: "authenticated", value: identity });
+            }
+            send({ kind: "result", id: data.id, value });
+          } catch (error) {
+            send({
+              kind: "result",
+              id: data.id,
+              error: {
+                message:
+                  error.name === "AbortError"
+                    ? "Đã hủy yêu cầu."
+                    : error.message,
+                status: error.status || 0,
+              },
+            });
+          } finally {
+            clearTimeout(timeout);
+            requests.delete(data.id);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

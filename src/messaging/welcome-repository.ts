@@ -16,7 +16,7 @@ export class WelcomeRepository {
     try {
       await client.query("BEGIN");
       const rows = await client.query(
-        "SELECT id,payload FROM message_outbox WHERE published_at IS NULL ORDER BY created_at,id LIMIT $1 FOR UPDATE SKIP LOCKED",
+        "SELECT id,payload FROM message_outbox WHERE published_at IS NULL AND event_type='auth.registered' ORDER BY created_at,id LIMIT $1 FOR UPDATE SKIP LOCKED",
         [limit],
       );
       for (const row of rows.rows) {
