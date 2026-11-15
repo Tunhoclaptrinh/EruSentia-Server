@@ -1,7 +1,8 @@
 # Triển khai EruSentia: App, API và Admin
 
-Cập nhật 15/11/2026. Các cấu hình đã được chuẩn bị trong mã nguồn; chưa tạo service,
-đổi environment cloud, push/merge GitHub hoặc chạy migration trên Neon trong lượt này.
+Cập nhật 15/11/2026. Admin và Server có repo GitHub riêng, liên kết bên dưới.
+Cấu hình deploy đã được kiểm chứng cục bộ; chưa tạo service, đổi environment cloud
+hoặc chạy migration trên Neon.
 
 | Thành phần              | Repo/thư mục                            | Nơi deploy                                             | Dữ liệu                           |
 | ----------------------- | --------------------------------------- | ------------------------------------------------------ | --------------------------------- |
@@ -16,13 +17,14 @@ thêm trên Render Free. Các tính năng cần worker/email không được coi
 
 ## 1. Đưa mã đã tích hợp lên GitHub
 
-App và Server đã có origin; Admin hiện chưa có remote. Các commit đang ở nhánh làm
-việc riêng. Push nhánh, tạo PR, kiểm tra và merge vào `main` trước khi dùng auto-deploy.
-Không force-push `main`. Xem tên nhánh bằng `git branch --show-current` trong từng repo.
+- API: [Tunhoclaptrinh/EruSentia-Server](https://github.com/Tunhoclaptrinh/EruSentia-Server).
+- Web quản trị: [Tunhoclaptrinh/EruSentia-Admin](https://github.com/Tunhoclaptrinh/EruSentia-Admin),
+  production branch `main`; import repo này thành một project Vercel riêng.
 
-Nếu muốn Admin tự deploy từ GitHub, tạo repo **riêng tư** rồi đặt origin cho repo local.
-Không import repo App vào project Admin. Có thể dùng Vercel CLI trực tiếp tại thư mục
-Admin để deploy mà chưa cần remote; hướng dẫn ở `erusentia-admin/docs/DEPLOYMENT.md`.
+Server cập nhật qua nhánh làm việc/PR: chờ CI và merge vào `main` trước auto-deploy.
+Không force-push `main`. Xem tên nhánh bằng `git branch --show-current` trong từng repo.
+Mã App vẫn giữ local theo yêu cầu; không push App cùng đợt cập nhật Admin/Server.
+Xem [hướng dẫn deploy Admin](https://github.com/Tunhoclaptrinh/EruSentia-Admin/blob/main/docs/DEPLOYMENT.md).
 
 ## 2. Backup và kiểm tra Neon
 

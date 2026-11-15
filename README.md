@@ -1,5 +1,15 @@
 # Sentia Hub Service
 
+## Các repository liên quan
+
+| Repository | Vai trò |
+| --- | --- |
+| [EruSentia-Server](https://github.com/Tunhoclaptrinh/EruSentia-Server) | API NestJS, phân quyền, nghiệp vụ và PostgreSQL; repo hiện tại |
+| [EruSentia-Admin](https://github.com/Tunhoclaptrinh/EruSentia-Admin) | Web quản trị React/TypeScript, triển khai độc lập và dùng API của repo này |
+
+Admin cấu hình `VITE_ERU_API_BASE_URL` trỏ đến API; Server cấu hình `CORS_ORIGINS`
+cho phép đúng origin của Admin. Xem [hướng dẫn triển khai](docs/DEPLOYMENT.md).
+
 Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 phát triển
 API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
 Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
@@ -409,7 +419,7 @@ Phân hệ HTML độc lập với template/resource, có nháp riêng, gửi du
 
 ## Core backend và web quản trị
 
-[CORE_FOUNDATION.md](docs/CORE_FOUNDATION.md) ghi nguồn UniFlow, BaseService/BaseController, DTO/pagination dùng chung, metadata, chính sách controller Admin và các lỗi đã sửa. `pnpm check:core` chạy trong build để kiểm tra 28 route Admin. Bộ test mặc định chạy bằng `pnpm test`; kiểm thử PostgreSQL Admin dùng database dùng một lần qua `pnpm test:admin`.
+[CORE_FOUNDATION.md](docs/CORE_FOUNDATION.md) ghi nguồn UniFlow, BaseService/BaseController, DTO/pagination dùng chung, metadata, chính sách controller Admin và các lỗi đã sửa. `pnpm check:core` chạy trong build để kiểm tra 60 route Admin. Bộ test mặc định chạy bằng `pnpm test`; kiểm thử PostgreSQL Admin dùng database dùng một lần qua `pnpm test:admin`.
 
 ## Triển khai App, API và Admin
 
