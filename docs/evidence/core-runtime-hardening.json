@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-14",
+  "scope": "Local development API/worker only",
+  "bootstrap": false,
+  "migrationJournalAndRowCountsUnchanged": true,
+  "migrations": 17,
+  "counts": {
+    "users": 59,
+    "templates": 35,
+    "categories": 6,
+    "documents": 0,
+    "audit": 40
+  },
+  "infrastructureContainersUnchanged": true,
+  "services": [
+    {
+      "name": "/erusentia-project-api-1",
+      "image": "sha256:49f551a94dc49d1d61eae07845c05c44fcca0761b6d4f6f89b9ad42d86e84c16",
+      "status": "running",
+      "health": "healthy"
+    },
+    {
+      "name": "/erusentia-project-worker-1",
+      "image": "sha256:49f551a94dc49d1d61eae07845c05c44fcca0761b6d4f6f89b9ad42d86e84c16",
+      "status": "running",
+      "health": "healthy"
+    }
+  ]
+}

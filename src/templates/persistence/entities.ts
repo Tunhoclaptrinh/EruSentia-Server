@@ -24,6 +24,12 @@ export class AuthorEntity {
   passwordHash!: string;
   @Column({ type: "varchar", length: 32, default: "user" }) role!: Role;
   @Column({ name: "is_active", type: "boolean" }) isActive!: boolean;
+  @Column({ name: "suspension_reason", type: "text", nullable: true })
+  suspensionReason!: string | null;
+  @Column({ name: "suspended_at", type: "timestamptz", nullable: true })
+  suspendedAt!: Date | null;
+  @Column({ name: "suspended_by", type: "uuid", nullable: true })
+  suspendedBy!: string | null;
   @Column({ name: "email_verified_at", type: "timestamptz", nullable: true })
   emailVerifiedAt!: Date | null;
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
@@ -79,6 +85,12 @@ export class TemplateEntity {
   moderationReason!: string | null;
   @Column({ name: "is_featured", type: "boolean", default: false })
   isFeatured!: boolean;
+  @Column({ name: "is_curated", type: "boolean", default: false })
+  isCurated!: boolean;
+  @Column({ name: "curated_at", type: "timestamptz", nullable: true })
+  curatedAt!: Date | null;
+  @Column({ name: "curated_by", type: "uuid", nullable: true })
+  curatedBy!: string | null;
   @Column({ name: "forks_count", type: "integer", default: 0 })
   forksCount!: number;
   @Column({ name: "views_count", type: "integer", default: 0 })

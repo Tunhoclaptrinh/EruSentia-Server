@@ -1,3 +1,4 @@
+import { PaginationQueryDto, integerQuery } from "../common/dto/pagination.dto";
 import { Transform } from "class-transformer";
 import {
   IsIn,
@@ -69,7 +70,7 @@ export class DecideReportDto {
   @Max(2147483647)
   reportVersion!: number;
 }
-export class ReportQueryDto {
+export class ReportQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     default: "open",
     enum: ["open", "resolved", "dismissed", "all"],
@@ -77,21 +78,17 @@ export class ReportQueryDto {
   @IsIn(["open", "resolved", "dismissed", "all"])
   state: ReportState | "all" = "open";
   @ApiPropertyOptional({ default: 1, minimum: 1, maximum: 10000 })
-  @Transform(({ value }) =>
-    typeof value === "string" && /^[0-9]+$/.test(value) ? Number(value) : value,
-  )
+  @Transform(integerQuery)
   @IsInt()
   @Min(1)
   @Max(10000)
-  page = 1;
+  override page = 1;
   @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 50 })
-  @Transform(({ value }) =>
-    typeof value === "string" && /^[0-9]+$/.test(value) ? Number(value) : value,
-  )
+  @Transform(integerQuery)
   @IsInt()
   @Min(1)
   @Max(50)
-  size = 20;
+  override size = 20;
 }
 export function receipt(row: ReportRecord) {
   const { reporterId, ...safe } = row;

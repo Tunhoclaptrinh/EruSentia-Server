@@ -1,0 +1,89 @@
+{
+  "verifiedAt": "2026-11-15T15:05:52.264491+00:00",
+  "scope": "Local source and disposable integration tests; no cloud deployment or production database writes.",
+  "upstreamMain": {
+    "app": "0ad8e050155ba2bdc9d955c99a8794b1a2149349",
+    "server": "8e3dc9208715eb4bd5db1788d3e00c6cd8fac70a"
+  },
+  "checkpointCommits": {
+    "app": "10a8e44",
+    "server": "a6dec8d",
+    "admin": "d736f5660a6b12d330b6659f685556ac3da8eb6b"
+  },
+  "integrationCommit": "208a5e8",
+  "tests": {
+    "serverDefault": {
+      "pass": 134,
+      "skip": 19,
+      "fail": 0
+    },
+    "hostedPostgresTls": {
+      "pass": 107,
+      "fail": 0,
+      "groups": [38, 4, 16, 17, 15, 17]
+    },
+    "isolatedAdminPostgres": {
+      "pass": 25,
+      "fail": 0
+    },
+    "adminUi": {
+      "pass": 64,
+      "fail": 0,
+      "retries": 0
+    },
+    "appSessionTransport": {
+      "pass": 116,
+      "fail": 0
+    },
+    "appDocumentsChromium": {
+      "pass": 1,
+      "fail": 0
+    },
+    "appLint": "pass",
+    "appPlaywrightTypecheck": "pass",
+    "appWebBuild": "pass",
+    "adminHostedBuild": "pass",
+    "adminFormat": "pass",
+    "hostedBuildMisconfigurationsRejected": 7,
+    "hostedHeadersAndSandboxPreview": "pass",
+    "renderDockerImageBuild": "pass"
+  },
+  "engine": {
+    "version": "3.7.3",
+    "extraRuntimeChangesDuringMerge": false
+  },
+  "adminEvidence": {
+    "sourceSha256": "c89686f3e0d4ac7398498c7f761a2ddbcfd4a87bb9e409751754fdedc3d34f7e",
+    "completedAt": "2026-11-15T14:59:33.680Z",
+    "images": 120,
+    "matrixImages": 62,
+    "imageHashesVerified": 120,
+    "productionPages": 10,
+    "productionPageErrors": []
+  },
+  "deployment": {
+    "app": "Vercel",
+    "admin": "Separate Vercel project; local Git repository has no remote yet",
+    "api": "Render Free Docker",
+    "database": "Neon direct PostgreSQL with verified TLS",
+    "requiredMigrations": 16,
+    "demoAccountsEnabled": false,
+    "accountEmailMode": "disabled",
+    "queueEnabled": false,
+    "cacheEnabled": false,
+    "cors": "Exact App and Admin origins supplied at setup"
+  },
+  "limitations": [
+    "Cloud environment values still need to be entered by owner",
+    "No cloud deployment or production migration executed",
+    "Render Free can sleep",
+    "Keycloak/OIDC and production SMTP are not implemented"
+  ],
+  "gitPolicy": "Local commits and main integration authorized; caches, secrets, other projects and training repository excluded.",
+  "appPreparedCommit": "c351caa67ec62cd5f13dc3c842afccec29446651",
+  "dockerImage": {
+    "tag": "erusentia-deploy-check:20261115",
+    "imageConfigSha256": "7535b3c2fc96be770a4e8985cf4443975a3051120a6d7b1b4505420f7e5efb4c",
+    "servicesRestarted": false
+  }
+}

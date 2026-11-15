@@ -1,5 +1,5 @@
-import { ResourcesModule } from './resources/resources.module';
-import { ExtensionsModule } from './extensions/extensions.module';
+import { ResourcesModule } from "./resources/resources.module";
+import { ExtensionsModule } from "./extensions/extensions.module";
 import { OperationsModule } from "./operations/operations.module";
 import { ApiOperations } from "./operations/api-operations";
 import "reflect-metadata";
@@ -19,10 +19,14 @@ import { HealthController } from "./common/health.controller";
 import { ServiceControlsModule } from "./service-controls/service-controls.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { WorkspacesModule } from "./workspaces/workspaces.module";
+import { AdminModule } from "./admin/admin.module";
+import { AdminAuditLogEntity } from "./admin/persistence/admin-audit-log.entity";
 
 @Module({})
 class AppModule {
   static register(settings: AppConfig): DynamicModule {
+    const templates = TemplatesModule.register(settings);
+    const resources = ResourcesModule.register(settings);
     return {
       module: AppModule,
       controllers: [HealthController],
@@ -32,7 +36,11 @@ class AppModule {
               TypeOrmModule.forRoot({
                 type: "postgres",
                 ...settings.database,
-                entities: [...entities, RefreshSessionEntity],
+                entities: [
+                  ...entities,
+                  RefreshSessionEntity,
+                  AdminAuditLogEntity,
+                ],
                 synchronize: false,
                 migrationsRun: false,
                 installExtensions: false,
@@ -46,11 +54,12 @@ class AppModule {
         ServiceControlsModule.register(settings),
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
-        TemplatesModule.register(settings),
+        templates,
         NotificationsModule.register(settings),
         WorkspacesModule.register(settings),
-        ResourcesModule.register(settings),
+        resources,
         ExtensionsModule,
+        AdminModule.register(settings, [templates, resources]),
       ],
     };
   }

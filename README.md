@@ -1,5 +1,15 @@
 # Sentia Hub Service
 
+## Các repository liên quan
+
+| Repository | Vai trò |
+| --- | --- |
+| [EruSentia-Server](https://github.com/Tunhoclaptrinh/EruSentia-Server) | API NestJS, phân quyền, nghiệp vụ và PostgreSQL; repo hiện tại |
+| [EruSentia-Admin](https://github.com/Tunhoclaptrinh/EruSentia-Admin) | Web quản trị React/TypeScript, triển khai độc lập và dùng API của repo này |
+
+Admin cấu hình `VITE_ERU_API_BASE_URL` trỏ đến API; Server cấu hình `CORS_ORIGINS`
+cho phép đúng origin của Admin. Xem [hướng dẫn triển khai](docs/DEPLOYMENT.md).
+
 Backend TypeScript của EruSentia: NestJS, TypeORM và PostgreSQL 16. Tuần 3 phát triển
 API Template từ tuần 2 với tài khoản, JWT, quyền sở hữu và refresh-token rotation.
 Tuần 4 bổ sung welcome email bất đồng bộ bằng RabbitMQ, outbox và worker riêng.
@@ -8,7 +18,7 @@ Tuần 6 hoàn thiện hệ thống theo dõi template và thông báo bất đ�
 RabbitMQ Quorum Queues, Idempotent Consumer, Redis unread counters và Cursor Pagination).
 Mã chạy/SQL/tests ở server; báo cáo và lý thuyết ở TYP. Đợt C0–C1 đã ghép tài khoản
 với client; App đã bổ sung catalog template, xem thử cô lập và bản sao local ở C2.
-Xuất bản nội dung và giao diện Creator/Admin thuộc các chặng tiếp theo.
+Các luồng xuất bản, tài liệu cộng đồng và web quản trị đã có phần triển khai; xem tài liệu tính năng và kiểm chứng tương ứng.
 
 Tài khoản C4: [quản lý phiên đăng nhập](docs/ACCOUNT_SESSIONS.md).
 Email C4-A2: [xác minh và đặt lại mật khẩu bằng Mailpit local](docs/ACCOUNT_EMAIL.md).
@@ -402,3 +412,16 @@ Module `resources` chạy chung API Render để cung cấp proxy có JWT/sessio
 Vận hành C4-D: [request ID, log an toàn và thống kê process](docs/PILOT_OPERATIONS.md).
 
 C4-D: [hạn mức dữ liệu lưu giữ và xóa mẫu có xác nhận](docs/RETAINED_DATA.md).
+
+## Tài liệu cộng đồng và phê duyệt
+
+Phân hệ HTML độc lập với template/resource, có nháp riêng, gửi duyệt, trả sửa, phê duyệt/thu hồi và audit transaction. Cần chạy `pnpm project:migrate` để thêm migration 16 trước khi khởi động backend mới; không cần reset/seed. [Hướng dẫn App ↔ Admin và API contract](docs/COMMUNITY_DOCUMENTS.md).
+
+## Core backend và web quản trị
+
+[CORE_FOUNDATION.md](docs/CORE_FOUNDATION.md) ghi nguồn UniFlow, BaseService/BaseController, DTO/pagination dùng chung, metadata, chính sách controller Admin và các lỗi đã sửa. `pnpm check:core` chạy trong build để kiểm tra 60 route Admin. Bộ test mặc định chạy bằng `pnpm test`; kiểm thử PostgreSQL Admin dùng database dùng một lần qua `pnpm test:admin`.
+
+## Triển khai App, API và Admin
+
+Xem [hướng dẫn triển khai hiện tại](docs/DEPLOYMENT.md) cho Vercel + Render + Neon,
+web Admin mới, migration an toàn, tạo tài khoản quản trị và kiểm tra sau deploy.

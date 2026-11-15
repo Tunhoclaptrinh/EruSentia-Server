@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-14",
+  "kind": "reviewed-design-adaptation",
+  "repository": "PTIT_Aka-Uniflow-",
+  "sourceCommit": "dfa1e963f025e00a44d97c5ca7621e8ebbb61aed",
+  "sourcesMatchCommit": true,
+  "scope": "Backend service/controller boundaries adapted to NestJS + TypeORM + PostgreSQL. Original MongoDB CRUD routes and filter operators are not exposed. Concrete DTOs, role policies, audit transactions and domain endpoints are retained.",
+  "files": [
+    {
+      "source": "apps/backend/src/common/services/base.service.ts",
+      "sourceSha256": "4d55ecb91e15965118be993252669322f05671475a7012f0b1f46abb6276c483",
+      "targets": ["src/common/services/base.service.ts"]
+    },
+    {
+      "source": "apps/backend/src/common/controllers/base.controller.ts",
+      "sourceSha256": "efe4d5d76f01650a3a4953644ffb91a1e0c631fe3c646e019fd20e79cf9519a0",
+      "targets": [
+        "src/common/controllers/base.controller.ts",
+        "src/admin/admin-controller.decorator.ts",
+        "src/common/request-context.ts"
+      ]
+    },
+    {
+      "source": "apps/backend/src/common/dto/pagination.dto.ts",
+      "sourceSha256": "3820f1c2cbdc99553e46c7c0904484d6b532803a8a4ccd09e6e54cde34e18311",
+      "targets": ["src/common/dto/pagination.dto.ts"]
+    }
+  ]
+}

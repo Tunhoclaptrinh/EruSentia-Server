@@ -1,3 +1,4 @@
+import { getRequestMeta, type ClientRequest } from "../common/request-context";
 import {
   Body,
   Controller,
@@ -7,6 +8,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -89,11 +91,18 @@ export class ReportsController {
     @Body() input: DecideReportDto,
     @Headers("if-match") match: string | undefined,
     @CurrentUser() user: UserIdentity,
+    @Req() req: ClientRequest,
   ) {
     const tag = requireTemplateMatch(match);
     const templateId = await this.store.templateIdForReport(id);
     const stamp = await this.cache.stamp(templateId);
-    const result = await this.store.decide(id, input, tag, user);
+    const result = await this.store.decide(
+      id,
+      input,
+      tag,
+      user,
+      getRequestMeta(req),
+    );
     await this.cache.invalidate(templateId, stamp);
     return result;
   }
