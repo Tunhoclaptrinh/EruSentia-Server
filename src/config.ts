@@ -95,7 +95,12 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     env.CORS_ORIGINS === undefined
       ? env.NODE_ENV === "production"
         ? []
-        : ["http://localhost:5173", "http://127.0.0.1:5173"]
+        : [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:5183",
+            "http://127.0.0.1:5183",
+          ]
       : env.CORS_ORIGINS.split(",")
           .map((origin) => origin.trim())
           .filter(Boolean);

@@ -54,11 +54,11 @@ export class ApiExceptionFilter implements ExceptionFilter {
       if (pgCode === "23505") {
         status = 409;
         code = "CONFLICT";
-        message = "Template slug already exists";
+        message = "A record with these values already exists";
       } else if (pgCode === "23503") {
         status = 400;
         code = "INVALID_REFERENCE";
-        message = "Author or category does not exist";
+        message = "The referenced record is missing or still in use";
       }
     }
     const http = host.switchToHttp();

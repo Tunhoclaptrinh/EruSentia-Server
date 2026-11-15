@@ -4,6 +4,8 @@ export interface ResourceSettings {
   freeDailyLimit: number;
   premiumDailyLimit: number;
   allowLocalTargets: boolean;
+  maxRetainedDocuments?: number;
+  maxRetainedBytes?: number;
 }
 export const RESOURCE_SETTINGS = Symbol("RESOURCE_SETTINGS");
 export function resourceSettings(env: NodeJS.ProcessEnv): ResourceSettings {
@@ -39,8 +41,17 @@ export function resourceSettings(env: NodeJS.ProcessEnv): ResourceSettings {
         throw Error("RESOURCE_TARGET_ORIGINS requires exact HTTPS origins");
       return url.origin;
     });
+  const retainedBytes = Number(env.RESOURCE_RETAINED_BYTES || 52428800);
+  if (
+    !Number.isSafeInteger(retainedBytes) ||
+    retainedBytes < 1024 ||
+    retainedBytes > 1073741824
+  )
+    throw Error("RESOURCE_RETAINED_BYTES must be 1024..1073741824");
   return {
     enabled: env.RESOURCE_GATEWAY_ENABLED !== "false",
+    maxRetainedDocuments: limit("RESOURCE_RETAINED_DOCUMENTS", 100),
+    maxRetainedBytes: Number(env.RESOURCE_RETAINED_BYTES || 52428800),
     targetOrigins: [...new Set(targetOrigins)],
     freeDailyLimit: limit("RESOURCE_FREE_DAILY_LIMIT", 30),
     premiumDailyLimit: limit("RESOURCE_PREMIUM_DAILY_LIMIT", 500),

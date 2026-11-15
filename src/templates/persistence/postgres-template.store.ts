@@ -1,3 +1,4 @@
+import { lockAdminActor } from "../../admin/admin-authorization";
 import {
   BadRequestException,
   Inject,
@@ -233,14 +234,18 @@ export class PostgresTemplateStore implements TemplateStore {
     input: Omit<UpdateTemplateDto, "contentJson"> & {
       contentJson?: unknown;
       deletedAt?: Date | null;
+      moderationState?: "visible" | "hidden";
+      moderationReason?: string;
     },
     tag: string,
     actor: UserIdentity,
     operation: "update" | "delete" | "restore",
+    existingManager?: EntityManager,
   ) {
     const revision = expectedRevision(id, tag);
     await this.checkReferences(undefined, input.categoryId);
-    return this.templates.manager.transaction(async (manager) => {
+    const execute = async (manager: EntityManager) => {
+      if (actor.role === "admin") await lockAdminActor(manager, actor.id);
       const [hint] = await manager.query(
         "SELECT author_id FROM templates WHERE id=$1",
         [id],
@@ -348,7 +353,25 @@ export class PostgresTemplateStore implements TemplateStore {
         }
       }
       return updated;
-    });
+    };
+    return existingManager
+      ? execute(existingManager)
+      : this.templates.manager.transaction(execute);
+  }
+  adminWrite(
+    manager: EntityManager,
+    id: string,
+    input: Omit<UpdateTemplateDto, "contentJson"> & {
+      contentJson?: unknown;
+      deletedAt?: Date | null;
+      moderationState?: "visible" | "hidden";
+      moderationReason?: string;
+    },
+    tag: string,
+    actor: UserIdentity,
+    operation: "update" | "delete" | "restore",
+  ) {
+    return this.write(id, input, tag, actor, operation, manager);
   }
   update(
     id: string,

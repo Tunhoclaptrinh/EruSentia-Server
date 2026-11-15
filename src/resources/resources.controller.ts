@@ -1,3 +1,4 @@
+import { getRequestMeta, type ClientRequest } from "../common/request-context";
 import {
   Body,
   Controller,
@@ -8,6 +9,7 @@ import {
   Patch,
   Post,
   Res,
+  Req,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import type { ServerResponse } from "node:http";
@@ -121,7 +123,8 @@ export class ResourcePlansController {
     @Param("userId", UuidPipe) id: string,
     @Body() body: ResourcePlanDto,
     @CurrentUser() user: UserIdentity,
+    @Req() req: ClientRequest,
   ) {
-    return this.service.updatePlan(id, body, user);
+    return this.service.updatePlan(id, body, user, getRequestMeta(req));
   }
 }

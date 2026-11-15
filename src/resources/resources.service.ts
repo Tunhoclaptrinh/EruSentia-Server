@@ -1,5 +1,9 @@
+import { lockAdminActor, lockAdminTarget } from "../admin/admin-authorization";
+import { recordAdminAction } from "../admin/admin-audit-record";
+import type { RequestMeta } from "../common/request-context";
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Inject,
   Injectable,
@@ -9,7 +13,7 @@ import {
   ServiceUnavailableException,
   HttpException,
 } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, type EntityManager } from "typeorm";
 import { randomUUID } from "node:crypto";
 import type { UserIdentity } from "../auth/auth-store";
 import { RESOURCE_SETTINGS, ResourceSettings } from "./resource-settings";
@@ -27,13 +31,20 @@ type DocumentRow = {
   html: string;
   access: "private" | "shared" | "premium";
   created_at: Date;
+  revision?: number;
   deleted_at: Date | null;
 };
 @Injectable()
 export class ResourcesService implements OnModuleInit {
   private readonly memoryPlans = new Map<
     string,
-    { plan: Plan; expiresAt?: string }
+    {
+      plan: Plan;
+      expiresAt?: string;
+      dailyLimit?: number | null;
+      documentLimit?: number | null;
+      retainedBytesLimit?: number | null;
+    }
   >();
   private readonly memoryUsage = new Map<string, number>();
   private readonly memoryDocuments = new Map<string, DocumentRow>();
@@ -63,10 +74,11 @@ export class ResourcesService implements OnModuleInit {
     if (!this.settings.enabled)
       throw new ServiceUnavailableException("RESOURCE_GATEWAY_DISABLED");
   }
-  async plan(user: UserIdentity): Promise<Plan> {
-    const row = this.db
+  async plan(user: UserIdentity, manager?: EntityManager): Promise<Plan> {
+    const reader = manager ?? this.db;
+    const row = reader
       ? (
-          await this.db.query(
+          await reader.query(
             'SELECT plan, expires_at AS "expiresAt" FROM resource_account_plans WHERE user_id=$1',
             [user.id],
           )
@@ -76,15 +88,50 @@ export class ResourcesService implements OnModuleInit {
       return "free";
     return row?.plan || "free";
   }
+  async limits(user: UserIdentity, manager?: EntityManager) {
+    const reader = manager ?? this.db;
+    const row = reader
+      ? (
+          await reader.query(
+            'SELECT plan,expires_at AS "expiresAt",daily_limit AS "dailyLimit",document_limit AS "documentLimit",retained_bytes_limit AS "retainedBytesLimit" FROM resource_account_plans WHERE user_id=$1',
+            [user.id],
+          )
+        )[0]
+      : this.memoryPlans.get(user.id);
+    const live =
+      row && (!row.expiresAt || new Date(row.expiresAt).getTime() > Date.now())
+        ? row
+        : undefined;
+    const plan: Plan = live?.plan || "free";
+    return {
+      plan,
+      dailyLimit:
+        plan === "blocked"
+          ? 0
+          : (live?.dailyLimit ??
+            (plan === "premium" || user.role === "admin"
+              ? this.settings.premiumDailyLimit
+              : this.settings.freeDailyLimit)),
+      documentLimit:
+        live?.documentLimit ??
+        (plan === "premium" || user.role === "admin" ? 100 : 10),
+      retainedDocuments: this.settings.maxRetainedDocuments ?? 100,
+      retainedBytes: Number(
+        live?.retainedBytesLimit ?? this.settings.maxRetainedBytes ?? 52428800,
+      ),
+    };
+  }
   async audit(
     user: UserIdentity,
     action: string,
     outcome: string,
     documentId?: string,
     origin?: string,
+    manager?: EntityManager,
   ) {
-    if (this.db)
-      await this.db.query(
+    const writer = manager ?? this.db;
+    if (writer)
+      await writer.query(
         "INSERT INTO resource_access_events(user_id,document_id,action,outcome,target_origin) VALUES($1,$2,$3,$4,$5)",
         [user.id, documentId || null, action, outcome, origin || null],
       );
@@ -103,13 +150,9 @@ export class ResourcesService implements OnModuleInit {
   }
   async me(user: UserIdentity) {
     this.enabled();
-    const plan = await this.plan(user),
-      limit =
-        plan === "blocked"
-          ? 0
-          : plan === "premium" || user.role === "admin"
-            ? this.settings.premiumDailyLimit
-            : this.settings.freeDailyLimit;
+    const limits = await this.limits(user),
+      plan = limits.plan,
+      limit = limits.dailyLimit;
     const key = user.id + ":" + new Date().toISOString().slice(0, 10);
     const used = this.db
       ? Number(
@@ -126,6 +169,9 @@ export class ResourcesService implements OnModuleInit {
       plan,
       enabled: limit > 0,
       dailyLimit: limit,
+      documentLimit: limits.documentLimit,
+      retainedDocumentLimit: limits.retainedDocuments,
+      retainedBytesLimit: limits.retainedBytes,
       used,
       remaining: Math.max(0, limit - used),
       targetOrigins: this.settings.targetOrigins,
@@ -135,36 +181,102 @@ export class ResourcesService implements OnModuleInit {
     userId: string,
     input: ResourcePlanDto,
     actor: UserIdentity,
+    meta: RequestMeta = {},
   ) {
     if (actor.role !== "admin")
       throw new ForbiddenException("RESOURCE_ADMIN_REQUIRED");
-    if (
-      this.db &&
-      !(
-        await this.db.query(
-          "SELECT 1 FROM users WHERE id=$1 AND deleted_at IS NULL",
-          [userId],
-        )
-      ).length
-    )
-      throw new NotFoundException("RESOURCE_USER_NOT_FOUND");
     if (
       input.expiresAt &&
       (!Number.isFinite(Date.parse(input.expiresAt)) ||
         Date.parse(input.expiresAt) <= Date.now())
     )
       throw new BadRequestException("PLAN_EXPIRY_MUST_BE_IN_FUTURE");
-    if (this.db)
-      await this.db.query(
-        "INSERT INTO resource_account_plans(user_id,plan,expires_at,updated_by) VALUES($1,$2,$3,$4) ON CONFLICT(user_id) DO UPDATE SET plan=EXCLUDED.plan,expires_at=EXCLUDED.expires_at,updated_by=EXCLUDED.updated_by,updated_at=now()",
-        [userId, input.plan, input.expiresAt || null, actor.id],
-      );
-    else
-      this.memoryPlans.set(userId, {
-        plan: input.plan,
-        expiresAt: input.expiresAt,
+    if (this.db) {
+      return this.db.transaction(async (manager) => {
+        const target = await lockAdminTarget(manager, actor.id, userId, true);
+        const [previous] = await manager.query(
+          'SELECT plan,expires_at AS "expiresAt",revision,daily_limit AS "dailyLimit",document_limit AS "documentLimit",retained_bytes_limit AS "retainedBytesLimit" FROM resource_account_plans WHERE user_id=$1',
+          [userId],
+        );
+        if (
+          input.revision !== undefined &&
+          input.revision !== (previous?.revision ?? 0)
+        )
+          throw new ConflictException(
+            "Gói tài nguyên đã thay đổi. Hãy tải lại trước khi cập nhật.",
+          );
+        const [updated] = await manager.query(
+          "INSERT INTO resource_account_plans(user_id,plan,expires_at,updated_by,daily_limit,document_limit,retained_bytes_limit) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(user_id) DO UPDATE SET plan=EXCLUDED.plan,expires_at=EXCLUDED.expires_at,updated_by=EXCLUDED.updated_by,daily_limit=EXCLUDED.daily_limit,document_limit=EXCLUDED.document_limit,retained_bytes_limit=EXCLUDED.retained_bytes_limit,revision=resource_account_plans.revision+1,updated_at=now() RETURNING revision",
+          [
+            userId,
+            input.plan,
+            input.expiresAt || null,
+            actor.id,
+            input.dailyLimit === undefined
+              ? (previous?.dailyLimit ?? null)
+              : input.dailyLimit,
+            input.documentLimit === undefined
+              ? (previous?.documentLimit ?? null)
+              : input.documentLimit,
+            input.retainedBytesLimit === undefined
+              ? (previous?.retainedBytesLimit ?? null)
+              : input.retainedBytesLimit,
+          ],
+        );
+        await this.audit(
+          actor,
+          "plan.changed",
+          input.plan,
+          undefined,
+          undefined,
+          manager,
+        );
+        await recordAdminAction(manager, {
+          actorId: actor.id,
+          action: "RESOURCE_PLAN_UPDATED",
+          targetType: "resource_plan",
+          targetId: userId,
+          reason: input.reason || "Resource plan updated by administrator",
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          metadata: {
+            userEmail: target.email,
+            previous: previous ?? { plan: "free", expiresAt: null },
+            current: {
+              plan: input.plan,
+              expiresAt: input.expiresAt || null,
+              dailyLimit:
+                input.dailyLimit === undefined
+                  ? (previous?.dailyLimit ?? null)
+                  : input.dailyLimit,
+              documentLimit:
+                input.documentLimit === undefined
+                  ? (previous?.documentLimit ?? null)
+                  : input.documentLimit,
+              retainedBytesLimit:
+                input.retainedBytesLimit === undefined
+                  ? (previous?.retainedBytesLimit ?? null)
+                  : input.retainedBytesLimit,
+            },
+          },
+        });
+        return {
+          userId,
+          plan: input.plan,
+          expiresAt: input.expiresAt || null,
+          revision: updated.revision,
+        };
       });
+    }
+    // Memory mode is a development adapter; do not change the plan if its audit fails.
     await this.audit(actor, "plan.changed", input.plan);
+    this.memoryPlans.set(userId, {
+      plan: input.plan,
+      expiresAt: input.expiresAt,
+      dailyLimit: input.dailyLimit,
+      documentLimit: input.documentLimit,
+      retainedBytesLimit: input.retainedBytesLimit,
+    });
     return { userId, plan: input.plan, expiresAt: input.expiresAt || null };
   }
   private async claim(user: UserIdentity) {
@@ -229,11 +341,12 @@ export class ResourcesService implements OnModuleInit {
       this.inFlight--;
     }
   }
-  private async document(id: string) {
-    const row: DocumentRow | undefined = this.db
+  private async document(id: string, manager?: EntityManager) {
+    const reader = manager ?? this.db;
+    const row: DocumentRow | undefined = reader
       ? (
-          await this.db.query(
-            "SELECT id,owner_id,title,html,access,created_at,deleted_at FROM resource_documents WHERE id=$1 AND deleted_at IS NULL",
+          await reader.query(
+            `SELECT id,owner_id,title,html,access,created_at,deleted_at,revision FROM resource_documents WHERE id=$1 AND deleted_at IS NULL ${manager ? "FOR UPDATE" : ""}`,
             [id],
           )
         )[0]
@@ -249,6 +362,7 @@ export class ResourcesService implements OnModuleInit {
       title: row.title,
       access: row.access,
       createdAt: new Date(row.created_at).toISOString(),
+      revision: row.revision ?? 1,
     };
   }
   async allowedDocument(id: string, user: UserIdentity) {
@@ -281,49 +395,150 @@ export class ResourcesService implements OnModuleInit {
       throw new ForbiddenException("RESOURCE_DOCUMENT_OWNER_REQUIRED");
     return row;
   }
+  private async lockResourceActor(manager: EntityManager, actor: UserIdentity) {
+    const [account] = await manager.query(
+      "SELECT id,role,is_active FROM users WHERE id=$1 AND deleted_at IS NULL FOR NO KEY UPDATE",
+      [actor.id],
+    );
+    if (
+      !account?.is_active ||
+      (actor.role === "admin" && account.role !== "admin")
+    )
+      throw new ForbiddenException("RESOURCE_ACCOUNT_AUTHORITY_CHANGED");
+    return account as { id: string; role: string; is_active: boolean };
+  }
+  private async ownerMutation<T>(
+    id: string,
+    actor: UserIdentity,
+    work: (manager: EntityManager, row: DocumentRow) => Promise<T>,
+    existingManager?: EntityManager,
+  ) {
+    this.enabled();
+    const execute = async (manager: EntityManager) => {
+      const [hint] = await manager.query(
+        "SELECT owner_id FROM resource_documents WHERE id=$1 AND deleted_at IS NULL",
+        [id],
+      );
+      if (!hint) throw new NotFoundException("RESOURCE_DOCUMENT_NOT_FOUND");
+      if (actor.role === "admin") await lockAdminActor(manager, actor.id);
+      else await this.lockResourceActor(manager, actor);
+      const row = await this.document(id, manager);
+      if (row.owner_id !== actor.id && actor.role !== "admin")
+        throw new ForbiddenException("RESOURCE_DOCUMENT_OWNER_REQUIRED");
+      return work(manager, row);
+    };
+    return existingManager
+      ? execute(existingManager)
+      : this.db!.transaction(execute);
+  }
+  private async auditDocumentMutation(
+    manager: EntityManager,
+    actor: UserIdentity,
+    action: "created" | "grant" | "revoke" | "deleted",
+    row: DocumentRow,
+    userId?: string,
+    context?: { reason?: string; meta?: RequestMeta },
+  ) {
+    await this.audit(
+      actor,
+      "document." + action,
+      "allowed",
+      row.id,
+      undefined,
+      manager,
+    );
+    if (actor.role === "admin")
+      await recordAdminAction(manager, {
+        actorId: actor.id,
+        action: {
+          created: "RESOURCE_DOCUMENT_CREATED",
+          grant: "RESOURCE_DOCUMENT_GRANTED",
+          revoke: "RESOURCE_DOCUMENT_REVOKED",
+          deleted: "RESOURCE_DOCUMENT_DELETED",
+        }[action],
+        targetType: "resource_document",
+        targetId: row.id,
+        reason:
+          context?.reason ||
+          "Protected resource document " + action + " by administrator",
+        ipAddress: context?.meta?.ip,
+        userAgent: context?.meta?.userAgent,
+        metadata: {
+          title: row.title,
+          ownerId: row.owner_id,
+          ...(userId ? { recipientId: userId } : {}),
+        },
+      });
+  }
   async create(input: ResourceDocumentDto, user: UserIdentity) {
     this.enabled();
     if (Buffer.byteLength(input.html, "utf8") > 524288)
       throw new BadRequestException("RESOURCE_DOCUMENT_TOO_LARGE");
-    if ((await this.plan(user)) === "blocked")
+    if (this.db)
+      return this.db.transaction(async (manager) => {
+        const account = await this.lockResourceActor(manager, user);
+        const limits = await this.limits(user, manager),
+          plan = limits.plan;
+        if (plan === "blocked")
+          throw new ForbiddenException("RESOURCE_ACCOUNT_BLOCKED");
+        const limit = limits.documentLimit;
+        const [{ count }] = await manager.query(
+          "SELECT count(*)::int count FROM resource_documents WHERE owner_id=$1 AND deleted_at IS NULL",
+          [user.id],
+        );
+        if (count >= limit)
+          throw new HttpException("RESOURCE_DOCUMENT_QUOTA_EXCEEDED", 429);
+        const [retained] = await manager.query(
+          "SELECT count(*)::int count,COALESCE(sum(content_bytes),0)::bigint bytes FROM resource_documents WHERE owner_id=$1",
+          [user.id],
+        );
+        if (
+          retained.count >= limits.retainedDocuments ||
+          Number(retained.bytes) + Buffer.byteLength(input.html, "utf8") >
+            limits.retainedBytes
+        )
+          throw new HttpException("RESOURCE_RETAINED_QUOTA_EXCEEDED", 429);
+        const [row]: DocumentRow[] = await manager.query(
+          "INSERT INTO resource_documents(owner_id,title,html,access) VALUES($1,$2,$3,$4) RETURNING id,owner_id,title,html,access,created_at,deleted_at,revision",
+          [user.id, input.title, input.html, input.access],
+        );
+        await this.auditDocumentMutation(manager, user, "created", row);
+        return this.metadata(row);
+      });
+    const limits = await this.limits(user),
+      plan = limits.plan;
+    if (plan === "blocked")
       throw new ForbiddenException("RESOURCE_ACCOUNT_BLOCKED");
-    const limit =
-      (await this.plan(user)) === "premium" || user.role === "admin" ? 100 : 10;
-    const row: DocumentRow = this.db
-      ? await this.db.transaction(async (manager) => {
-          await manager.query("SELECT id FROM users WHERE id=$1 FOR UPDATE", [
-            user.id,
-          ]);
-          const [count] = await manager.query(
-            "SELECT count(*)::int AS count FROM resource_documents WHERE owner_id=$1 AND deleted_at IS NULL",
-            [user.id],
-          );
-          if (Number(count.count) >= limit)
-            throw new HttpException("RESOURCE_DOCUMENT_QUOTA_EXCEEDED", 429);
-          return (
-            await manager.query(
-              "INSERT INTO resource_documents(owner_id,title,html,access) VALUES($1,$2,$3,$4) RETURNING id,owner_id,title,html,access,created_at,deleted_at",
-              [user.id, input.title, input.html, input.access],
-            )
-          )[0];
-        })
-      : {
-          id: randomUUID(),
-          owner_id: user.id,
-          title: input.title,
-          html: input.html,
-          access: input.access,
-          created_at: new Date(),
-          deleted_at: null,
-        };
+    const limit = limits.documentLimit;
     if (
-      !this.db &&
       [...this.memoryDocuments.values()].filter(
-        (document) => document.owner_id === user.id && !document.deleted_at,
+        (row) => row.owner_id === user.id && !row.deleted_at,
       ).length >= limit
     )
       throw new HttpException("RESOURCE_DOCUMENT_QUOTA_EXCEEDED", 429);
-    if (!this.db) this.memoryDocuments.set(row.id, row);
+    const retained = [...this.memoryDocuments.values()].filter(
+      (row) => row.owner_id === user.id,
+    );
+    if (
+      retained.length >= limits.retainedDocuments ||
+      retained.reduce(
+        (sum, row) => sum + Buffer.byteLength(row.html, "utf8"),
+        0,
+      ) +
+        Buffer.byteLength(input.html, "utf8") >
+        limits.retainedBytes
+    )
+      throw new HttpException("RESOURCE_RETAINED_QUOTA_EXCEEDED", 429);
+    const row: DocumentRow = {
+      id: randomUUID(),
+      owner_id: user.id,
+      title: input.title,
+      html: input.html,
+      access: input.access,
+      created_at: new Date(),
+      deleted_at: null,
+    };
+    this.memoryDocuments.set(row.id, row);
     await this.audit(user, "document.created", "allowed", row.id);
     return this.metadata(row);
   }
@@ -331,7 +546,7 @@ export class ResourcesService implements OnModuleInit {
     this.enabled();
     const rows: DocumentRow[] = this.db
       ? await this.db.query(
-          "SELECT id,owner_id,title,access,created_at FROM resource_documents WHERE owner_id=$1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 100",
+          "SELECT id,owner_id,title,access,created_at,revision FROM resource_documents WHERE owner_id=$1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 100",
           [user.id],
         )
       : [...this.memoryDocuments.values()].filter(
@@ -345,26 +560,52 @@ export class ResourcesService implements OnModuleInit {
     await this.audit(user, "document.open", "allowed", id);
     return { ...this.metadata(row), html: row.html };
   }
-  async grant(id: string, userId: string, actor: UserIdentity) {
+  async grant(
+    id: string,
+    userId: string,
+    actor: UserIdentity,
+    context?: { manager?: EntityManager; reason?: string; meta?: RequestMeta },
+  ) {
+    if (this.db)
+      return this.ownerMutation(
+        id,
+        actor,
+        async (manager, row) => {
+          if (row.access !== "shared")
+            throw new BadRequestException("DOCUMENT_MUST_USE_SHARED_ACCESS");
+          if (
+            !(
+              await manager.query(
+                "SELECT id FROM users WHERE id=$1 AND deleted_at IS NULL",
+                [userId],
+              )
+            ).length
+          )
+            throw new NotFoundException("RESOURCE_USER_NOT_FOUND");
+          await manager.query(
+            "INSERT INTO resource_document_grants(document_id,user_id,granted_by) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
+            [id, userId, actor.id],
+          );
+          await manager.query(
+            "UPDATE resource_documents SET updated_at=now() WHERE id=$1",
+            [id],
+          );
+          await this.auditDocumentMutation(
+            manager,
+            actor,
+            "grant",
+            row,
+            userId,
+            context,
+          );
+          return { documentId: id, userId };
+        },
+        context?.manager,
+      );
     const row = await this.owner(id, actor);
     if (row.access !== "shared")
       throw new BadRequestException("DOCUMENT_MUST_USE_SHARED_ACCESS");
-    if (
-      this.db &&
-      !(
-        await this.db.query(
-          "SELECT 1 FROM users WHERE id=$1 AND deleted_at IS NULL",
-          [userId],
-        )
-      ).length
-    )
-      throw new NotFoundException("RESOURCE_USER_NOT_FOUND");
-    if (this.db)
-      await this.db.query(
-        "INSERT INTO resource_document_grants(document_id,user_id,granted_by) VALUES($1,$2,$3) ON CONFLICT DO NOTHING",
-        [id, userId, actor.id],
-      );
-    else this.memoryGrants.add(id + ":" + userId);
+    this.memoryGrants.add(id + ":" + userId);
     await this.audit(actor, "document.grant", "allowed", id);
     return { documentId: id, userId };
   }
@@ -379,24 +620,67 @@ export class ResourcesService implements OnModuleInit {
           .filter((key) => key.startsWith(id + ":"))
           .map((key) => ({ userId: key.slice(id.length + 1) }));
   }
-  async revoke(id: string, userId: string, actor: UserIdentity) {
-    await this.owner(id, actor);
+  async revoke(
+    id: string,
+    userId: string,
+    actor: UserIdentity,
+    context?: { manager?: EntityManager; reason?: string; meta?: RequestMeta },
+  ) {
     if (this.db)
-      await this.db.query(
-        "DELETE FROM resource_document_grants WHERE document_id=$1 AND user_id=$2",
-        [id, userId],
+      return this.ownerMutation(
+        id,
+        actor,
+        async (manager, row) => {
+          await manager.query(
+            "DELETE FROM resource_document_grants WHERE document_id=$1 AND user_id=$2",
+            [id, userId],
+          );
+          await manager.query(
+            "UPDATE resource_documents SET updated_at=now() WHERE id=$1",
+            [id],
+          );
+          await this.auditDocumentMutation(
+            manager,
+            actor,
+            "revoke",
+            row,
+            userId,
+            context,
+          );
+        },
+        context?.manager,
       );
-    else this.memoryGrants.delete(id + ":" + userId);
+    await this.owner(id, actor);
+    this.memoryGrants.delete(id + ":" + userId);
     await this.audit(actor, "document.revoke", "allowed", id);
   }
-  async remove(id: string, user: UserIdentity) {
-    await this.owner(id, user);
+  async remove(
+    id: string,
+    user: UserIdentity,
+    context?: { manager?: EntityManager; reason?: string; meta?: RequestMeta },
+  ) {
     if (this.db)
-      await this.db.query(
-        "UPDATE resource_documents SET deleted_at=now() WHERE id=$1",
-        [id],
+      return this.ownerMutation(
+        id,
+        user,
+        async (manager, row) => {
+          await manager.query(
+            "UPDATE resource_documents SET deleted_at=now() WHERE id=$1",
+            [id],
+          );
+          await this.auditDocumentMutation(
+            manager,
+            user,
+            "deleted",
+            row,
+            undefined,
+            context,
+          );
+        },
+        context?.manager,
       );
-    else this.memoryDocuments.get(id)!.deleted_at = new Date();
+    await this.owner(id, user);
+    this.memoryDocuments.get(id)!.deleted_at = new Date();
     await this.audit(user, "document.deleted", "allowed", id);
   }
   async events(id: string, user: UserIdentity) {

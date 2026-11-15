@@ -17,6 +17,10 @@ const migrationFiles = [
   "13_workspaces_rbac.sql",
   "14_resource_gateway.sql",
   "12_retained_resources.sql",
+  "15_admin_portal_core.sql",
+  "16_community_documents.sql",
+  "17_admin_resource_lifecycle.sql",
+  "18_community_document_versions.sql",
 ];
 const optionalMigration = "09_account_email.sql";
 const lockName = "erusentia-project-migrations-v1";

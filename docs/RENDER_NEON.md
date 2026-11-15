@@ -1,5 +1,10 @@
 # Deploy API EruSentia bằng Render Free + Neon, kèm CI/CD GitHub
 
+> Deployment có **web Admin mới**: dùng [hướng dẫn hiện tại](DEPLOYMENT.md) cho
+> thứ tự deploy, CORS hai frontend, migration và tài khoản admin đầu tiên. Bên dưới
+> giữ ghi nhận nghiệm thu ngày 06/11; số lượng migration/fixture lịch sử không phải
+> kết quả xác nhận deployment cloud hiện tại.
+
 Cập nhật 06/11/2026. Đây là hosted demo cho tài khoản, API Template/catalog và
 Swagger. PostgreSQL lưu tại Neon; App vẫn phát hành riêng. Queue, worker, Mailpit
 và Redis không chạy trên phương án này; stack Docker local vẫn đầy đủ và không đổi.
@@ -16,12 +21,12 @@ sau khi push các thay đổi lên GitHub.
 Dùng repo **server**: <https://github.com/Tunhoclaptrinh/EruSentia-Server>.
 Không đưa mã nguồn App riêng tư vào Render. Bộ cấu hình cần có trên nhánh `main`:
 
-| File | Vai trò |
-|---|---|
-| [`render.yaml`](../render.yaml) | Một Docker Web Service, plan `free`, Singapore, tự deploy sau CI |
-| [`Dockerfile`](../Dockerfile) | Build bằng Node 24 và pnpm 12.11.2 đã ghim |
-| [`checks.yml`](../.github/workflows/checks.yml) | Typecheck, test API, Compose và PostgreSQL TLS/migration/startup |
-| [`project-entrypoint.sh`](../docker/project-entrypoint.sh) | Migration/seed an toàn trước khi mở API |
+| File                                                       | Vai trò                                                          |
+| ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| [`render.yaml`](../render.yaml)                            | Một Docker Web Service, plan `free`, Singapore, tự deploy sau CI |
+| [`Dockerfile`](../Dockerfile)                              | Build bằng Node 24 và pnpm 12.11.2 đã ghim                       |
+| [`checks.yml`](../.github/workflows/checks.yml)            | Typecheck, test API, Compose và PostgreSQL TLS/migration/startup |
+| [`project-entrypoint.sh`](../docker/project-entrypoint.sh) | Migration/seed an toàn trước khi mở API                          |
 
 Kiểm tra ở máy phát triển, trong `erusentia-server`:
 
@@ -79,13 +84,15 @@ và API. [Giới hạn pooling của Neon](https://neon.com/docs/connect/connect
    branch `main`, Blueprint Path **`render.yaml`**.
 3. Nếu GitHub yêu cầu cấp quyền, chỉ chọn repo server cần deploy. Không dùng đường
    dẫn public Git thay cho kết nối GitHub: auto-deploy cần Git provider đã kết nối.
-4. Điền ba biến Render hỏi:
+4. Điền các biến Render hỏi (bao gồm origin ở hướng dẫn hiện tại):
 
-   | Biến | Lấy từ Neon |
-   |---|---|
-   | `DB_HOST` | Direct hostname, ví dụ `ep-….ap-southeast-1.aws.neon.tech` |
-   | `DB_USERNAME` | Role/username Neon |
-   | `DB_PASSWORD` | Password của role đó |
+   | Biến                      | Lấy từ Neon                                                |
+   | ------------------------- | ---------------------------------------------------------- |
+   | `DB_HOST`                 | Direct hostname, ví dụ `ep-….ap-southeast-1.aws.neon.tech` |
+   | `DB_USERNAME`             | Role/username Neon                                         |
+   | `DB_PASSWORD`             | Password của role đó                                       |
+   | `CORS_ORIGINS`            | Các origin App, Admin và Pages cần dùng                    |
+   | `RESOURCE_TARGET_ORIGINS` | Origin HTTPS thực tế của API Render                        |
 
 5. Kiểm tra chỉ có **một Web Service**, plan **Free**, region Singapore. Không có
    database Render, disk, worker hoặc dịch vụ trả phí được tạo bởi Blueprint này.
@@ -95,7 +102,8 @@ và API. [Giới hạn pooling của Neon](https://neon.com/docs/connect/connect
 
 **Kết quả cần thấy:** Render có service `erusentia-api` hoặc tên thêm hậu tố, trạng
 thái chuyển sang **Live**, kèm URL `https://….onrender.com`. Trong Logs, bootstrap
-lần đầu báo 5 migration đã áp dụng và `fixtures: 3`, sau đó API listening. Lần sau
+lần đầu áp dụng các migration chưa có (16 bắt buộc trên schema rỗng hiện tại) và
+`fixtures: 3`, sau đó API listening. Lần sau
 `applied: []` là đúng nếu không có migration mới. Các dòng này là kết quả dự kiến;
 cần đối chiếu với Logs thực tế sau khi bạn tạo dịch vụ.
 
@@ -105,19 +113,19 @@ Tên service có thể được Render thêm hậu tố nếu trùng; lấy URL 
 
 Các biến còn lại đã nằm trong `render.yaml`:
 
-| Biến | Giá trị/mục đích |
-|---|---|
-| `NODE_ENV` | `production` |
-| `HOST` / `PORT` | `0.0.0.0` / `10000` |
-| `TEMPLATE_STORE` | `postgres` |
-| `DB_DATABASE` / `DB_PORT` | `eru_project_render` / `5432` |
-| `DB_SSL` / `DB_POOL_MAX` | `true` / `5` |
-| `JWT_SECRET` | Render sinh ngẫu nhiên; giữ ổn định qua deploy |
-| `CORS_ORIGINS` | `https://tunhoclaptrinh.github.io,https://eru-sentia.vercel.app` |
-| `SWAGGER_ENABLED` | `true` cho hosted demo |
-| `PROJECT_BOOTSTRAP` | `true`: migrate/seed trước mỗi lần mở API |
-| `PROJECT_DEMO_ACCOUNTS` | `false`: không tạo user/creator/admin có mật khẩu chung |
-| `QUEUE_ENABLED` / `CACHE_ENABLED` | `false` / `false` |
+| Biến                              | Giá trị/mục đích                                                 |
+| --------------------------------- | ---------------------------------------------------------------- |
+| `NODE_ENV`                        | `production`                                                     |
+| `HOST` / `PORT`                   | `0.0.0.0` / `10000`                                              |
+| `TEMPLATE_STORE`                  | `postgres`                                                       |
+| `DB_DATABASE` / `DB_PORT`         | `eru_project_render` / `5432`                                    |
+| `DB_SSL` / `DB_POOL_MAX`          | `true` / `5`                                                     |
+| `JWT_SECRET`                      | Render sinh ngẫu nhiên; giữ ổn định qua deploy                   |
+| `CORS_ORIGINS`                    | `https://tunhoclaptrinh.github.io,https://eru-sentia.vercel.app` |
+| `SWAGGER_ENABLED`                 | `true` cho hosted demo                                           |
+| `PROJECT_BOOTSTRAP`               | `true`: migrate/seed trước mỗi lần mở API                        |
+| `PROJECT_DEMO_ACCOUNTS`           | `false`: không tạo user/creator/admin có mật khẩu chung          |
+| `QUEUE_ENABLED` / `CACHE_ENABLED` | `false` / `false`                                                |
 
 TLS kiểm tra chứng chỉ và hostname, áp dụng cho cả TypeORM lẫn CLI SQL/migration.
 Không đặt `NODE_TLS_REJECT_UNAUTHORIZED=0` hoặc tắt kiểm tra chứng chỉ khi có lỗi TLS.
@@ -224,16 +232,16 @@ Kiểm tra Usage ở cả hai dịch vụ; không dùng cron ping liên tục đ
 Không dùng Render Postgres Free cho phương án này vì database đó hết hạn sau 30 ngày.
 [Render Free](https://render.com/docs/free), [Neon Free](https://neon.com/blog/neon-free-plan-1-gb-per-project).
 
-| Hiện tượng | Cách kiểm tra |
-|---|---|
-| Build/start lỗi | Xem Render Logs của deploy, đối chiếu SHA và bước lỗi; không dán secret |
-| TLS/authentication DB lỗi | Direct hostname, role, mật khẩu gốc, đúng DB và `DB_SSL=true`; không tắt verify |
-| Migration từ chối database | Tên phải bắt đầu `eru_project_`; dùng database mới rỗng, không tự xóa bảng cũ |
-| Migration history mismatch | Đọc journal và commit SQL; bổ sung migration mới thay vì sửa checksum hoặc reset DB |
-| Health check fail | `/health`, port 10000, bind `0.0.0.0`; kiểm tra bootstrap hoàn thành |
-| GitHub xanh nhưng không deploy | Kết nối GitHub, branch `main`, After CI Checks Pass và Events; không chọn public repo URL |
-| Swagger hoạt động nhưng App lỗi | API URL lúc build/start App, HTTPS và CORS origin; mở lại App sau khi đổi URL |
-| Request đầu chậm | Render/Neon đang thức dậy; chờ và thử lại, không coi đây là mất dữ liệu |
+| Hiện tượng                      | Cách kiểm tra                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------- |
+| Build/start lỗi                 | Xem Render Logs của deploy, đối chiếu SHA và bước lỗi; không dán secret                   |
+| TLS/authentication DB lỗi       | Direct hostname, role, mật khẩu gốc, đúng DB và `DB_SSL=true`; không tắt verify           |
+| Migration từ chối database      | Tên phải bắt đầu `eru_project_`; dùng database mới rỗng, không tự xóa bảng cũ             |
+| Migration history mismatch      | Đọc journal và commit SQL; bổ sung migration mới thay vì sửa checksum hoặc reset DB       |
+| Health check fail               | `/health`, port 10000, bind `0.0.0.0`; kiểm tra bootstrap hoàn thành                      |
+| GitHub xanh nhưng không deploy  | Kết nối GitHub, branch `main`, After CI Checks Pass và Events; không chọn public repo URL |
+| Swagger hoạt động nhưng App lỗi | API URL lúc build/start App, HTTPS và CORS origin; mở lại App sau khi đổi URL             |
+| Request đầu chậm                | Render/Neon đang thức dậy; chờ và thử lại, không coi đây là mất dữ liệu                   |
 
 Trước migration mới, backup qua Neon/direct connection và thử restore trên DB khác.
 Giữ dump ngoài Git. Rollback image trên Render **không rollback database**; migration

@@ -23,6 +23,7 @@ test(
       ...process.env,
       DB_DATABASE: "project_test_hosted",
       NODE_ENV: "production",
+      ACCOUNT_EMAIL_MODE: "disabled",
       HOST: "127.0.0.1",
       PROJECT_BOOTSTRAP: "true",
       PROJECT_DEMO_ACCOUNTS: "false",
@@ -101,7 +102,7 @@ test(
     assert.equal(
       (await pool.query("SELECT count(*)::int n FROM eru_schema_migrations"))
         .rows[0].n,
-      12,
+      16,
     );
     assert.equal(
       (await pool.query("SELECT count(*)::int n FROM users WHERE is_active"))

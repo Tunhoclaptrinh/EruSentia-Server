@@ -49,3 +49,6 @@ coverage/
 /docker/.env.project.local
 !/docker/.env.project.example
 !/docker/.env.hosted.example
+
+# Private local verification scripts, migration backups and capture caches
+/.local/

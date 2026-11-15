@@ -19,6 +19,8 @@ test("CORS configuration has exact development origins and a closed production d
   assert.deepEqual(readConfig({}).corsOrigins, [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5183",
+    "http://127.0.0.1:5183",
   ]);
   assert.deepEqual(
     readConfig({
