@@ -136,8 +136,8 @@
     "screenshots": 120,
     "matrixScreenshots": 62,
     "protectedPages": 10,
-    "sourceSha256": "62c9ea70b9fe9a4109d907938db94eee096d933d6f034332f7d6af00aa530fcc",
-    "captureCompletedAt": "2026-11-14T15:44:34.731Z",
+    "sourceSha256": "c89686f3e0d4ac7398498c7f761a2ddbcfd4a87bb9e409751754fdedc3d34f7e",
+    "captureCompletedAt": "2026-11-15T14:59:33.680Z",
     "galleryCheck": {
       "galleryLoaded": true,
       "screenshots": 120,
@@ -152,12 +152,12 @@
     "productionLoading": {
       "scope": "Built production assets with isolated API outage/auth fixtures; no live backend writes. Not a network/LCP benchmark.",
       "loginScripts": [
-        "/assets/index-B9oC4yn-.js",
+        "/assets/index-qmsjLPnk.js",
         "/assets/rolldown-runtime-XKyaHtl9.js",
         "/assets/jsx-runtime-xHGICux5.js",
         "/assets/i18n-DtFq3DuG.js",
         "/assets/notification-BvboiMhp.js",
-        "/assets/adminClient-CMV24qWH.js",
+        "/assets/adminClient-ogBLcaHr.js",
         "/assets/input-DKglQRs6.js",
         "/assets/QuestionCircleOutlined-BnURW6JL.js",
         "/assets/layers-BtYsSNX1.js"
@@ -172,7 +172,8 @@
       "Snapshot-only timeout: capture uses 90 second case budget; regular UI tests retain their default.",
       "Duplicate broad fixture registration hid document routes in the expanded visual matrix.",
       "IconButton disabled wrapper changed DOM during async reads and left a stale tooltip."
-    ]
+    ],
+    "latestVerificationDate": "2026-11-15"
   },
   "sourceHashes": {
     "sql/17_admin_resource_lifecycle.sql": "043005af694f1dd6a1fbe241fb05578f23d2543b560d6c2b562960eab07c0b44",

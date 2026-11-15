@@ -260,6 +260,10 @@ test(
             "12_template_notifications.sql",
             "13_workspaces_rbac.sql",
             "14_resource_gateway.sql",
+            "15_admin_portal_core.sql",
+            "16_community_documents.sql",
+            "17_admin_resource_lifecycle.sql",
+            "18_community_document_versions.sql",
           ]) {
             await fs.copyFile(path.resolve("sql", file), path.join(root, file));
           }
@@ -310,6 +314,10 @@ test(
           "12_template_notifications.sql",
           "13_workspaces_rbac.sql",
           "14_resource_gateway.sql",
+          "15_admin_portal_core.sql",
+          "16_community_documents.sql",
+          "17_admin_resource_lifecycle.sql",
+          "18_community_document_versions.sql",
         ]);
         assert.equal(
           (
@@ -317,7 +325,7 @@ test(
               "SELECT count(*)::int n FROM eru_schema_migrations",
             )
           ).rows[0].n,
-          12,
+          16,
         );
         assert.deepEqual(await migrateProject(pool), []);
         assert.equal(

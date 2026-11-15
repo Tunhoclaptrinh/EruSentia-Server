@@ -410,3 +410,8 @@ Phân hệ HTML độc lập với template/resource, có nháp riêng, gửi du
 ## Core backend và web quản trị
 
 [CORE_FOUNDATION.md](docs/CORE_FOUNDATION.md) ghi nguồn UniFlow, BaseService/BaseController, DTO/pagination dùng chung, metadata, chính sách controller Admin và các lỗi đã sửa. `pnpm check:core` chạy trong build để kiểm tra 28 route Admin. Bộ test mặc định chạy bằng `pnpm test`; kiểm thử PostgreSQL Admin dùng database dùng một lần qua `pnpm test:admin`.
+
+## Triển khai App, API và Admin
+
+Xem [hướng dẫn triển khai hiện tại](docs/DEPLOYMENT.md) cho Vercel + Render + Neon,
+web Admin mới, migration an toàn, tạo tài khoản quản trị và kiểm tra sau deploy.

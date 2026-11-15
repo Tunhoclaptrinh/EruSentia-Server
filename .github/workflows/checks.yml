@@ -27,7 +27,7 @@ jobs:
     env:
       DB_HOST: 127.0.0.1
       DB_PORT: 5432
-      DB_USER: postgres
+      DB_USERNAME: postgres
       DB_PASSWORD: ci-week6-only
       DB_DATABASE: postgres
       DB_SSL: "false"
@@ -45,6 +45,8 @@ jobs:
       - run: pnpm test
       - name: Isolated Week 6 PostgreSQL integration
         run: pnpm test:week6
+      - name: Isolated Admin PostgreSQL integration
+        run: pnpm test:admin
       - name: Validate hosted Compose configuration
         run: |
           PROJECT_DB_PASSWORD=ci-only-db-password PROJECT_RABBIT_PASSWORD=ci-only-queue-password PROJECT_JWT_SECRET=ci-only-secret-at-least-32-bytes-long HOSTED_API_DOMAIN=api.example.com \

@@ -37,7 +37,7 @@ async function revisionContract(t, mode) {
       0,
     );
     await t.test(
-      "upgrade adds one migration and a truthful baseline without changing legacy content",
+      "upgrade adds pending migrations and a truthful baseline without changing legacy content",
       async () => {
         await pool.query(
           "CREATE TABLE eru_schema_migrations(id text PRIMARY KEY, checksum char(64) NOT NULL, applied_at timestamptz NOT NULL DEFAULT now())",
@@ -85,6 +85,10 @@ async function revisionContract(t, mode) {
           "13_workspaces_rbac.sql",
           "14_resource_gateway.sql",
           "12_retained_resources.sql",
+          "15_admin_portal_core.sql",
+          "16_community_documents.sql",
+          "17_admin_resource_lifecycle.sql",
+          "18_community_document_versions.sql",
         ]);
         assert.deepEqual(await migrateProject(pool), []);
         const existing = (

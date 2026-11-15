@@ -36,7 +36,8 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: https://tunhoclaptrinh.github.io,https://eru-sentia.vercel.app
+        # Include the real App AND Admin origins, without paths or wildcards.
+        sync: false
       - key: SWAGGER_ENABLED
         value: "true"
       - key: PROJECT_BOOTSTRAP
@@ -45,6 +46,8 @@ services:
         value: "true"
       - key: PROJECT_DEMO_ACCOUNTS
         value: "false"
+      - key: ACCOUNT_EMAIL_MODE
+        value: disabled
       - key: QUEUE_ENABLED
         value: "false"
       - key: CACHE_ENABLED
@@ -64,12 +67,14 @@ services:
       - key: REPORT_RETAINED_COUNT
         value: "1000"
       - key: TRUST_PROXY_HOPS
-        value: "0"
+        # Render terminates incoming connections at its proxy.
+        value: "1"
 
       - key: RESOURCE_GATEWAY_ENABLED
         value: "true"
       - key: RESOURCE_TARGET_ORIGINS
-        value: https://erusentia-api.onrender.com
+        # The actual HTTPS origin assigned to this API service.
+        sync: false
       - key: RESOURCE_FREE_DAILY_LIMIT
         value: "30"
       - key: RESOURCE_PREMIUM_DAILY_LIMIT
