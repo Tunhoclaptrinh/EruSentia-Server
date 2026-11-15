@@ -1,0 +1,209 @@
+{
+  "date": "2026-11-14T15:46:11.236170+00:00",
+  "scope": "Implemented and validated current server-stored HTML/template/account/resource administration. Separate future modules remain explicitly listed.",
+  "status": "current lifecycle, global resources/ACL/quota, category transfer, document versions/reports, account restoration and retention cleanup implemented; further ecosystem modules incomplete",
+  "coverageDocument": "../../../erusentia-admin/docs/ADMIN_COVERAGE_REVIEW.md",
+  "implementationPlan": "../ADMIN_IMPLEMENTATION_PLAN.md",
+  "fixes": [
+    "transactional authority revalidation for decisions, plans, generic template admin writes and protected resource writes",
+    "atomic resource plan/document mutation plus access and central admin audits",
+    "central report/plan/admin resource actions now visible in Admin audit with Vietnamese labels",
+    "shared ordered identity locking and central SQL audit writer",
+    "revision-checked template lifecycle and private restoration",
+    "global protected-resource administration, ACL invalidation and effective plan overrides",
+    "actor-bound retention preview and atomic audited purge of old trash",
+    "category transfer locks and exact snapshot fingerprint",
+    "document snapshots, private restoration, App report receipt and dual-version report decisions",
+    "deleted accounts restore as suspended users with old sessions revoked",
+    "shared IconButton keeps its DOM stable while disabled and dismisses activation tooltips"
+  ],
+  "tests": {
+    "default": {
+      "tests": 153,
+      "pass": 134,
+      "fail": 0,
+      "skipped": 19
+    },
+    "isolatedPostgresAdmin": {
+      "tests": 25,
+      "pass": 25,
+      "fail": 0,
+      "skipped": 0
+    },
+    "adminUi": {
+      "tests": 64,
+      "pass": 64,
+      "fail": 0,
+      "skipped": 0
+    },
+    "appSharedSession": {
+      "tests": 111,
+      "pass": 111,
+      "fail": 0,
+      "skipped": 0
+    },
+    "appDocumentBrowser": {
+      "tests": 1,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "runtime": {
+    "date": "2026-11-14",
+    "scope": "Local development API/worker only",
+    "bootstrap": false,
+    "migrationJournalAndRowCountsUnchanged": true,
+    "migrations": 17,
+    "counts": {
+      "users": 59,
+      "templates": 35,
+      "categories": 6,
+      "documents": 0,
+      "audit": 40
+    },
+    "infrastructureContainersUnchanged": true,
+    "services": [
+      {
+        "name": "/erusentia-project-api-1",
+        "image": "sha256:49f551a94dc49d1d61eae07845c05c44fcca0761b6d4f6f89b9ad42d86e84c16",
+        "status": "running",
+        "health": "healthy"
+      },
+      {
+        "name": "/erusentia-project-worker-1",
+        "image": "sha256:49f551a94dc49d1d61eae07845c05c44fcca0761b6d4f6f89b9ad42d86e84c16",
+        "status": "running",
+        "health": "healthy"
+      }
+    ]
+  },
+  "schema": {
+    "date": "2026-11-14T15:24:30.761Z",
+    "scope": "Local development database; additive schema only",
+    "applied": [
+      "17_admin_resource_lifecycle.sql",
+      "18_community_document_versions.sql"
+    ],
+    "existingMigrationChecksumsUnchanged": true,
+    "applicationRowCountsUnchanged": true,
+    "before": {
+      "users": 59,
+      "templates": 35,
+      "categories": 6,
+      "documents": 0,
+      "resourceDocuments": 0,
+      "resourceGrants": 0,
+      "resourceEvents": 0,
+      "audit": 40
+    },
+    "after": {
+      "users": 59,
+      "templates": 35,
+      "categories": 6,
+      "documents": 0,
+      "resourceDocuments": 0,
+      "resourceGrants": 0,
+      "resourceEvents": 0,
+      "audit": 40
+    },
+    "migrations": [
+      "01_schema.sql",
+      "02_indexes.sql",
+      "05_auth_sessions.sql",
+      "06_message_queue.sql",
+      "07_template_cache_revision.sql",
+      "08_template_revisions.sql",
+      "09_account_email.sql",
+      "10_service_controls.sql",
+      "11_content_moderation.sql",
+      "12_retained_resources.sql",
+      "12_template_notifications.sql",
+      "13_workspaces_rbac.sql",
+      "14_resource_gateway.sql",
+      "15_admin_portal_core.sql",
+      "16_community_documents.sql",
+      "17_admin_resource_lifecycle.sql",
+      "18_community_document_versions.sql"
+    ],
+    "privateBackupCreated": true,
+    "seedExecuted": false
+  },
+  "frontend": {
+    "build": true,
+    "format": true,
+    "fullUiRerun": true,
+    "screenshots": 120,
+    "matrixScreenshots": 62,
+    "protectedPages": 10,
+    "sourceSha256": "62c9ea70b9fe9a4109d907938db94eee096d933d6f034332f7d6af00aa530fcc",
+    "captureCompletedAt": "2026-11-14T15:44:34.731Z",
+    "galleryCheck": {
+      "galleryLoaded": true,
+      "screenshots": 120,
+      "imageHashesVerified": 120,
+      "mobileDarkFilter": {
+        "expected": 18,
+        "actual": 18
+      },
+      "filterDialogSearch": true,
+      "firstImageDecoded": true
+    },
+    "productionLoading": {
+      "scope": "Built production assets with isolated API outage/auth fixtures; no live backend writes. Not a network/LCP benchmark.",
+      "loginScripts": [
+        "/assets/index-B9oC4yn-.js",
+        "/assets/rolldown-runtime-XKyaHtl9.js",
+        "/assets/jsx-runtime-xHGICux5.js",
+        "/assets/i18n-DtFq3DuG.js",
+        "/assets/notification-BvboiMhp.js",
+        "/assets/adminClient-CMV24qWH.js",
+        "/assets/input-DKglQRs6.js",
+        "/assets/QuestionCircleOutlined-BnURW6JL.js",
+        "/assets/layers-BtYsSNX1.js"
+      ],
+      "feedbackChunk": "FeedbackProvider-B9GK80Lf.js",
+      "feedbackLoadedBeforeLogin": false,
+      "feedbackLoadedAfterLogin": true,
+      "protectedPagesOpened": 10,
+      "pageErrors": []
+    },
+    "captureFailuresResolved": [
+      "Snapshot-only timeout: capture uses 90 second case budget; regular UI tests retain their default.",
+      "Duplicate broad fixture registration hid document routes in the expanded visual matrix.",
+      "IconButton disabled wrapper changed DOM during async reads and left a stale tooltip."
+    ]
+  },
+  "sourceHashes": {
+    "sql/17_admin_resource_lifecycle.sql": "043005af694f1dd6a1fbe241fb05578f23d2543b560d6c2b562960eab07c0b44",
+    "sql/18_community_document_versions.sql": "d18454aadfec43663ffbefc9da2c0fa0de38f6321664dda64aab8122984b6b12",
+    "src/admin/admin-audit-record.ts": "d8d74379c5915fa0f85d4e756715bcf360d1e814483f26a2f8b0796315e0e0ed",
+    "src/admin/admin-audit.service.ts": "e0bf73c410da1bbb085e183253e2a9153eb26169820956d8de9764f65a4cc0fc",
+    "src/admin/admin-authorization.ts": "8ac9137c4ce34352681edcdb8e2f91c8884ace6a22abc8c5a876dd48722651c6",
+    "src/admin/admin-resources.ts": "a3d5387c9b440301256912035fff99d526657f1df86bc423f4b9cb3a686d6bb9",
+    "src/admin/admin-template-lifecycle.ts": "9dc96f311a8b9bca42afb4a6db89ff20b4e1df98b1307f6beb37113dbc1ffed3",
+    "src/admin/admin-users.service.ts": "855cab6466ec0452875a18b9e10d8792f2649b319f1f200ee69fdec8175c79b3",
+    "src/admin/category-import.ts": "f20ba30baffe51a24c47ae06f992210147303fa8eb4756b369818d22aa34ab2e",
+    "src/admin/dto/lifecycle.dto.ts": "9885f1ad5913f800a175b7f521493ef4d628a5424aa09336987eea47552395b0",
+    "src/admin/dto/resource-admin.dto.ts": "3f102e7e56465e6ee1e645a81f75d87d43cc9e31038cbe040268b0332f2f4da1",
+    "src/community-documents/document-administration.ts": "0927ec67a4e353c5fce98a83e1121fde77a0449696b3e1dcad702fd9d9875548",
+    "src/community-documents/document-history.ts": "f10ee2cd43e0cefe8032229a4d5bc282a0c04397597b7dcefb6bbcbac3da4d00",
+    "src/community-documents/documents.service.ts": "a445629a7588f5a0f0d40bd6b114354f2bc6f104d24f5f36aef19bfa1ab2f51a",
+    "src/community-documents/history-contracts.ts": "16d15db3eabe41f2cdbac01488062d313b95250153da2f00330ea1e81f25d481",
+    "src/infrastructure/database/project-migrations.ts": "d7a799e4f5045f0b01632d2374c3c4f15181e8d8ecf6dc314e034f32ffdef695",
+    "src/moderation/report-store.ts": "742053056f9f0d5b2b6608412e3d5cd31bf3228159ac330dd9098b9fc7aad187",
+    "src/moderation/reports.controller.ts": "0783dd023f7c9f8826bd06f1b9b3d00766c5b4de9296575a0841e7cbfa24504e",
+    "src/resources/resource.dto.ts": "4255c12f28b0e633030e494d4d7b7f2418c9669ad4abfc0226c8dcafd4322d9b",
+    "src/resources/resources.controller.ts": "9ac0bba2d4abab1a43d7e8a16192eb3ddf16c275d2e94ceff656f94874730939",
+    "src/resources/resources.service.ts": "a9a80de3c3004000f23c29cdaf767a66d91b08ba9e5d91682ff627f1f6bb6d73",
+    "src/templates/persistence/postgres-template.store.ts": "7518f5a956b7eea831822f4025aeb342961007c80e85cd4ec168abf3643b4d04",
+    "test/admin.test.cjs": "06937e272f4c5af86e9a0b8382669e0ab3f35ab1ebf3b92e3f8d9a84f50b00a3"
+  },
+  "gitPolicy": "No stage/reset/commit/push commands executed in this continuation; existing work preserved; training repository excluded.",
+  "knownGaps": [
+    "Prepublication template approval policy/author workflow; current App sharing policy retained",
+    "Binary PDF/DOCX/asset storage and lifecycle",
+    "Granular admin permissions, invitations, Keycloak/OIDC/MFA/provider integration",
+    "Admin workspace portal, Redis/RabbitMQ telemetry, real job/DLQ controls, document/audit retention and asynchronous exports"
+  ]
+}

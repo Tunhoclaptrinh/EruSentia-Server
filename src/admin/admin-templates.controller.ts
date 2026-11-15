@@ -1,6 +1,17 @@
+import { AdminTemplateLifecycleService } from "./admin-template-lifecycle";
+import {
+  AdminRevisionQueryDto,
+  AdminRestoreRevisionDto,
+  AdminTemplateMetadataDto,
+  AdminTemplatePurgeDto,
+  AdminVersionReasonDto,
+} from "./dto/lifecycle.dto";
+import { AdminBatchCurationDto } from "./dto/batch.dto";
+import { RateLimited } from "../service-controls/service-controls";
+import { BaseController } from "../common/controllers/base.controller";
+import { AdminController } from "./admin-controller.decorator";
 import {
   Body,
-  Controller,
   Get,
   HttpCode,
   Param,
@@ -9,38 +20,27 @@ import {
   Query,
   Req,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { CurrentUser, Roles } from "../auth/auth.guards";
+import { ApiOperation } from "@nestjs/swagger";
+import { CurrentUser } from "../auth/auth.guards";
 import type { UserIdentity } from "../auth/auth-store";
 import { UuidPipe } from "../common/uuid.pipe";
 import {
   AdminCurateTemplateDto,
   AdminTemplateQueryDto,
+  AdminForceHideDto,
 } from "./dto/admin.dto";
 import { AdminTemplatesService } from "./admin-templates.service";
 
-interface ClientRequest {
-  ip?: string;
-  socket?: { remoteAddress?: string };
-  headers: Record<string, string | string[] | undefined>;
-}
+import { type AdminRequest as ClientRequest } from "./request-meta";
 
-function getRequestMeta(req: ClientRequest) {
-  const forwarded = req.headers["x-forwarded-for"];
-  const ip =
-    (typeof forwarded === "string" ? forwarded.split(",")[0]?.trim() : undefined) ||
-    req.socket?.remoteAddress ||
-    req.ip;
-  const userAgent = typeof req.headers["user-agent"] === "string" ? req.headers["user-agent"] : undefined;
-  return { ip, userAgent };
-}
-
-@ApiTags("Admin - Templates")
-@ApiBearerAuth()
-@Roles("admin")
-@Controller("admin/templates")
-export class AdminTemplatesController {
-  constructor(private readonly service: AdminTemplatesService) {}
+@AdminController("templates", "Admin - Templates")
+export class AdminTemplatesController extends BaseController {
+  constructor(
+    private readonly service: AdminTemplatesService,
+    private readonly lifecycle: AdminTemplateLifecycleService,
+  ) {
+    super();
+  }
 
   @Get()
   @ApiOperation({ summary: "Quản lý toàn bộ template trên hệ thống" })
@@ -48,8 +48,32 @@ export class AdminTemplatesController {
     return this.service.list(query);
   }
 
+  @Post("batch-curation")
+  @HttpCode(200)
+  @RateLimited("write")
+  @ApiOperation({
+    summary: "Tuyển chọn hoặc gỡ tuyển chọn tối đa 100 mẫu cùng lý do và audit",
+  })
+  curateMany(
+    @Body() input: AdminBatchCurationDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    const context = this.actionContext(actor, req);
+    return this.service.curateMany(input, context.actorId, context.meta);
+  }
+
+  @Get(":id/revision")
+  revision(
+    @Param("id", UuidPipe) id: string,
+    @Query() query: AdminRevisionQueryDto,
+  ) {
+    return this.lifecycle.revision(id, query.revision);
+  }
   @Get(":id")
-  @ApiOperation({ summary: "Chi tiết template, báo cáo vi phạm và lịch sử phiên bản" })
+  @ApiOperation({
+    summary: "Chi tiết template, báo cáo vi phạm và lịch sử phiên bản",
+  })
   detail(@Param("id", UuidPipe) id: string) {
     return this.service.detail(id);
   }
@@ -63,7 +87,8 @@ export class AdminTemplatesController {
     @CurrentUser() admin: UserIdentity,
     @Req() req: ClientRequest,
   ) {
-    return this.service.curate(id, input, admin.id, getRequestMeta(req));
+    const { actorId, meta } = this.actionContext(admin, req);
+    return this.service.curate(id, input, actorId, meta);
   }
 
   @Post(":id/force-hide")
@@ -71,10 +96,124 @@ export class AdminTemplatesController {
   @ApiOperation({ summary: "Buộc ẩn template vi phạm kèm lý do" })
   forceHide(
     @Param("id", UuidPipe) id: string,
-    @Body("reason") reason: string,
+    @Body() input: AdminForceHideDto,
     @CurrentUser() admin: UserIdentity,
     @Req() req: ClientRequest,
   ) {
-    return this.service.forceHide(id, reason || "Vi phạm tiêu chuẩn cộng đồng", admin.id, getRequestMeta(req));
+    const { actorId, meta } = this.actionContext(admin, req);
+    return this.service.forceHide(
+      id,
+      input.reason,
+      actorId,
+      meta,
+      input.revision,
+    );
+  }
+  @Patch(":id/metadata")
+  @HttpCode(200)
+  @RateLimited("write")
+  metadata(
+    @Param("id", UuidPipe) id: string,
+    @Body() input: AdminTemplateMetadataDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    return this.lifecycle.change(
+      id,
+      "metadata",
+      input,
+      actor,
+      this.actionContext(actor, req).meta,
+    );
+  }
+
+  @Post(":id/release")
+  @HttpCode(200)
+  @RateLimited("write")
+  release(
+    @Param("id", UuidPipe) id: string,
+    @Body() input: AdminVersionReasonDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    return this.lifecycle.change(
+      id,
+      "release",
+      input,
+      actor,
+      this.actionContext(actor, req).meta,
+    );
+  }
+
+  @Post(":id/trash")
+  @HttpCode(200)
+  @RateLimited("write")
+  trash(
+    @Param("id", UuidPipe) id: string,
+    @Body() input: AdminVersionReasonDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    return this.lifecycle.change(
+      id,
+      "trash",
+      input,
+      actor,
+      this.actionContext(actor, req).meta,
+    );
+  }
+
+  @Post(":id/restore")
+  @HttpCode(200)
+  @RateLimited("write")
+  restore(
+    @Param("id", UuidPipe) id: string,
+    @Body() input: AdminVersionReasonDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    return this.lifecycle.change(
+      id,
+      "restore",
+      input,
+      actor,
+      this.actionContext(actor, req).meta,
+    );
+  }
+
+  @Post(":id/restore-revision")
+  @HttpCode(200)
+  @RateLimited("write")
+  restore_revision(
+    @Param("id", UuidPipe) id: string,
+    @Body() input: AdminRestoreRevisionDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    return this.lifecycle.change(
+      id,
+      "restore_revision",
+      input,
+      actor,
+      this.actionContext(actor, req).meta,
+    );
+  }
+
+  @Post(":id/purge")
+  @HttpCode(200)
+  @RateLimited("sensitive")
+  purge(
+    @Param("id", UuidPipe) id: string,
+    @Body() input: AdminTemplatePurgeDto,
+    @CurrentUser() actor: UserIdentity,
+    @Req() req: ClientRequest,
+  ) {
+    return this.lifecycle.change(
+      id,
+      "purge",
+      input,
+      actor,
+      this.actionContext(actor, req).meta,
+    );
   }
 }

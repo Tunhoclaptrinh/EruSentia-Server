@@ -1,6 +1,10 @@
 import { Transform } from "class-transformer";
 import {
   IsIn,
+  IsInt,
+  Max,
+  Min,
+  ValidateIf,
   IsISO8601,
   IsObject,
   IsOptional,
@@ -32,6 +36,36 @@ export class ResourcePlanDto {
   @ApiProperty({ enum: ["free", "premium", "blocked"] })
   @IsIn(["free", "premium", "blocked"])
   plan!: "free" | "premium" | "blocked";
+  @ApiPropertyOptional({ maxLength: 1000 })
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === "string" ? value.trim() : value))
+  @IsString()
+  @Length(1, 1000)
+  reason?: string;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(2147483647)
+  revision?: number;
+  @ApiPropertyOptional()
+  @ValidateIf((_o, value) => value != null)
+  @IsInt()
+  @Min(0)
+  @Max(10000)
+  dailyLimit?: number | null;
+  @ApiPropertyOptional()
+  @ValidateIf((_o, value) => value != null)
+  @IsInt()
+  @Min(0)
+  @Max(1000)
+  documentLimit?: number | null;
+  @ApiPropertyOptional()
+  @ValidateIf((_o, value) => value != null)
+  @IsInt()
+  @Min(1024)
+  @Max(1073741824)
+  retainedBytesLimit?: number | null;
   @ApiPropertyOptional() @IsOptional() @IsISO8601() expiresAt?: string;
 }
 export class ResourceDocumentDto {

@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-14T15:29:24.705Z",
+  "scope": "Read-only local health/OpenAPI and unauthenticated guard checks; no live test mutations",
+  "health": {
+    "status": "ok"
+  },
+  "requiredRoutes": [
+    "/admin/resources/documents",
+    "/admin/resources/retention/preview",
+    "/admin/resources/retention/commit",
+    "/admin/document-reports",
+    "/admin/accounts/{id}/restore",
+    "/admin/templates/{id}/restore-revision",
+    "/community/documents/{id}/reports"
+  ],
+  "guardChecks": [
+    {
+      "route": "/admin/resources/documents",
+      "status": 401
+    },
+    {
+      "route": "/admin/resources/usage",
+      "status": 401
+    },
+    {
+      "route": "/admin/document-reports",
+      "status": 401
+    },
+    {
+      "route": "/admin/accounts?status=deleted",
+      "status": 401
+    }
+  ]
+}

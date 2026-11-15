@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-14",
+  "scope": "Current backend core and Admin business mutation review; PostgreSQL/TypeORM adaptation of UniFlow",
+  "reference": "../core-reference.json",
+  "boundaries": {
+    "adminRoutes": 32,
+    "baseServiceConsumers": 6,
+    "baseControllerConsumers": 6
+  },
+  "tests": {
+    "default": {
+      "tests": 153,
+      "pass": 134,
+      "fail": 0,
+      "skipped": 19
+    },
+    "isolatedPostgresAdmin": {
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "regressions": [
+    "concurrent cross-admin demotions and suspensions",
+    "count and rows share a repeatable-read snapshot across a concurrent insert",
+    "invalid pagination and unknown query fields rejected by all six list endpoints",
+    "category UPDATE response and audit target/metadata are correct",
+    "deleting a missing category returns 404",
+    "audit failure rolls back the domain write",
+    "seed UUID syntax matches route and filter validation",
+    "database error details stay private and resource-neutral",
+    "category import preview writes neither categories nor audit; commit revalidates all rows",
+    "import rejects duplicate/unknown/invalid fields and persists all rows with per-row audit",
+    "batch deletion refuses referenced or missing categories without partial writes",
+    "batch curation serializes reversed ID batches across authors; repeated state changes no rows or revisions",
+    "second-row audit failure rolls back earlier import, deletion and curation statements",
+    "batch routes enforce administrator access, UUID uniqueness, reason and a 100 item limit",
+    "document and moderation decisions reject a stale administrator identity after role/active state changes",
+    "central moderation and plan audit records share the write transaction; audit failure rolls back all journals",
+    "concurrent plan updates serialize with accurate previous/current metadata",
+    "protected resource create/grant/revoke/delete roll back on audit failure and reject stale admin ownership bypass",
+    "generic template admin update/delete/restore writes recheck authority under transaction lock",
+    "active admins retain cleanup access to a protected resource after its owner is soft-deleted"
+  ],
+  "runtime": {
+    "date": "2026-11-14",
+    "scope": "Local development API/worker only",
+    "bootstrap": false,
+    "migrationJournalAndRowCountsUnchanged": true,
+    "migrations": 15,
+    "counts": {
+      "users": 59,
+      "templates": 35,
+      "categories": 6,
+      "documents": 0,
+      "audit": 40
+    },
+    "infrastructureContainersUnchanged": true,
+    "services": [
+      {
+        "name": "/erusentia-project-api-1",
+        "image": "sha256:e9a4ffb901198852c7ff15b05be38d033087c7888828b2d16633076704c89344",
+        "status": "running",
+        "health": "healthy"
+      },
+      {
+        "name": "/erusentia-project-worker-1",
+        "image": "sha256:e9a4ffb901198852c7ff15b05be38d033087c7888828b2d16633076704c89344",
+        "status": "running",
+        "health": "healthy"
+      }
+    ],
+    "databaseCheckScope": "Migration journal checksums and row counts; this is not a comparison of every row content."
+  },
+  "gitPolicy": "No staging, reset, commit or push commands executed for this task. Existing staged work was preserved."
+}

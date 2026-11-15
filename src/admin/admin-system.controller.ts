@@ -1,14 +1,14 @@
-import { Controller, Get } from "@nestjs/common";
-import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Roles } from "../auth/auth.guards";
+import { BaseController } from "../common/controllers/base.controller";
+import { AdminController } from "./admin-controller.decorator";
+import { Get } from "@nestjs/common";
+import { ApiOperation } from "@nestjs/swagger";
 import { AdminSystemService } from "./admin-system.service";
 
-@ApiTags("Admin - System")
-@ApiBearerAuth()
-@Roles("admin")
-@Controller("admin/system")
-export class AdminSystemController {
-  constructor(private readonly service: AdminSystemService) {}
+@AdminController("system", "Admin - System")
+export class AdminSystemController extends BaseController {
+  constructor(private readonly service: AdminSystemService) {
+    super();
+  }
 
   @Get("overview")
   @ApiOperation({ summary: "Thống kê KPI và số liệu tổng quan toàn hệ thống" })
@@ -17,9 +17,10 @@ export class AdminSystemController {
   }
 
   @Get("health")
-  @ApiOperation({ summary: "Trạng thái sức khỏe hạ tầng, kết nối DB và bộ nhớ tiến trình" })
+  @ApiOperation({
+    summary: "Trạng thái sức khỏe hạ tầng, kết nối DB và bộ nhớ tiến trình",
+  })
   getHealth() {
     return this.service.getHealth();
   }
 }
-

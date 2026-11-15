@@ -1,3 +1,7 @@
+import { lockAdminActor } from "../admin/admin-authorization";
+import { recordAdminAction } from "../admin/admin-audit-record";
+import type { RequestMeta } from "../common/request-context";
+import { readPage, pageWindow } from "../common/services/base.service";
 import {
   BadRequestException,
   ForbiddenException,
@@ -156,6 +160,7 @@ export class ReportStore implements OnModuleInit {
     });
   }
   async list(query: ReportQueryDto, reporter?: string) {
+    pageWindow(query);
     if (!this.db) {
       const rows = [...this.reports.values()]
         .filter(
@@ -187,16 +192,18 @@ export class ReportStore implements OnModuleInit {
       conditions.push(`state=$${args.length}`);
     }
     const where = conditions.length ? " WHERE " + conditions.join(" AND ") : "";
-    const [count] = await this.db.query(
-      "SELECT count(*)::int n FROM template_reports" + where,
-      args,
-    );
-    args.push(query.size, (query.page - 1) * query.size);
-    const rows = await this.db.query(
-      `SELECT ${projection} FROM template_reports${where} ORDER BY created_at DESC,id DESC LIMIT $${args.length - 1} OFFSET $${args.length}`,
-      args,
-    );
-    return this.page(rows, count.n, query);
+    return readPage(this.db, query, async (manager, { size, offset }) => {
+      const [count] = await manager.query(
+        "SELECT count(*)::int n FROM template_reports" + where,
+        args,
+      );
+      args.push(size, offset);
+      const rows = await manager.query(
+        `SELECT ${projection} FROM template_reports${where} ORDER BY created_at DESC,id DESC LIMIT $${args.length - 1} OFFSET $${args.length}`,
+        args,
+      );
+      return { data: rows as ReportRecord[], total: count.n as number };
+    });
   }
   private page(data: ReportRecord[], count: number, query: ReportQueryDto) {
     return {
@@ -334,7 +341,10 @@ export class ReportStore implements OnModuleInit {
     input: DecideReportDto,
     tag: string,
     actor: UserIdentity,
+    meta: RequestMeta = {},
   ): Promise<ReportRecord> {
+    if (actor.role !== "admin")
+      throw new ForbiddenException("Insufficient role");
     if (!this.db) {
       const current = this.reports.get(id);
       if (!current) throw absent();
@@ -375,6 +385,7 @@ export class ReportStore implements OnModuleInit {
       return structuredClone(report);
     }
     return this.db.transaction(async (manager) => {
+      await lockAdminActor(manager, actor.id);
       const [hint] = await manager.query(
         "SELECT r.template_id,t.author_id FROM template_reports r JOIN templates t ON t.id=r.template_id WHERE r.id=$1",
         [id],
@@ -426,6 +437,26 @@ export class ReportStore implements OnModuleInit {
         "INSERT INTO moderation_audit(report_id,template_id,actor_id,action,reason) VALUES($1,$2,$3,$4,$5)",
         [id, report.templateId, actor.id, input.action, input.reason],
       );
+      await recordAdminAction(manager, {
+        actorId: actor.id,
+        action:
+          input.action === "hide"
+            ? "REPORT_HIDDEN"
+            : input.action === "dismiss"
+              ? "REPORT_DISMISSED"
+              : "REPORT_RESTRICTION_RELEASED",
+        targetType: "report",
+        targetId: id,
+        reason: input.reason,
+        ipAddress: meta.ip,
+        userAgent: meta.userAgent,
+        metadata: {
+          templateId: report.templateId,
+          previousState: report.state,
+          state: result.state,
+          reportVersion: result.version,
+        },
+      });
       return result;
     });
   }

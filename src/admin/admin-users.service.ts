@@ -1,32 +1,50 @@
+import { lockAdminTarget } from "./admin-authorization";
+import { BaseService } from "../common/services/base.service";
 import {
-  BadRequestException,
+  Inject,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { AdminAuditService } from "./admin-audit.service";
-import { AdminUserQueryDto, AdminSuspendUserDto, AdminUpdateRoleDto } from "./dto/admin.dto";
-import type { Role } from "../auth/auth-store";
+import {
+  AdminUserQueryDto,
+  AdminSuspendUserDto,
+  AdminUpdateRoleDto,
+  AdminRestoreAccountDto,
+} from "./dto/admin.dto";
+import { AUTH_STORE, type AuthStore } from "../auth/auth-store";
+import { AdminPageQueryDto } from "./dto/admin.dto";
+import type { AdminRequestMeta } from "./request-meta";
 
 @Injectable()
-export class AdminUsersService {
+export class AdminUsersService extends BaseService {
   constructor(
-    private readonly dataSource: DataSource,
+    dataSource: DataSource,
     private readonly audit: AdminAuditService,
-  ) {}
+    @Inject(AUTH_STORE) private readonly auth: AuthStore,
+  ) {
+    super(dataSource);
+  }
 
   async list(query: AdminUserQueryDto) {
-    const page = Math.max(1, query.page || 1);
-    const size = Math.min(100, Math.max(1, query.size || 20));
-    const offset = (page - 1) * size;
-
-    const conditions: string[] = ["u.deleted_at IS NULL"];
+    const conditions: string[] =
+      query.status === "all"
+        ? []
+        : [
+            query.status === "deleted"
+              ? "u.deleted_at IS NOT NULL"
+              : "u.deleted_at IS NULL",
+          ];
     const params: unknown[] = [];
     let pIdx = 1;
 
     if (query.search) {
-      conditions.push(`(u.email ILIKE $${pIdx} OR p.display_name ILIKE $${pIdx})`);
+      conditions.push(
+        `(u.email ILIKE $${pIdx} OR p.display_name ILIKE $${pIdx})`,
+      );
       params.push(`%${query.search}%`);
       pIdx++;
     }
@@ -42,52 +60,51 @@ export class AdminUsersService {
       conditions.push(`u.is_active = FALSE`);
     }
 
-    const whereClause = `WHERE ${conditions.join(" AND ")}`;
+    const whereClause = conditions.length
+      ? `WHERE ${conditions.join(" AND ")}`
+      : "";
 
-    const countRes = await this.dataSource.query<{ count: string }[]>(
-      `SELECT count(*) as count
+    return this.paginate(query, async (manager, { size, offset }) => {
+      const countRes = await manager.query<{ count: string }[]>(
+        `SELECT count(*) as count
        FROM users u
        LEFT JOIN profiles p ON p.user_id = u.id
        ${whereClause}`,
-      params,
-    );
-    const total = parseInt(countRes[0]?.count || "0", 10);
+        params,
+      );
+      const total = parseInt(countRes[0]?.count || "0", 10);
 
-    const rows = await this.dataSource.query(
-      `SELECT u.id, u.email, u.role, u.is_active as "isActive",
+      const rows = await manager.query(
+        `SELECT u.id, u.email, u.role, u.is_active as "isActive",
               u.suspension_reason as "suspensionReason",
               u.suspended_at as "suspendedAt",
               u.email_verified_at as "emailVerifiedAt",
-              u.created_at as "createdAt",
+              u.created_at as "createdAt", u.deleted_at AS "deletedAt",
               p.display_name as "displayName",
               p.avatar_url as "avatarUrl",
               COALESCE((SELECT count(*) FROM templates t WHERE t.author_id = u.id AND t.deleted_at IS NULL), 0)::int as "templateCount",
-              COALESCE((SELECT count(*) FROM auth_refresh_sessions s WHERE s.user_id = u.id AND s.revoked_at IS NULL AND s.expires_at > NOW()), 0)::int as "activeSessionCount"
+              COALESCE((SELECT count(DISTINCT s.family_id) FROM auth_refresh_sessions s WHERE s.user_id = u.id AND s.used_at IS NULL AND s.revoked_at IS NULL AND s.expires_at > NOW()), 0)::int as "activeSessionCount"
        FROM users u
        LEFT JOIN profiles p ON p.user_id = u.id
        ${whereClause}
        ORDER BY u.created_at DESC, u.id DESC
        LIMIT $${pIdx++} OFFSET $${pIdx++}`,
-      [...params, size, offset],
-    );
+        [...params, size, offset],
+      );
 
-    return {
-      data: rows,
-      page,
-      size,
-      totalElements: total,
-      totalPages: Math.ceil(total / size),
-    };
+      return { data: rows, total };
+    });
   }
 
   async detail(id: string) {
-    const [user] = await this.dataSource.query(
-      `SELECT u.id, u.email, u.role, u.is_active as "isActive",
+    return this.snapshot(async (manager) => {
+      const [user] = await manager.query(
+        `SELECT u.id, u.email, u.role, u.is_active as "isActive",
               u.suspension_reason as "suspensionReason",
               u.suspended_at as "suspendedAt",
               u.suspended_by as "suspendedBy",
               u.email_verified_at as "emailVerifiedAt",
-              u.created_at as "createdAt",
+              u.created_at as "createdAt", u.deleted_at AS "deletedAt",
               u.updated_at as "updatedAt",
               p.display_name as "displayName",
               p.avatar_url as "avatarUrl",
@@ -95,190 +112,299 @@ export class AdminUsersService {
               p.reputation_score as "reputationScore"
        FROM users u
        LEFT JOIN profiles p ON p.user_id = u.id
-       WHERE u.id = $1 AND u.deleted_at IS NULL`,
-      [id],
-    );
+       WHERE u.id = $1`,
+        [id],
+      );
 
-    if (!user) throw new NotFoundException("User not found");
+      if (!user) throw new NotFoundException("User not found");
 
-    const [quota] = await this.dataSource.query(
-      `SELECT COALESCE(sum(content_bytes), 0)::bigint as "totalContentBytes",
+      const [quota] = await manager.query(
+        `SELECT COALESCE(sum(content_bytes), 0)::bigint as "totalContentBytes",
               count(*)::int as "templateCount"
        FROM templates
        WHERE author_id = $1 AND deleted_at IS NULL`,
-      [id],
-    );
+        [id],
+      );
 
-    const sessions = await this.dataSource.query(
-      `SELECT id, family_id as "familyId", expires_at as "expiresAt",
+      const sessions = await manager.query(
+        `SELECT id, family_id as "familyId", expires_at as "expiresAt",
               created_at as "createdAt", revoked_at as "revokedAt", used_at as "usedAt"
        FROM auth_refresh_sessions
        WHERE user_id = $1
        ORDER BY created_at DESC
        LIMIT 20`,
-      [id],
-    );
+        [id],
+      );
 
-    return {
-      user,
-      quota: {
-        totalContentBytes: Number(quota?.totalContentBytes || 0),
-        templateCount: Number(quota?.templateCount || 0),
-      },
-      sessions: sessions.map((s: any) => ({
-        ...s,
-        isActive: !s.revokedAt && new Date(s.expiresAt) > new Date(),
-      })),
-    };
+      return {
+        user,
+        quota: {
+          totalContentBytes: Number(quota?.totalContentBytes || 0),
+          templateCount: Number(quota?.templateCount || 0),
+        },
+        sessions: sessions.map(
+          (s: {
+            usedAt: Date | null;
+            revokedAt: Date | null;
+            expiresAt: Date;
+          }) => ({
+            ...s,
+            isActive:
+              !s.usedAt && !s.revokedAt && new Date(s.expiresAt) > new Date(),
+          }),
+        ),
+      };
+    });
+  }
+
+  async restore(
+    id: string,
+    input: AdminRestoreAccountDto,
+    actorId: string,
+    meta: AdminRequestMeta,
+  ) {
+    return this.transaction(async (manager) => {
+      const target = await lockAdminTarget(manager, actorId, id, true, true);
+      if (
+        !target.deleted_at ||
+        new Date(target.deleted_at).getTime() !==
+          Date.parse(input.expectedDeletedAt)
+      )
+        throw new ConflictException(
+          "Tài khoản đã thay đổi hoặc không còn trong danh sách đã xóa. Hãy tải lại.",
+        );
+      await manager.query(
+        "UPDATE users SET deleted_at=NULL,is_active=FALSE,role='user',suspension_reason=$2,suspended_at=now(),suspended_by=$3,updated_at=now() WHERE id=$1",
+        [id, input.reason, actorId],
+      );
+      await this.revokeFamilies(manager, id);
+      await this.audit.record(
+        {
+          actorId,
+          action: "USER_RESTORED",
+          targetType: "user",
+          targetId: id,
+          reason: input.reason,
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          metadata: {
+            previousRole: target.role,
+            previousDeletedAt: target.deleted_at,
+            role: "user",
+            isActive: false,
+          },
+        },
+        manager,
+      );
+      return { id, success: true, status: "suspended", role: "user" };
+    });
+  }
+
+  private accountTransaction<T>(
+    id: string,
+    actorId: string,
+    work: (
+      manager: EntityManager,
+      target: { id: string; email: string; role: string; is_active: boolean },
+    ) => Promise<T>,
+  ): Promise<T> {
+    return this.transaction(async (manager) => {
+      const target = await lockAdminTarget(manager, actorId, id, true);
+      return work(manager, target);
+    });
   }
 
   async updateRole(
     id: string,
     input: AdminUpdateRoleDto,
     actorId: string,
-    meta: { ip?: string; userAgent?: string },
+    meta: AdminRequestMeta,
   ) {
-    const [target] = await this.dataSource.query(
-      "SELECT id, email, role FROM users WHERE id = $1 AND deleted_at IS NULL",
-      [id],
-    );
-    if (!target) throw new NotFoundException("User not found");
-
     if (id === actorId && input.role !== "admin") {
-      throw new ForbiddenException("Cannot demote your own admin account");
+      throw new ForbiddenException(
+        "Không thể tự hạ quyền quản trị của chính mình",
+      );
     }
-
-    await this.dataSource.query(
-      "UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2",
-      [input.role, id],
-    );
-
-    await this.audit.record({
-      actorId,
-      action: "USER_ROLE_UPDATED",
-      targetType: "user",
-      targetId: id,
-      ipAddress: meta.ip,
-      userAgent: meta.userAgent,
-      reason: `Changed role from ${target.role} to ${input.role}`,
-      metadata: { previousRole: target.role, newRole: input.role, userEmail: target.email },
+    return this.accountTransaction(id, actorId, async (manager, target) => {
+      if (target.role === input.role)
+        return { success: true, id, role: input.role };
+      await manager.query(
+        "UPDATE users SET role=$1,updated_at=NOW() WHERE id=$2",
+        [input.role, id],
+      );
+      await this.audit.record(
+        {
+          actorId,
+          action: "USER_ROLE_UPDATED",
+          targetType: "user",
+          targetId: id,
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          reason:
+            input.reason || `Changed role from ${target.role} to ${input.role}`,
+          metadata: {
+            previousRole: target.role,
+            newRole: input.role,
+            userEmail: target.email,
+          },
+        },
+        manager,
+      );
+      return { success: true, id, role: input.role };
     });
+  }
 
-    return { success: true, id, role: input.role };
+  private async revokeFamilies(
+    manager: EntityManager,
+    id: string,
+    familyId?: string,
+  ) {
+    const families: { familyId: string }[] = await manager.query(
+      `SELECT DISTINCT family_id AS "familyId" FROM auth_refresh_sessions
+       WHERE user_id=$1 AND revoked_at IS NULL ${familyId ? "AND family_id=$2" : ""} ORDER BY family_id`,
+      familyId ? [id, familyId] : [id],
+    );
+    for (const family of families) {
+      await manager.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended($1,0))",
+        [family.familyId],
+      );
+      await manager.query(
+        "UPDATE auth_refresh_sessions SET revoked_at=NOW() WHERE user_id=$1 AND family_id=$2 AND revoked_at IS NULL",
+        [id, family.familyId],
+      );
+    }
   }
 
   async suspend(
     id: string,
     input: AdminSuspendUserDto,
     actorId: string,
-    meta: { ip?: string; userAgent?: string },
+    meta: AdminRequestMeta,
   ) {
-    if (id === actorId) {
-      throw new ForbiddenException("Cannot suspend your own admin account");
-    }
-
-    const [target] = await this.dataSource.query(
-      "SELECT id, email, role, is_active FROM users WHERE id = $1 AND deleted_at IS NULL",
-      [id],
-    );
-    if (!target) throw new NotFoundException("User not found");
-
-    await this.dataSource.transaction(async (manager) => {
+    if (id === actorId)
+      throw new ForbiddenException("Không thể tự khóa tài khoản quản trị");
+    return this.accountTransaction(id, actorId, async (manager, target) => {
       await manager.query(
-        `UPDATE users
-         SET is_active = FALSE,
-             suspension_reason = $1,
-             suspended_at = NOW(),
-             suspended_by = $2,
-             updated_at = NOW()
-         WHERE id = $3`,
+        `UPDATE users SET is_active=FALSE,suspension_reason=$1,suspended_at=NOW(),suspended_by=$2,updated_at=NOW() WHERE id=$3`,
         [input.reason, actorId, id],
       );
+      await this.revokeFamilies(manager, id);
+      await this.audit.record(
+        {
+          actorId,
+          action: "USER_SUSPENDED",
+          targetType: "user",
+          targetId: id,
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          reason: input.reason,
+          metadata: { userEmail: target.email },
+        },
+        manager,
+      );
+      return { success: true, id, status: "suspended", reason: input.reason };
+    });
+  }
 
-      // Force revoke all active refresh sessions
+  async activate(id: string, actorId: string, meta: AdminRequestMeta) {
+    return this.accountTransaction(id, actorId, async (manager, target) => {
       await manager.query(
-        "UPDATE auth_refresh_sessions SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL",
+        `UPDATE users SET is_active=TRUE,suspension_reason=NULL,suspended_at=NULL,suspended_by=NULL,updated_at=NOW() WHERE id=$1`,
         [id],
       );
+      await this.audit.record(
+        {
+          actorId,
+          action: "USER_ACTIVATED",
+          targetType: "user",
+          targetId: id,
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          reason: "Account reactivated by administrator",
+          metadata: { userEmail: target.email },
+        },
+        manager,
+      );
+      return { success: true, id, status: "active" };
     });
-
-    await this.audit.record({
-      actorId,
-      action: "USER_SUSPENDED",
-      targetType: "user",
-      targetId: id,
-      ipAddress: meta.ip,
-      userAgent: meta.userAgent,
-      reason: input.reason,
-      metadata: { userEmail: target.email },
-    });
-
-    return { success: true, id, status: "suspended", reason: input.reason };
   }
 
-  async activate(
+  async sessions(
     id: string,
+    query: AdminPageQueryDto,
     actorId: string,
-    meta: { ip?: string; userAgent?: string },
+    current: string,
   ) {
-    const [target] = await this.dataSource.query(
-      "SELECT id, email, is_active FROM users WHERE id = $1 AND deleted_at IS NULL",
+    const [user] = await this.dataSource.query(
+      "SELECT id FROM users WHERE id=$1 AND deleted_at IS NULL",
       [id],
     );
-    if (!target) throw new NotFoundException("User not found");
-
-    await this.dataSource.query(
-      `UPDATE users
-       SET is_active = TRUE,
-           suspension_reason = NULL,
-           suspended_at = NULL,
-           suspended_by = NULL,
-           updated_at = NOW()
-       WHERE id = $1`,
-      [id],
+    if (!user) throw new NotFoundException("Không tìm thấy tài khoản");
+    const page = await this.auth.listSessions(
+      id,
+      query.page,
+      query.size,
+      new Date(),
     );
-
-    await this.audit.record({
-      actorId,
-      action: "USER_ACTIVATED",
-      targetType: "user",
-      targetId: id,
-      ipAddress: meta.ip,
-      userAgent: meta.userAgent,
-      reason: "Account reactivated by administrator",
-      metadata: { userEmail: target.email },
-    });
-
-    return { success: true, id, status: "active" };
+    return {
+      ...page,
+      data: page.data.map((row) => ({
+        ...row,
+        current: id === actorId && row.id === current,
+      })),
+    };
   }
 
-  async revokeSessions(
+  async revokeSession(
     id: string,
+    familyId: string,
+    reason: string,
     actorId: string,
-    meta: { ip?: string; userAgent?: string },
+    meta: AdminRequestMeta,
   ) {
-    const [target] = await this.dataSource.query(
-      "SELECT id, email FROM users WHERE id = $1 AND deleted_at IS NULL",
-      [id],
-    );
-    if (!target) throw new NotFoundException("User not found");
-
-    const result = await this.dataSource.query(
-      "UPDATE auth_refresh_sessions SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL",
-      [id],
-    );
-
-    await this.audit.record({
-      actorId,
-      action: "USER_SESSIONS_REVOKED",
-      targetType: "user",
-      targetId: id,
-      ipAddress: meta.ip,
-      userAgent: meta.userAgent,
-      reason: "All active sessions revoked by administrator",
-      metadata: { userEmail: target.email },
+    return this.accountTransaction(id, actorId, async (manager, target) => {
+      const [session] = await manager.query(
+        "SELECT family_id FROM auth_refresh_sessions WHERE user_id=$1 AND family_id=$2 LIMIT 1",
+        [id, familyId],
+      );
+      if (!session)
+        throw new NotFoundException("Không tìm thấy phiên của tài khoản này");
+      await this.revokeFamilies(manager, id, familyId);
+      await this.audit.record(
+        {
+          actorId,
+          action: "USER_SESSION_REVOKED",
+          targetType: "user",
+          targetId: id,
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          reason,
+          metadata: { userEmail: target.email, sessionId: familyId },
+        },
+        manager,
+      );
+      return { success: true, id, sessionId: familyId };
     });
+  }
 
-    return { success: true, id, revoked: true };
+  async revokeSessions(id: string, actorId: string, meta: AdminRequestMeta) {
+    return this.accountTransaction(id, actorId, async (manager, target) => {
+      await this.revokeFamilies(manager, id);
+      await this.audit.record(
+        {
+          actorId,
+          action: "USER_SESSIONS_REVOKED",
+          targetType: "user",
+          targetId: id,
+          ipAddress: meta.ip,
+          userAgent: meta.userAgent,
+          reason: "All active sessions revoked by administrator",
+          metadata: { userEmail: target.email },
+        },
+        manager,
+      );
+      return { success: true, id, revoked: true };
+    });
   }
 }
