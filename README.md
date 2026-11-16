@@ -36,6 +36,11 @@ Kiểm soát C4-B: [rate limit, quota và usage của tài khoản](docs/SERVICE
 
 ## Stack project: chạy bằng một lệnh
 
+Để chạy **App + Server + Admin** cùng nhau, xem
+[WORKSPACE_LAUNCHER.md](docs/WORKSPACE_LAUNCHER.md). Launcher và manifest mẫu được
+quản lý trong repo Server. `pnpm workspace:init`
+tạo manifest ngoài cùng khi chưa có; `pnpm setup:all` tại thư mục cha cài ba repo.
+
 ```bash
 pnpm stack:up          # PostgreSQL + RabbitMQ + Redis + Mailpit + API + worker
 pnpm stack:up api      # API và các dependency; không mở worker
@@ -47,7 +52,7 @@ pnpm stack:down        # Dừng, giữ volume
 Để mở **cả App và backend**, từ thư mục cha `EruSentia` có `package.json` và README điều phối:
 
 ```bash
-pnpm start          # App desktop Electron + toàn bộ backend/hạ tầng Docker
+pnpm start          # App desktop Electron + backend Docker + Admin (launcher mới)
 pnpm start:desktop  # Alias của pnpm start
 pnpm start:web      # App web + backend/hạ tầng Docker
 pnpm stop           # Dừng Docker, giữ volume/dữ liệu

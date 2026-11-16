@@ -1,0 +1,21 @@
+{
+  "name": "erusentia-workspace",
+  "private": true,
+  "packageManager": "pnpm@12.11.2",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "setup:all": "node erusentia-server/scripts/workspace-dev.mjs setup",
+    "setup:sandbox": "node erusentia-server/scripts/workspace-sandbox.mjs --apply",
+    "setup:env": "node erusentia-server/scripts/workspace-dev.mjs configure",
+    "start": "node erusentia-server/scripts/workspace-dev.mjs start all",
+    "start:web": "node erusentia-server/scripts/workspace-dev.mjs start web",
+    "start:app-server": "node erusentia-server/scripts/workspace-dev.mjs start app-server",
+    "start:server-admin": "node erusentia-server/scripts/workspace-dev.mjs start server-admin",
+    "start:app": "node erusentia-server/scripts/workspace-dev.mjs start app",
+    "start:app:web": "node erusentia-server/scripts/workspace-dev.mjs start app-web",
+    "start:server": "node erusentia-server/scripts/workspace-dev.mjs start server",
+    "start:admin": "node erusentia-server/scripts/workspace-dev.mjs start admin",
+    "stop": "node erusentia-server/scripts/workspace-dev.mjs stop",
+    "check:launcher": "node --test erusentia-server/test/workspace-*.test.mjs && node erusentia-server/scripts/workspace-dev.mjs check"
+  }
+}
