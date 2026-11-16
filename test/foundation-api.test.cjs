@@ -63,6 +63,7 @@ async function catalogContract(t, mode) {
       sharing: require("./publication-fixture.cjs").sharing,
       html: "<section>" + "x".repeat(250_000) + "</section>",
       allowHeightResize: false,
+      level: "full",
     },
   };
   const created = await request("POST", "/templates", body, owner);
@@ -94,6 +95,8 @@ async function catalogContract(t, mode) {
       assert.equal(page.data[0].id, JSON.parse(created.text).id);
       assert.equal(page.data[0].contentFormat, "erusentia-template-html");
       assert.equal(page.data[0].schemaVersion, 1);
+      // The contract level travels with the row, so a catalog card needs no second request and no client-side guess.
+      assert.equal(page.data[0].level, "full");
       assert.equal("contentJson" in page.data[0], false);
       assert.equal("html" in page.data[0], false);
       const next = JSON.parse(

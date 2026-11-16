@@ -47,9 +47,14 @@ export interface TemplatePage {
   totalElements: number;
 }
 
+export const TEMPLATE_LEVELS = ["full", "semi", "basic"] as const;
+export type TemplateLevel = (typeof TEMPLATE_LEVELS)[number];
+
 export interface TemplateSummary extends Omit<TemplateRecord, "contentJson"> {
   contentFormat: string | null;
   schemaVersion: number | null;
+  /** Semi/Full contract level, lifted from the envelope so a catalog card needs no second request. */
+  level: TemplateLevel | null;
 }
 export interface TemplateSummaryPage extends Omit<TemplatePage, "data"> {
   data: TemplateSummary[];
@@ -65,6 +70,7 @@ export function summarizeTemplate(row: TemplateRecord): TemplateSummary {
       typeof contentJson?.schemaVersion === "number"
         ? contentJson.schemaVersion
         : null,
+    level: TEMPLATE_LEVELS.find((level) => level === contentJson?.level) ?? null,
   };
 }
 

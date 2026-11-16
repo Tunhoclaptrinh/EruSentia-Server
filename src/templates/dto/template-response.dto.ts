@@ -73,6 +73,8 @@ export class TemplateSummaryDto
 {
   @ApiProperty({ type: String, nullable: true }) contentFormat!: string | null;
   @ApiProperty({ type: Number, nullable: true }) schemaVersion!: number | null;
+  @ApiProperty({ enum: ["full", "semi", "basic"], nullable: true }) level!:
+    "full" | "semi" | "basic" | null;
 }
 
 export class TemplateSummaryPageDto
