@@ -69,7 +69,12 @@
     "data:retention": "node --import tsx scripts/data-retention.ts",
     "db:retained": "node --import tsx scripts/run-sql.ts sql/12_retained_resources.sql",
     "test:retained": "pnpm build && node --test test/retained-resources.test.cjs",
-    "check:core": "node scripts/check-admin-core.mjs"
+    "check:core": "node scripts/check-admin-core.mjs",
+    "workspace:start": "node scripts/workspace-dev.mjs full",
+    "workspace:web": "node scripts/workspace-dev.mjs web",
+    "workspace:app-server": "node scripts/workspace-dev.mjs app-server",
+    "workspace:server-admin": "node scripts/workspace-dev.mjs server-admin",
+    "workspace:setup": "node scripts/workspace-dev.mjs setup"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",
