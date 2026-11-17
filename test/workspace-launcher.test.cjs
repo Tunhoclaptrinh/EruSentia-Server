@@ -49,6 +49,13 @@ test("workspace profiles isolate checkouts, honor ports and fail before starting
       assert.equal(plan.api, "http://127.0.0.1:23001");
       const context = await projectContext();
       assert(context.settings.PROJECT_CORS_ORIGINS.includes(plan.admin));
+      await assert.rejects(
+        fs.access(path.join(process.env.ERU_ADMIN_DIR, ".env.local")),
+        { code: "ENOENT" },
+      );
+      await assert.rejects(fs.access(process.env.ERU_APP_DIR), {
+        code: "ENOENT",
+      });
     },
   );
   await t.test("App/server does not require an Admin checkout", async () => {
@@ -68,6 +75,34 @@ test("workspace profiles isolate checkouts, honor ports and fail before starting
     assert.equal(plan.desktop, true);
     process.env.ERU_ADMIN_DIR = path.join(root, "admin");
   });
+  await t.test(
+    "published and outer-manifest CLI forms share the dry-run plan",
+    async () => {
+      const { execFileSync } = require("node:child_process");
+      const launcher = path.resolve(__dirname, "../scripts/workspace-dev.mjs");
+      for (const args of [
+        ["full", "--dry-run"],
+        ["start", "all", "--dry-run"],
+      ]) {
+        const output = execFileSync(process.execPath, [launcher, ...args], {
+          encoding: "utf8",
+        });
+        const plan = JSON.parse(output.trim());
+        assert.equal(plan.backend, true);
+        assert.equal(plan.desktop, true);
+        assert.equal(plan.app, "http://127.0.0.1:25173");
+        assert.equal(plan.admin, "http://127.0.0.1:25183");
+      }
+      await assert.rejects(
+        fs.access(path.join(process.env.ERU_APP_DIR, ".env.local")),
+        { code: "ENOENT" },
+      );
+      await assert.rejects(
+        fs.access(path.join(process.env.ERU_ADMIN_DIR, ".env.local")),
+        { code: "ENOENT" },
+      );
+    },
+  );
   await t.test("colliding frontend ports are rejected", async () => {
     process.env.PROJECT_ADMIN_PORT = process.env.PROJECT_WEB_PORT;
     await assert.rejects(

@@ -6,6 +6,9 @@
   "license": "UNLICENSED",
   "packageManager": "pnpm@12.11.2",
   "scripts": {
+    "workspace:init": "node scripts/workspace-dev.mjs init",
+    "workspace:check": "node scripts/workspace-dev.mjs check",
+    "workspace:test": "node --test test/workspace-*.test.mjs test/workspace-launcher.test.cjs",
     "dev": "node --watch --require ts-node/register src/main.ts",
     "build": "pnpm check:core && tsc -p tsconfig.json",
     "start": "node dist/src/main.js",

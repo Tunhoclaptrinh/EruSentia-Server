@@ -42,6 +42,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm community:check
       - run: pnpm typecheck
+      - name: Workspace launch profiles, process cleanup and AppArmor policy generation
+        run: pnpm workspace:test
       - run: pnpm test
       - name: Isolated Week 6 PostgreSQL integration
         run: pnpm test:week6
