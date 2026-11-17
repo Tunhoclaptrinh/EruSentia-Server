@@ -14,12 +14,35 @@ import {
 import { WorkspaceProcesses, requireFreePort } from "./workspace-processes.mjs";
 
 export const workspaceRoot = path.resolve(serverRoot, "..");
-const appDir = path.join(workspaceRoot, "erusentia-app");
-const adminDir = path.join(workspaceRoot, "erusentia-admin");
+function directories() {
+  return {
+    appDir: path.resolve(
+      process.env.ERU_APP_DIR || path.join(workspaceRoot, "erusentia-app"),
+    ),
+    adminDir: path.resolve(
+      process.env.ERU_ADMIN_DIR || path.join(workspaceRoot, "erusentia-admin"),
+    ),
+  };
+}
+
+async function checkout(directory, expected) {
+  let manifest;
+  try {
+    manifest = JSON.parse(
+      await readFile(path.join(directory, "package.json"), "utf8"),
+    );
+  } catch {
+    throw new Error(`Missing checkout: ${directory}`);
+  }
+  assert.equal(manifest.name, expected, `Unexpected checkout at ${directory}`);
+}
+
 export const profiles = {
   all: { app: "desktop", server: true, admin: true },
+  full: { app: "desktop", server: true, admin: true },
   web: { app: "web", server: true, admin: true },
   "app-server": { app: "desktop", server: true },
+  "app-server-web": { app: "web", server: true },
   "server-admin": { server: true, admin: true },
   app: { app: "desktop" },
   "app-web": { app: "web" },
@@ -98,9 +121,14 @@ async function updateEnv(file, values, label) {
   await chmod(file, 0o600);
 }
 
-export async function configure() {
+export async function configure(
+  profile = profiles.all,
+  { dryRun = false } = {},
+) {
+  const { appDir, adminDir } = directories();
   const initial = await projectContext();
   const ports = portsFor(initial.settings);
+  if (dryRun) return { context: initial, ports };
   const origins = new Set(
     initial.settings.PROJECT_CORS_ORIGINS.split(",").map((value) =>
       value.trim(),
@@ -118,19 +146,21 @@ export async function configure() {
     "project.env",
   );
   // Never replace the backend .env, hosted database config, credentials or vaults.
-  await updateEnv(
-    path.join(appDir, ".env.local"),
-    { VITE_ERU_API_BASE_URL: `http://127.0.0.1:${ports.api}` },
-    "app.env.local",
-  );
-  await updateEnv(
-    path.join(adminDir, ".env.local"),
-    {
-      VITE_ERU_API_BASE_URL: "/api",
-      ERU_API_PROXY_TARGET: `http://127.0.0.1:${ports.api}`,
-    },
-    "admin.env.local",
-  );
+  if (profile.app)
+    await updateEnv(
+      path.join(appDir, ".env.local"),
+      { VITE_ERU_API_BASE_URL: `http://127.0.0.1:${ports.api}` },
+      "app.env.local",
+    );
+  if (profile.admin)
+    await updateEnv(
+      path.join(adminDir, ".env.local"),
+      {
+        VITE_ERU_API_BASE_URL: "/api",
+        ERU_API_PROXY_TARGET: `http://127.0.0.1:${ports.api}`,
+      },
+      "admin.env.local",
+    );
   return { context: await projectContext(), ports };
 }
 
@@ -142,6 +172,13 @@ function pnpm(args, cwd) {
 }
 
 async function setup() {
+  const { appDir, adminDir } = directories();
+  for (const [directory, name] of [
+    [appDir, "erusentia"],
+    [serverRoot, "sentia-hub-service"],
+    [adminDir, "erusentia-admin"],
+  ])
+    await checkout(directory, name);
   for (const cwd of [appDir, serverRoot, adminDir])
     await pnpm(["install", "--frozen-lockfile"], cwd);
   const require = createRequire(path.join(appDir, "package.json"));
@@ -160,13 +197,29 @@ async function setup() {
   );
 }
 
-export async function start(profileName) {
+export async function start(profileName, { dryRun = false } = {}) {
   assert(
     Object.hasOwn(profiles, profileName),
     `Choose a profile: ${Object.keys(profiles).join(", ")}`,
   );
   const profile = profiles[profileName];
-  const { context, ports } = await configure();
+  const { appDir, adminDir } = directories();
+  if (profile.app) await checkout(appDir, "erusentia");
+  if (profile.admin) await checkout(adminDir, "erusentia-admin");
+  const { context, ports } = await configure(profile, { dryRun });
+  const api = `http://127.0.0.1:${ports.api}`;
+  const plan = {
+    profile: profileName,
+    backend: !!profile.server,
+    app: profile.app ? `http://127.0.0.1:${ports.app}` : null,
+    admin: profile.admin ? `http://127.0.0.1:${ports.admin}` : null,
+    api,
+    desktop: profile.app === "desktop",
+  };
+  if (dryRun) {
+    console.log(JSON.stringify(plan));
+    return plan;
+  }
   const group = new WorkspaceProcesses();
   const interrupt = () => {
     void group.stop();
@@ -184,12 +237,11 @@ export async function start(profileName) {
       ["admin", adminDir],
     ]) {
       if (!profile[name]) continue;
-      await access(path.join(directory, "node_modules/vite/bin/vite.js"));
       await requireFreePort(ports[name], name);
+      await access(path.join(directory, "node_modules/vite/bin/vite.js"));
     }
     if (profile.server) await runStack("up", backendServices, { context });
     if (group.stopping) return;
-    const api = `http://127.0.0.1:${ports.api}`;
     const common = {
       ...process.env,
       ERU_API_BASE_URL: api,
@@ -253,15 +305,8 @@ export async function start(profileName) {
         env: { ...common, ERU_DEV_SERVER_URL: `http://127.0.0.1:${ports.app}` },
       });
     }
-    console.log(
-      JSON.stringify({
-        profile: profileName,
-        ...(profile.app && { app: `http://127.0.0.1:${ports.app}` }),
-        ...(profile.admin && { admin: `http://127.0.0.1:${ports.admin}` }),
-        ...(profile.server && { api }),
-      }),
-    );
-    if (!profile.app && !profile.admin) return;
+    console.log(JSON.stringify(plan));
+    if (!profile.app && !profile.admin) return plan;
     console.log(
       "Ctrl+C closes only this frontend group. Backend data stays in Docker; pnpm stop stops the backend without deleting volumes.",
     );
@@ -275,21 +320,33 @@ export async function start(profileName) {
   }
 }
 
+// Keep the profile-first API already published on main alongside the outer
+// manifest's action-first commands. Both use the same lifecycle implementation.
+export function runWorkspace(action = "full", options = {}) {
+  if (action === "setup") return setup();
+  return start(action, options);
+}
+
 async function main() {
   assert.equal(
     Number(process.versions.node.split(".")[0]),
     24,
     "Use Node 24: run nvm use in the outer EruSentia directory",
   );
-  const [action, profile = "all", ...extra] = process.argv
-    .slice(2)
-    .filter((arg) => arg !== "--");
+  const args = process.argv.slice(2).filter((arg) => arg !== "--");
+  const dryRun = args.includes("--dry-run");
+  const positional = args.filter((arg) => arg !== "--dry-run");
+  const [action = "full", profile = "all", ...extra] = positional;
   assert.equal(extra.length, 0, "Unexpected launcher arguments");
   assert(
-    action === "start" ||
-      process.argv.slice(2).filter((arg) => arg !== "--").length <= 1,
+    action === "start" || positional.length <= 1,
     "Only start accepts a profile argument",
   );
+  assert(
+    !dryRun || action === "start" || Object.hasOwn(profiles, action),
+    "Only profiles accept --dry-run",
+  );
+  if (Object.hasOwn(profiles, action)) return runWorkspace(action, { dryRun });
   if (action === "init") {
     for (const [name, content] of [
       [
@@ -315,9 +372,10 @@ async function main() {
   }
   if (action === "setup") return setup();
   if (action === "configure") return configure();
-  if (action === "start") return start(profile);
+  if (action === "start") return start(profile, { dryRun });
   if (action === "stop") return runStack("down");
   if (action === "check") {
+    const { appDir, adminDir } = directories();
     const { context, ports } = await configure();
     const version = execFileSync(
       process.platform === "win32" ? "pnpm.cmd" : "pnpm",

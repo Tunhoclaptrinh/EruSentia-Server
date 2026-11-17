@@ -22,6 +22,7 @@ const defaults = {
   PROJECT_API_PORT: "3001",
   PROJECT_ACCOUNT_EMAIL_MODE: "mailpit",
   PROJECT_WEB_PORT: "5173",
+  PROJECT_ADMIN_PORT: "5183",
   PROJECT_POSTGRES_PORT: "5433",
   PROJECT_AMQP_PORT: "5673",
   PROJECT_RABBIT_UI_PORT: "15673",
@@ -89,7 +90,7 @@ export async function projectContext({ appDir } = {}) {
     throw new Error(
       "PROJECT_ACCOUNT_EMAIL_APP_URL must be a loopback HTTP origin",
     );
-  settings.PROJECT_CORS_ORIGINS ||= `http://localhost:${settings.PROJECT_WEB_PORT},http://127.0.0.1:${settings.PROJECT_WEB_PORT}`;
+  settings.PROJECT_CORS_ORIGINS ||= `http://localhost:${settings.PROJECT_WEB_PORT},http://127.0.0.1:${settings.PROJECT_WEB_PORT},http://localhost:${settings.PROJECT_ADMIN_PORT},http://127.0.0.1:${settings.PROJECT_ADMIN_PORT}`;
   for (const origin of settings.PROJECT_CORS_ORIGINS.split(",")) {
     const url = new URL(origin.trim());
     if (
@@ -241,6 +242,7 @@ export async function runStack(action, services = [], options = {}) {
         config: context.envFile,
         api: `http://127.0.0.1:${context.settings.PROJECT_API_PORT}`,
         web: `http://127.0.0.1:${context.settings.PROJECT_WEB_PORT}`,
+        admin: `http://127.0.0.1:${context.settings.PROJECT_ADMIN_PORT}`,
         database: `127.0.0.1:${context.settings.PROJECT_POSTGRES_PORT}/eru_project_docker`,
         services: allowed,
       });

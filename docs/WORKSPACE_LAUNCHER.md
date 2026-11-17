@@ -1,6 +1,6 @@
 # Launcher App + Server + Admin trên máy phát triển
 
-Cập nhật 16/11/2026. `scripts/workspace-dev.mjs` điều phối App + Server + Admin
+Cập nhật 17/11/2026. `scripts/workspace-dev.mjs` điều phối App + Server + Admin
 trên nền `project-stack.mjs`; script và manifest mẫu nằm trong repo Server để có
 thể khởi tạo bộ lệnh ngoài cùng sau khi clone. Cấu hình và dữ liệu riêng của mỗi
 máy vẫn được giữ ngoài Git.
@@ -39,6 +39,20 @@ pnpm start
 `.nvmrc` khi chưa tồn tại. Nó **không ghi đè** manifest hoặc cấu hình ngoài cùng đã
 có. Kiểm tra/ghép các script thủ công khi một workspace cũ đã có package.json khác.
 Không tạo pnpm workspace chung; mỗi repo vẫn dùng lockfile của nó.
+
+Các lệnh đã có trên main vẫn dùng cùng launcher: `pnpm workspace:start`,
+`pnpm workspace:web`, `pnpm workspace:app-server`, `pnpm workspace:server-admin`
+và `pnpm workspace:setup` từ repo Server. Cú pháp profile trước
+`node scripts/workspace-dev.mjs full` tương đương `start all`; có thêm
+`app-server-web` để chạy App web + backend. API `runWorkspace(profile, options)`
+vẫn được export, dùng chung quản lý vòng đời với `start(profile, options)`.
+
+`ERU_APP_DIR` và `ERU_ADMIN_DIR` chọn checkout khác khi cần. Chỉ kiểm checkout và
+ghi `.env.local` cho frontend được chọn; profile server/admin không cần App.
+Thêm `--dry-run` sau profile (hoặc `start <profile>`) để in kế hoạch và kiểm cổng
+cấu hình, không bật Docker/frontend hoặc sửa `.env.local`. `projectContext` có
+thể tạo env project riêng nếu chưa tồn tại. Dry-run không thay thế kiểm thực tế
+bind cổng, browser, proxy hoặc Ctrl+C.
 
 ## Electron sandbox trên Ubuntu 24.04
 

@@ -1,5 +1,7 @@
 # Sentia Hub Service
 
+Chạy cả App + Server + Admin ở workspace: `pnpm workspace:start`; chỉ App/Server: `pnpm workspace:app-server`; chỉ Server/Admin: `pnpm workspace:server-admin`. [Profile, cổng và dừng dịch vụ](docs/WORKSPACE_LAUNCHER.md).
+
 ## Các repository liên quan
 
 | Repository | Vai trò |

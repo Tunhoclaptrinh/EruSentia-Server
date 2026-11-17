@@ -8,7 +8,7 @@ export async function requireFreePort(port, label) {
     server.once("error", () =>
       reject(
         new Error(
-          `${label}: port ${port} is already in use; stop its owner or change the local port. No existing process was killed.`,
+          `${label}: port ${port} is occupied or unavailable (already in use); stop its owner or change the local port. No existing process was killed.`,
         ),
       ),
     );

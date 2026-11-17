@@ -96,8 +96,10 @@ async function released(port) {
 test("all requested profiles select exactly the intended components", () => {
   assert.deepEqual(profiles, {
     all: { app: "desktop", server: true, admin: true },
+    full: { app: "desktop", server: true, admin: true },
     web: { app: "web", server: true, admin: true },
     "app-server": { app: "desktop", server: true },
+    "app-server-web": { app: "web", server: true },
     "server-admin": { server: true, admin: true },
     app: { app: "desktop" },
     "app-web": { app: "web" },
