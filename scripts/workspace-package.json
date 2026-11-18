@@ -16,6 +16,6 @@
     "start:server": "node erusentia-server/scripts/workspace-dev.mjs start server",
     "start:admin": "node erusentia-server/scripts/workspace-dev.mjs start admin",
     "stop": "node erusentia-server/scripts/workspace-dev.mjs stop",
-    "check:launcher": "node --test erusentia-server/test/workspace-*.test.mjs && node erusentia-server/scripts/workspace-dev.mjs check"
+    "check:launcher": "pnpm --dir erusentia-server workspace:test && node erusentia-server/scripts/workspace-dev.mjs check"
   }
 }

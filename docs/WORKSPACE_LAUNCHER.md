@@ -5,6 +5,10 @@ trên nền `project-stack.mjs`; script và manifest mẫu nằm trong repo Serv
 thể khởi tạo bộ lệnh ngoài cùng sau khi clone. Cấu hình và dữ liệu riêng của mỗi
 máy vẫn được giữ ngoài Git.
 
+Các bước pull main, bootstrap manifest cha, chạy hằng ngày và chuyển dữ liệu sang
+máy khác nằm trong [WORKSPACE_DEVELOPMENT.md](WORKSPACE_DEVELOPMENT.md). Tài liệu
+này được quản lý trong Server để clone/pull có đủ hướng dẫn, dù các file cha là local.
+
 ## Repo và bộ điều phối ngoài cùng
 
 ```text
