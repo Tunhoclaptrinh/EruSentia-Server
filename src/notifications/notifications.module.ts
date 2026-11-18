@@ -9,10 +9,20 @@ import { TemplateFollowsService } from "./template-follows.service";
 
 @Module({})
 export class NotificationsModule {
-  static register(settings: AppConfig): DynamicModule {
+  /**
+   * `templates` must be the application's own TemplatesModule registration. Registering it again here
+   * would create a second store, cache and controller set: in memory mode follows would read an empty
+   * store, and cache invalidations would only reach one of the two caches.
+   */
+  static register(
+    settings: AppConfig,
+    templates: DynamicModule,
+  ): DynamicModule {
+    if (templates.module !== TemplatesModule)
+      throw new Error("NotificationsModule needs the TemplatesModule registration");
     return {
       module: NotificationsModule,
-      imports: [TemplatesModule.register(settings)],
+      imports: [templates],
       controllers: [NotificationsController, TemplateFollowsController],
       providers: [
         NotificationsService,
