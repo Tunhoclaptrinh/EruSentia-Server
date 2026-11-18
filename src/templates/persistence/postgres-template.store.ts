@@ -97,7 +97,7 @@ export class PostgresTemplateStore implements TemplateStore {
       );
       query.addSelect("category");
       query.addSelect(
-        "jsonb_build_object('format', t.content_json -> 'format', 'schemaVersion', t.content_json -> 'schemaVersion')",
+        "jsonb_build_object('format', t.content_json -> 'format', 'schemaVersion', t.content_json -> 'schemaVersion', 'level', t.content_json -> 'level')",
         "catalog_content_meta",
       );
     }

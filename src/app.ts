@@ -55,7 +55,7 @@ class AppModule {
         AuthModule.register(settings),
         CategoriesModule.register(settings.store),
         templates,
-        NotificationsModule.register(settings),
+        NotificationsModule.register(settings, templates),
         WorkspacesModule.register(settings),
         resources,
         ExtensionsModule,
